@@ -28,3 +28,8 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Dodatkowe biblioteki 
+* [TailwindCSS](https://tailwindcss.com/) - narzędzie zastępujące css klasami
+* [DaisyUI](https://daisyui.com/) - biblioteka gotowych komponentów w tailwind
+* [classNames](https://www.npmjs.com/package/classnames) - ułatwie zarządzenie stylem w zależności od zmian stanu aplikacji
