@@ -33,3 +33,5 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 * [TailwindCSS](https://tailwindcss.com/) - narzędzie zastępujące css klasami
 * [DaisyUI](https://daisyui.com/) - biblioteka gotowych komponentów w tailwind
 * [classNames](https://www.npmjs.com/package/classnames) - ułatwie zarządzenie stylem w zależności od zmian stanu aplikacji
+* [eslint](https://eslint.org/) - biblioteka do wychwytywania problemów z JS (jescze nie skonfigurowana). 
+    Jeśli chcesz użyć musisz posiadać odpowiednią wtyczkę od swojego IDE
