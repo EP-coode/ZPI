@@ -1,0 +1,6 @@
+GET localhost:8080/demo/all
+Accept: application/json
+###
+
+POST localhost:8080/demo/add?name=Kacper&email=temp@temp.com
+Content-Type: application/json
