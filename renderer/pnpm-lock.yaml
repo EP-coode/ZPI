@@ -10,6 +10,7 @@ specifiers:
   daisyui: ^2.31.0
   eslint: 8.25.0
   eslint-config-next: 12.3.1
+  jwt-decode: ^3.1.2
   next: 12.3.1
   postcss: ^8.4.17
   react: 18.2.0
@@ -19,6 +20,7 @@ specifiers:
 
 dependencies:
   classnames: 2.3.2
+  jwt-decode: 3.1.2
   next: 12.3.1_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -1478,6 +1480,10 @@ packages:
       array-includes: 3.1.5
       object.assign: 4.1.4
     dev: true
+
+  /jwt-decode/3.1.2:
+    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
+    dev: false
 
   /language-subtag-registry/0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}
