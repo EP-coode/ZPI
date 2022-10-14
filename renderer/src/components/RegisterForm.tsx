@@ -45,7 +45,7 @@ const RegisterForm = (props: Props) => {
       });
     }
 
-    // todo walidacia maila
+    // todo walidacjaa maila 
 
     return errors;
   };
