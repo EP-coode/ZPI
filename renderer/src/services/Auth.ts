@@ -29,8 +29,8 @@ const REFRESH_TOKEN = "rt";
 const ACCES_TOKEN = "at";
 
 export default class AuthService {
-  public onAccesTokenChange:
-    | ((errorMessages: string[], at?: string) => void)
+  public onLoginStatusChange:
+    | ((errorMessages: string[], at?: string, user?: User) => void)
     | undefined;
 
   public onLogout: (() => void) | undefined;
@@ -47,7 +47,7 @@ export default class AuthService {
 
   constructor(private authServerUrl: string) {}
 
-  private async fetchRefreshToken(): Promise<string[]> {
+  private async getTokens() {
     const req = await fetch(`${this.authServerUrl}/login/rt`, {
       method: "POST",
       body: JSON.stringify({
@@ -57,16 +57,20 @@ export default class AuthService {
     });
 
     if (!req.ok) {
-      return ["Coś poszło nie tak"];
+      if (this.onLoginStatusChange) this.onLoginStatusChange(["coś poszło nie tak"]);
     }
 
     const res = await req.json();
     this.rt = res.rt;
+    this.at = res.at;
 
-    return [];
+    if (this.onLoginStatusChange) {
+      const user = this.getUser();
+      this.onLoginStatusChange([], this.at, user);
+    }
   }
 
-  private async fetchAccesToken(): Promise<string[]> {
+  private async refreshTokens() {
     const req = await fetch(`${this.authServerUrl}/login/at`, {
       headers: {
         Authorization: `Bearer ${this.rt}`,
@@ -74,13 +78,17 @@ export default class AuthService {
     });
 
     if (!req.ok) {
-      return ["Coś poszło nie tak"];
+      if (this.onLoginStatusChange) this.onLoginStatusChange(["coś poszło nie tak"]);
     }
 
     const res = await req.json();
     this.at = res.at;
+    this.rt = res.rt;
 
-    return [];
+    if (this.onLoginStatusChange) {
+      const user = this.getUser();
+      this.onLoginStatusChange([], this.at, user);
+    }
   }
 
   isLoggedIn(): boolean {
@@ -97,17 +105,8 @@ export default class AuthService {
 
     if (!rt) return;
 
-    const atErrors = await this.fetchAccesToken();
-
-    if (this.at) {
-      const { iat, exp } = jwt_decode<{ exp: number; iat: number }>(this.at);
-      const atRefreshItervalTime = Math.abs(exp - iat) - 10 * 1000;
-
-      setInterval(async () => {
-        const errors = await this.fetchAccesToken();
-        if (this.onAccesTokenChange) this.onAccesTokenChange(errors, this.at);
-      }, atRefreshItervalTime);
-    }
+    this.refreshTokens();
+    this.setTokenRefreshInterval();
   }
 
   getUser(): User | undefined {
@@ -126,7 +125,7 @@ export default class AuthService {
   }
 
   logout() {
-    this.close()
+    this.close();
     this.at = undefined;
     localStorage.removeItem(ACCES_TOKEN);
 
@@ -139,49 +138,30 @@ export default class AuthService {
   close() {
     if (this.logoutTimeout) clearTimeout(this.logoutTimeout);
     if (this.atTiemout) clearTimeout(this.atTiemout);
-    this.onAccesTokenChange = undefined;
+    this.onLoginStatusChange = undefined;
     this.onLogout = undefined;
   }
 
-  async login(
-    email: string,
-    password: string,
-    remember: boolean
-  ): Promise<LoginResponse> {
+  private setTokenRefreshInterval() {
+    if (!this.at || !this.rt) return;
+    const { iat, exp } = jwt_decode<{ exp: number; iat: number }>(this.at);
+    const atRefreshItervalTime = Math.abs(exp - iat) - 10 * 1000;
+
+    setInterval(async () => {
+      this.refreshTokens();
+    }, atRefreshItervalTime);
+  }
+
+  async login(email: string, password: string, remember: boolean) {
     this.email = email;
     this.password = password;
     this.remember = remember;
 
     try {
-      const rtErrors = await this.fetchRefreshToken();
-
-      if (rtErrors) {
-        return { errorMsgs: rtErrors };
-      }
-
-      const atErrors = await this.fetchAccesToken();
-
-      if (atErrors) {
-        return { errorMsgs: atErrors };
-      }
-
-      if (this.at) {
-        const { iat, exp } = jwt_decode<{ exp: number; iat: number }>(this.at);
-        const atRefreshItervalTime = Math.abs(exp - iat) - 10 * 1000;
-
-        setInterval(async () => {
-          const errors = await this.fetchAccesToken();
-          if (this.onAccesTokenChange) this.onAccesTokenChange(errors, this.at);
-        }, atRefreshItervalTime);
-      }
+      await this.getTokens();
+      this.setTokenRefreshInterval();
     } catch (e) {
       console.error(e);
-      return { errorMsgs: ["Coś poszło nie tak"] };
     }
-
-    if (!this.rt) return { errorMsgs: ["Coś poszło nie tak"] };
-
-    const user = jwt_decode<User>(this.rt);
-    return { user };
   }
 }
