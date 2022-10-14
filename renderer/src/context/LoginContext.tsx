@@ -12,6 +12,7 @@ interface ILoginContext {
 
 const LoginContext = createContext<ILoginContext | null>(null);
 
+// TODO: Przetestować działanie serwisu na działającym serwerze  
 const authService = new AuthService("localhost:3000");
 
 const LoginContextProvider = ({ children }: React.PropsWithChildren) => {

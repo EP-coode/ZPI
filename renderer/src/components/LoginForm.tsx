@@ -1,10 +1,12 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { HtmlHTMLAttributes, useState } from "react";
+import ErrorSvg from "../icons/ErrorSvg";
 
 type Props = {};
 
 const LoginForm = (props: Props) => {
   const [rememberOnThisDevice, setRememberOnThisDevice] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const handleFormSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -14,22 +16,32 @@ const LoginForm = (props: Props) => {
       password: { value: string };
     };
 
-    alert(`Loguje jako: ${target.email.value}, ${target.password.value}`)
+    alert(`Loguje jako: ${target.email.value}, ${target.password.value}`);
 
     //TODO podpięcie do serwera
-  
+    setErrors(["Niepodpięte do serwera"]);
+  };
+
+  const handleFormChange = (e: React.SyntheticEvent) => {
+    const target = e.target as typeof e.target & {
+      email: { value: string };
+      password: { value: string };
+    };
+
+    setErrors([]);
   };
 
   return (
     <form
       onSubmit={handleFormSubmit}
+      onChange={handleFormChange}
       className="h-full max-w-xl min-w-[20rem] w-full bg-base-100 p-8 flex flex-col gap-5 rounded-md"
     >
       <h1 className="text-2xl mb-7">Witaj w StudentSociety</h1>
       <label className="input-group">
         <span className="w-20">Email</span>
         <input
-          type="text"
+          type="email"
           name="email"
           placeholder="example@mail.com"
           className="input input-bordered w-0 flex-grow"
@@ -50,12 +62,21 @@ const LoginForm = (props: Props) => {
         <input
           type="checkbox"
           checked={rememberOnThisDevice}
-          onClick={() => {
-            setRememberOnThisDevice((prevState) => !prevState);
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setRememberOnThisDevice(e.target.checked);
           }}
           className="checkbox"
         />
       </label>
+
+      {errors.map((error, index) => (
+        <div className="alert alert-error shadow-lg" key={index}>
+          <div>
+            <ErrorSvg />
+            <span>{error}</span>
+          </div>
+        </div>
+      ))}
 
       <input
         type="submit"

@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import FullPageFormWrapper from "../src/layout/FullPageFormWrapper";
 import LoginForm from "../src/components/LoginForm";
 
-const Login: NextPage = () => {
+const LoginPage: NextPage = () => {
   return (
     <FullPageFormWrapper>
       <LoginForm />
@@ -10,4 +10,4 @@ const Login: NextPage = () => {
   );
 };
 
-export default Login;
+export default LoginPage;
