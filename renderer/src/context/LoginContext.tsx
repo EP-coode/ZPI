@@ -1,6 +1,14 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import AuthService, { User } from "../services/Auth";
+import { User } from "../model/User";
+import {
+  getAccesToken,
+  getUserData,
+  isLoggedIn,
+  login,
+  logout,
+  refreshTokens,
+} from "../utils/auth";
 
 interface ILoginContext {
   errorMsgs: string[];
@@ -12,9 +20,6 @@ interface ILoginContext {
 
 const LoginContext = createContext<ILoginContext | null>(null);
 
-// TODO: Przetestować działanie serwisu na działającym serwerze  
-const authService = new AuthService("localhost:3000");
-
 const LoginContextProvider = ({ children }: React.PropsWithChildren) => {
   const [user, setUser] = useState<User>();
   const [errors, setErrors] = useState<string[]>([]);
@@ -22,29 +27,33 @@ const LoginContextProvider = ({ children }: React.PropsWithChildren) => {
 
   const router = useRouter();
 
-  const onLoginStatusChange = (
-    errorMessages: string[],
-    at?: string,
-    user?: User
+  const handleLogin = async (
+    email: string,
+    password: string,
+    remember: boolean
   ) => {
-    setErrors(errorMessages);
-    setAt(at);
-    setUser(user);
-  };
-
-  const onLogout = () => {
-    setUser(undefined);
-    setErrors([]);
-    setAt(undefined);
+    try {
+      await login(email, password, remember);
+      const user = getUserData();
+      const at = getAccesToken();
+      setUser(user);
+      setAt(at);
+    } catch (e: any) {
+      if (e instanceof Error) {
+        setErrors([e.message]);
+      }
+    }
   };
 
   useEffect(() => {
-    authService.init();
-    authService.onLoginStatusChange = onLoginStatusChange;
-    authService.onLogout = onLogout;
-    return () => {
-      authService.close();
+    const f = async () => {
+      if (isLoggedIn()) {
+        await refreshTokens();
+        setUser(await getUserData());
+      }
     };
+
+    f();
   }, []);
 
   return (
@@ -54,11 +63,9 @@ const LoginContextProvider = ({ children }: React.PropsWithChildren) => {
         errorMsgs: errors,
         at,
         logout: () => {
-          authService.logout();
+          logout();
         },
-        login: (email, password, remember) => {
-          authService.login(email, password, remember);
-        },
+        login: handleLogin,
       }}
     >
       {children}
