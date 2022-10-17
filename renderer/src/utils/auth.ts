@@ -9,6 +9,7 @@ const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL ?? "localhost:3000";
 interface TokenPayload {
   iat: number;
   exp: number;
+  sub: string;
 }
 
 interface RefreshTokenPayload extends TokenPayload {
