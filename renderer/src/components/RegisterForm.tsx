@@ -1,80 +1,51 @@
-import classNames from "classnames";
+import React, { useState } from "react";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+
+import classNames from "classnames";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 import ErrorSvg from "../icons/ErrorSvg";
 
 type Props = {};
 
-interface FormInputError {
-  affectedFields?: string[];
-  msg: string;
-}
-
-interface FormFields {
-  email: { value: string };
-  password: { value: string };
-  password_rpt: { value: string };
-}
-
 const RegisterForm = (props: Props) => {
-  const [errors, setErrors] = useState<FormInputError[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      password_rpt: "",
+    },
+    validationSchema: Yup.object().shape({
+      email: Yup.string()
+        .email("E-mail jest niepoprawny")
+        .required("Pole jest wymagane"),
+      password: Yup.string()
+        .min(7, "Hasło musi mieć min. 7 znaków")
+        .max(32, "Hasło może mieć max 32 znaki")
+        .oneOf([Yup.ref("password_rpt")], "Hasła nie zgadzają się")
+        .required("Pole jest wymagane"),
+      password_rpt: Yup.string()
+        .oneOf([Yup.ref("password")], "Hasła nie zgadzają się")
+        .required("Pole jest wymagane"),
+    }),
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: ({ email, password }) => {
+      alert(`Rejestruje jako: ${email}, ${password}`);
 
-  const wrongFields = useMemo<Set<string>>(
-    () =>
-      errors.reduce<Set<string>>((acc, current) => {
-        current.affectedFields?.forEach((field) => acc.add(field));
-        return acc;
-      }, new Set<string>()),
-    [errors]
-  );
-
-  const validateForm = (formFields: FormFields): FormInputError[] => {
-    const errors: FormInputError[] = [];
-
-    if (formFields.password.value != formFields.password_rpt.value) {
-      errors.push({
-        msg: "Hasła nie zgadzają się",
-        affectedFields: ["password", "password_rpt"],
-      });
-    }
-
-    if (formFields.password.value.length < 7) {
-      errors.push({
-        msg: "Hasło musi mieć conajmniej 7 znaków",
-        affectedFields: ["password"],
-      });
-    }
-
-    // todo walidacjaa maila 
-
-    return errors;
-  };
-
+      //TODO podpięcie do serwera
+      setErrors(["Nie podięte do serwera"]);
+    },
+  });
   const handleFormChange = (e: React.SyntheticEvent) => {
     if (errors.length > 0) setErrors([]);
   };
 
-  const handleFormSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-
-    const target = e.target as typeof e.target & FormFields;
-
-    const errors = validateForm(target);
-
-    if (errors.length > 0) {
-      setErrors(errors);
-      return;
-    }
-
-    alert(`Rejestruje jako: ${target.email.value}, ${target.password.value}`);
-
-    //TODO podpięcie do serwera
-    setErrors([{ msg: "Nie podięte do serwera" }]);
-  };
-
   return (
     <form
-      onSubmit={handleFormSubmit}
+      onSubmit={formik.handleSubmit}
       onChange={handleFormChange}
       className="h-full max-w-xl min-w-[20rem] w-full bg-base-100 p-8 flex flex-col gap-5 rounded-md"
     >
@@ -87,11 +58,18 @@ const RegisterForm = (props: Props) => {
         <input
           type="email"
           name="email"
-          placeholder="email"
+          placeholder="example@mail.com"
           className={classNames("input input-bordered w-full", {
-            "input-error": wrongFields.has("email"),
+            "input-error": formik.errors.email,
           })}
+          onChange={formik.handleChange}
+          value={formik.values.email}
         />
+        <label className="label">
+          {formik.errors.email && (
+            <span className="label-text text-error">{formik.errors.email}</span>
+          )}
+        </label>
       </div>
 
       <div className="form-control w-full">
@@ -103,9 +81,18 @@ const RegisterForm = (props: Props) => {
           name="password"
           placeholder="hasło"
           className={classNames("input input-bordered w-full", {
-            "input-error": wrongFields.has("password"),
+            "input-error": formik.errors.password,
           })}
+          onChange={formik.handleChange}
+          value={formik.values.password}
         />
+        <label className="label">
+          {formik.errors.password && (
+            <span className="label-text text-error">
+              {formik.errors.password}
+            </span>
+          )}
+        </label>
       </div>
 
       <div className="form-control w-full">
@@ -117,16 +104,25 @@ const RegisterForm = (props: Props) => {
           name="password_rpt"
           placeholder="hasło"
           className={classNames("input input-bordered w-full", {
-            "input-error": wrongFields.has("password_rpt"),
+            "input-error": formik.errors.password_rpt,
           })}
+          onChange={formik.handleChange}
+          value={formik.values.password_rpt}
         />
+        <label className="label">
+          {formik.errors.password_rpt && (
+            <span className="label-text text-error">
+              {formik.errors.password_rpt}
+            </span>
+          )}
+        </label>
       </div>
 
       {errors.map((error, index) => (
         <div className="alert alert-error shadow-lg" key={index}>
           <div>
             <ErrorSvg />
-            <span>{error.msg}</span>
+            <span>{error}</span>
           </div>
         </div>
       ))}

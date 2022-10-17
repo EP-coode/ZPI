@@ -1,26 +1,37 @@
+import React, { useState } from "react";
 import Link from "next/link";
-import React, { HtmlHTMLAttributes, useState } from "react";
+
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 import ErrorSvg from "../icons/ErrorSvg";
+import classNames from "classnames";
 
 type Props = {};
 
 const LoginForm = (props: Props) => {
-  const [rememberOnThisDevice, setRememberOnThisDevice] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      remember: false,
+    },
+    validationSchema: Yup.object().shape({
+      email: Yup.string()
+        .email("E-mail jest niepoprawny")
+        .required("Pole jest wymagane"),
+      password: Yup.string().required("Pole jest wymagane"),
+    }),
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: ({ email, password }) => {
+      alert(`Loguje jako: ${email}, ${password}`);
 
-  const handleFormSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-
-    const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
-    };
-
-    alert(`Loguje jako: ${target.email.value}, ${target.password.value}`);
-
-    //TODO podpięcie do serwera
-    setErrors(["Niepodpięte do serwera"]);
-  };
+      //TODO podpięcie do serwera
+      setErrors(["Niepodpięte do serwera"]);
+    },
+  });
 
   const handleFormChange = (e: React.SyntheticEvent) => {
     const target = e.target as typeof e.target & {
@@ -33,38 +44,62 @@ const LoginForm = (props: Props) => {
 
   return (
     <form
-      onSubmit={handleFormSubmit}
+      onSubmit={formik.handleSubmit}
       onChange={handleFormChange}
       className="h-full max-w-xl min-w-[20rem] w-full bg-base-100 p-8 flex flex-col gap-5 rounded-md"
     >
       <h1 className="text-2xl mb-7">Witaj w StudentSociety</h1>
-      <label className="input-group">
-        <span className="w-20">Email</span>
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text">E-mail</span>
+        </label>
         <input
           type="email"
           name="email"
           placeholder="example@mail.com"
-          className="input input-bordered w-0 flex-grow"
+          className={classNames("input input-bordered w-full", {
+            "input-error": formik.errors.email,
+          })}
+          onChange={formik.handleChange}
+          value={formik.values.email}
         />
-      </label>
+        <label className="label">
+          {formik.errors.email && (
+            <span className="label-text text-error">{formik.errors.email}</span>
+          )}
+        </label>
+      </div>
 
-      <label className="input-group">
-        <span className="w-20">Hasło</span>
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text">Hasło</span>
+        </label>
         <input
           type="password"
           name="password"
-          className="input input-bordered w-0 flex-grow"
+          className={classNames("input input-bordered w-full", {
+            "input-error": formik.errors.password,
+          })}
+          placeholder="twoje hasło"
+          onChange={formik.handleChange}
+          value={formik.values.password}
         />
-      </label>
+        <label className="label">
+          {formik.errors.password && (
+            <span className="label-text text-error">
+              {formik.errors.password}
+            </span>
+          )}
+        </label>
+      </div>
 
       <label className="label cursor-pointer">
         <span className="label-text">Pamiętaj na tym urządzeniu</span>
         <input
           type="checkbox"
-          checked={rememberOnThisDevice}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setRememberOnThisDevice(e.target.checked);
-          }}
+          name="remember"
+          checked={formik.values.remember}
+          onChange={formik.handleChange}
           className="checkbox"
         />
       </label>
