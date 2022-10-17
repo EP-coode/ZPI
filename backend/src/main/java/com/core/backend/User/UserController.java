@@ -21,32 +21,30 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     ResponseEntity<Object> getUser(@PathVariable(name = "id") String id) {
-        if (id != null) {
-            long longId;
-            try {
-                longId = Long.parseLong(id);
-            } catch (NumberFormatException e) {
-                return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
-            }
-            Optional<User> userOptional = userRepository.findById(longId);
-            if (userOptional.isPresent())
-                return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
-            return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
+        if (id == null)
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        long longId;
+        try {
+            longId = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        Optional<User> userOptional = userRepository.findById(longId);
+        if (userOptional.isPresent())
+            return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
+        return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping()
     ResponseEntity<Object> createUser(@RequestBody User user) {
-        if (user != null) {
-            try {
-                userRepository.save(user);
-            } catch (Exception e) {
-                return new ResponseEntity<>("Coś poszło nie tak", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            return new ResponseEntity<>("Użytkownik zarejestrowany", HttpStatus.CREATED);
+        if (user == null)
+            return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Coś poszło nie tak", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Użytkownik zarejestrowany", HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
@@ -58,57 +56,55 @@ public class UserController {
                                       @RequestParam Boolean emailConfirmed,
                                       @RequestParam String refreshToken,
                                       @RequestParam Boolean studentStatusConfirmed) {
-        if (id != null) {
-            long longId;
-            try {
-                longId = Long.parseLong(id);
-            } catch (NumberFormatException e) {
-                return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
-            }
-            Optional<User> userOptional = userRepository.findById(longId);
-            if (userOptional.isEmpty())
-                return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
-            User userToSave = userOptional.get();
-            if (roleName != null) {
-                Optional<Role> roleOptional = roleRepository.findById(roleName);
-                if (roleOptional.isEmpty())
-                    return new ResponseEntity<>("Brak roli o danym id", HttpStatus.NOT_FOUND);
-                userToSave.setRole(roleOptional.get());
-            }
-            userToSave.setAvatarUrl(avatarUrl); // użytkownik może usunąć zdjęcie avatara
-            if (email != null)
-                userToSave.setEmail(email);
-            if (emailConfirmationToken != null)
-                userToSave.setEmailConfirmationToken(emailConfirmationToken);
-            if (emailConfirmed != null)
-                userToSave.setEmailConfirmed(emailConfirmed);
-            if (refreshToken != null)
-                userToSave.setRefreshToken(refreshToken);
-            if (studentStatusConfirmed != null)
-                userToSave.setStudentStatusConfirmed(studentStatusConfirmed);
-            userRepository.save(userToSave);
-            return new ResponseEntity<>("Użytkownik zaktualizowany", HttpStatus.OK);
+        if (id == null)
+            return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
+        long longId;
+        try {
+            longId = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
+        Optional<User> userOptional = userRepository.findById(longId);
+        if (userOptional.isEmpty())
+            return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
+        User userToSave = userOptional.get();
+        if (roleName != null) {
+            Optional<Role> roleOptional = roleRepository.findById(roleName);
+            if (roleOptional.isEmpty())
+                return new ResponseEntity<>("Brak roli o danym id", HttpStatus.NOT_FOUND);
+            userToSave.setRole(roleOptional.get());
+        }
+        userToSave.setAvatarUrl(avatarUrl); // użytkownik może usunąć zdjęcie avatara
+        if (email != null)
+            userToSave.setEmail(email);
+        if (emailConfirmationToken != null)
+            userToSave.setEmailConfirmationToken(emailConfirmationToken);
+        if (emailConfirmed != null)
+            userToSave.setEmailConfirmed(emailConfirmed);
+        if (refreshToken != null)
+            userToSave.setRefreshToken(refreshToken);
+        if (studentStatusConfirmed != null)
+            userToSave.setStudentStatusConfirmed(studentStatusConfirmed);
+        userRepository.save(userToSave);
+        return new ResponseEntity<>("Użytkownik zaktualizowany", HttpStatus.OK);
     }
 
 
     @DeleteMapping("/{id}")
     ResponseEntity<Object> deleteUser(@PathVariable String id) {
-        if (id != null) {
-            long longId;
-            try {
-                longId = Long.parseLong(id);
-            } catch (NumberFormatException e) {
-                return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
-            }
-            if (userRepository.existsById(longId)) {
-                userRepository.deleteById(longId);
-                return new ResponseEntity<>("Użytkownik usunięty", HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
+        if (id == null)
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        long longId;
+        try {
+            longId = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        if (userRepository.existsById(longId)) {
+            userRepository.deleteById(longId);
+            return new ResponseEntity<>("Użytkownik usunięty", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
     }
 }
 
