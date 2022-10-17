@@ -34,11 +34,6 @@ const LoginForm = (props: Props) => {
   });
 
   const handleFormChange = (e: React.SyntheticEvent) => {
-    const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
-    };
-
     setErrors([]);
   };
 
