@@ -1,7 +1,6 @@
 import { getAccesToken, isLoggedIn, isTokenValid, refreshTokens } from "./auth";
 
-// TODO: load from .env
-const SERVICE_URL = "localhost:3000";
+const SERVICE_URL = process.env.DATA_PROVIDER_URL ?? "localhost:3000";
 
 export async function fetchWithJWT<T>(
   endpoint: string,
@@ -23,8 +22,8 @@ export async function fetchWithJWT<T>(
   const request = new Request(`${SERVICE_URL}/${endpoint}`, config);
   const response = await fetch(request);
 
-  if(!response.ok){
-    throw new Error("Coś poszło nie tak")
+  if (!response.ok) {
+    throw new Error("Coś poszło nie tak");
   }
 
   return await response.json();
