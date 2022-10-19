@@ -35,7 +35,7 @@ public class FollowedUserController {
         List<User> result = new ArrayList<>();
         for (FollowedUser followedUser : followedUserList) {
             if (followedUser.getPrimaryKey().getFollowedUserId().getUserId() == longId)
-                result.add(userRepository.findById(longId).orElseThrow());
+                result.add(userRepository.findById(followedUser.getPrimaryKey().getUserId().getUserId()).orElseThrow());
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -54,7 +54,7 @@ public class FollowedUserController {
         List<User> result = new ArrayList<>();
         for (FollowedUser followedUser : followedUserList) {
             if (followedUser.getPrimaryKey().getUserId().getUserId() == longId)
-                result.add(userRepository.findById(longId).orElseThrow());
+                result.add(userRepository.findById(followedUser.getPrimaryKey().getFollowedUserId().getUserId()).orElseThrow());
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
