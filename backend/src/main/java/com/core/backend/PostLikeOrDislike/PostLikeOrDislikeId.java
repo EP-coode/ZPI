@@ -15,6 +15,14 @@ public class PostLikeOrDislikeId implements Serializable {
     @ManyToOne
     private Post postId;
 
+    public PostLikeOrDislikeId() {
+    }
+
+    public PostLikeOrDislikeId(User userId, Post postId) {
+        this.userId = userId;
+        this.postId = postId;
+    }
+
     public User getUserId() {
         return userId;
     }
