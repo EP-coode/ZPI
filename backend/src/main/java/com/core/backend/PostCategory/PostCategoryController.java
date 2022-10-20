@@ -1,4 +1,4 @@
-package com.core.backend.PostCategoryGroup;
+package com.core.backend.PostCategory;
 
 import com.core.backend.utilis.NoIdException;
 import com.core.backend.utilis.Utilis;
@@ -14,32 +14,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(path = "/postCategoryGroup")
-public class PostCategoryGroupController {
+@RequestMapping(path = "postCategory")
+public class PostCategoryController {
 
     @Autowired
-    private PostCategoryGroupRepository postCategoryGroupRepository;
+    private PostCategoryRepository postCategoryRepository;
     @Autowired
     private Utilis utilis;
 
-    @GetMapping()
-    public ResponseEntity<Object> getAllPostCategoryGroup() {
-        return new ResponseEntity<>(postCategoryGroupRepository.findAll(), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<Object> getAllPostCategoryController() {
+        return new ResponseEntity<>(postCategoryRepository.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "{postCategoryGroupId}")
-    public ResponseEntity<Object> getPostCategoryGroup(@PathVariable String postCategoryGroupId) {
+    @GetMapping(path = "{postCategoryId}")
+    public ResponseEntity<Object> getPostCategory(@PathVariable String postCategoryId) {
         long longId;
         try {
-            longId = utilis.convertId(postCategoryGroupId);
+            longId = utilis.convertId(postCategoryId);
         } catch (WrongIdException e) {
             return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
-        Optional<PostCategoryGroup> postCategoryGroup = postCategoryGroupRepository.findById(longId);
-        if (postCategoryGroup.isEmpty())
-            return new ResponseEntity<>("Grupa o podanym id nie istnieje", HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(postCategoryGroup.get(), HttpStatus.OK);
+        Optional<PostCategory> postCategory = postCategoryRepository.findById(longId);
+        if (postCategory.isEmpty())
+            return new ResponseEntity<>("Brak kategorii postu o podanym id", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(postCategory.get(), HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.core.backend.Post;
 
+import com.core.backend.PostCategory.PostCategory;
 import com.core.backend.User.User;
 
 import javax.persistence.*;
@@ -17,10 +18,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "approver_id_fk")
     private User approverId;
-//    @ManyToOne
-//    @JoinColumn
-//    private PostCategory categoryId;
-    //TODO dodać kategorię postów
+    @ManyToOne
+    @JoinColumn(name = "post_category_id_fk")
+    private PostCategory categoryId;
     private String title;
     private String imageUrl;
     private int totalLikes;
