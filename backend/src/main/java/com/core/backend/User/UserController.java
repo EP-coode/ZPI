@@ -2,6 +2,9 @@ package com.core.backend.User;
 
 import com.core.backend.Role.Role;
 import com.core.backend.Role.RoleRepository;
+import com.core.backend.utilis.NoIdException;
+import com.core.backend.utilis.Utilis;
+import com.core.backend.utilis.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +21,17 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private Utilis utilis;
 
     @GetMapping(path = "/{id}")
     ResponseEntity<Object> getUser(@PathVariable(name = "id") String id) {
-        if (id == null)
-            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         long longId;
         try {
-            longId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
+            longId = utilis.convertId(id);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
         Optional<User> userOptional = userRepository.findById(longId);
@@ -56,12 +61,12 @@ public class UserController {
                                       @RequestParam Boolean emailConfirmed,
                                       @RequestParam String refreshToken,
                                       @RequestParam Boolean studentStatusConfirmed) {
-        if (id == null)
-            return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
         long longId;
         try {
-            longId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
+            longId = utilis.convertId(id);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
         Optional<User> userOptional = userRepository.findById(longId);
@@ -92,12 +97,12 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<Object> deleteUser(@PathVariable String id) {
-        if (id == null)
-            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         long longId;
         try {
-            longId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
+            longId = utilis.convertId(id);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
         if (userRepository.existsById(longId)) {

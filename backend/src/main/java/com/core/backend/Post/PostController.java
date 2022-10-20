@@ -1,5 +1,8 @@
 package com.core.backend.Post;
 
+import com.core.backend.utilis.NoIdException;
+import com.core.backend.utilis.Utilis;
+import com.core.backend.utilis.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,20 +19,22 @@ public class PostController {
 
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private Utilis utilis;
 
     @GetMapping
     public ResponseEntity<Object> getPost() {
         return new ResponseEntity<>(postRepository.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getPost(@PathVariable String id) {
-        if (id == null)
-            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+    @GetMapping(value = "/{postId}")
+    public ResponseEntity<Object> getPost(@PathVariable String postId) {
         long longId;
         try {
-            longId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
+            longId = utilis.convertId(postId);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
         Optional<Post> postOptional = postRepository.findById(longId);

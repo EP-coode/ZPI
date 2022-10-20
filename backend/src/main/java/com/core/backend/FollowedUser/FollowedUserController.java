@@ -2,6 +2,9 @@ package com.core.backend.FollowedUser;
 
 import com.core.backend.User.User;
 import com.core.backend.User.UserRepository;
+import com.core.backend.utilis.NoIdException;
+import com.core.backend.utilis.Utilis;
+import com.core.backend.utilis.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +23,17 @@ public class FollowedUserController {
     private FollowedUserRepository followedUserRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private Utilis utilis;
 
     @GetMapping(path = "myFollowers/{userId}")
     public ResponseEntity<Object> getMyFollowers(@PathVariable String userId) {
-        if (userId == null)
-            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         long longId;
         try {
-            longId = Long.parseLong(userId);
-        } catch (NumberFormatException e) {
+            longId = utilis.convertId(userId);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
         List<FollowedUser> followedUserList = followedUserRepository.findAll();
@@ -42,12 +47,12 @@ public class FollowedUserController {
 
     @GetMapping(path = "myFollowings/{userId}")
     public ResponseEntity<Object> getMyFollowing(@PathVariable String userId) {
-        if (userId == null)
-            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         long longId;
         try {
-            longId = Long.parseLong(userId);
-        } catch (NumberFormatException e) {
+            longId = utilis.convertId(userId);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
         List<FollowedUser> followedUserList = followedUserRepository.findAll();
