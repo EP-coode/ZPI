@@ -35,9 +35,9 @@ public class UserController {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
         Optional<User> userOptional = userRepository.findById(longId);
-        if (userOptional.isPresent())
-            return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
-        return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
+        if (userOptional.isEmpty())
+            return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
     }
 
     @PostMapping()
