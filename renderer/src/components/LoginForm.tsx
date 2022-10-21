@@ -15,6 +15,7 @@ const LoginForm = (props: Props) => {
   const loginContext = useContext(LoginContext);
   const router = useRouter();
   const [errors, setErrors] = useState<string[]>([]);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -32,19 +33,19 @@ const LoginForm = (props: Props) => {
     onSubmit: async ({ email, password, remember }) => {
       if (errors.length > 0) setErrors([]);
       alert(`Loguje jako: ${email}, ${password}`);
-      const loginSucces = await loginContext?.login(email, password, remember);
-      if (loginSucces) {
+      try {
+        await loginContext?.login(email, password, remember);
         router.push("/");
+      } catch (e: any) {
+        if (e instanceof Error) {
+          setErrors([e.message]);
+        }
       }
       //TODO podpięcie do serwera
       setErrors(["Niepodpięte do serwera"]);
       formik.setSubmitting(false);
     },
   });
-
-  useEffect(() => {
-    setErrors((errors) => errors.concat(loginContext?.errorMsgs ?? []));
-  }, [loginContext?.errorMsgs]);
 
   const handleFormChange = (e: React.SyntheticEvent) => {
     setErrors([]);
@@ -122,17 +123,17 @@ const LoginForm = (props: Props) => {
       ))}
 
       <button
-        className={classNames("btn btn-primary w-full max-w-xs mx-auto my-2 relative", {
-          loading: formik.isSubmitting,
-        })}
+        className={classNames(
+          "btn btn-primary w-full max-w-xs mx-auto my-2 relative",
+          {
+            loading: formik.isSubmitting,
+          }
+        )}
       >
         <input
-          className={classNames(
-            "w-full h-full cursor-pointer absolute",
-            {
-              "pointer-events-none": formik.isSubmitting,
-            }
-          )}
+          className={classNames("w-full h-full cursor-pointer absolute", {
+            "pointer-events-none": formik.isSubmitting,
+          })}
           type="submit"
           value=""
         />

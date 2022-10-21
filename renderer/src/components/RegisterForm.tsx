@@ -11,6 +11,7 @@ type Props = {};
 
 const RegisterForm = (props: Props) => {
   const [errors, setErrors] = useState<string[]>([]);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -33,6 +34,7 @@ const RegisterForm = (props: Props) => {
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: ({ email, password }) => {
+      if(errors.length > 0) setErrors([])
       alert(`Rejestruje jako: ${email}, ${password}`);
 
       //TODO podpięcie do serwera
@@ -40,6 +42,7 @@ const RegisterForm = (props: Props) => {
       formik.setSubmitting(false)
     },
   });
+
   const handleFormChange = (e: React.SyntheticEvent) => {
     if (errors.length > 0) setErrors([]);
   };

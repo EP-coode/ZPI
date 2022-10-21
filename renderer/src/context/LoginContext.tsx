@@ -1,8 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { User } from "../model/User";
 import {
-  getAccesToken,
   getUserData,
   isLoggedIn,
   login,
@@ -11,14 +9,12 @@ import {
 } from "../utils/auth";
 
 export interface ILoginContext {
-  errorMsgs: string[];
   user?: User;
-  at?: string;
   login: (
     email: string,
     password: string,
     remember: boolean
-  ) => Promise<boolean>;
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -26,29 +22,15 @@ export const LoginContext = createContext<ILoginContext | null>(null);
 
 export const LoginContextProvider = ({ children }: React.PropsWithChildren) => {
   const [user, setUser] = useState<User>();
-  const [errors, setErrors] = useState<string[]>([]);
-  const [at, setAt] = useState<string>();
-
-  const router = useRouter();
 
   const handleLogin = async (
     email: string,
     password: string,
     remember: boolean
   ) => {
-    try {
-      if (errors.length > 0) setErrors([]);
-      await login(email, password, remember);
-      const [user, at] = await Promise.all([getUserData(), getAccesToken()]);
-      setUser(user);
-      setAt(at);
-      return true;
-    } catch (e: any) {
-      if (e instanceof Error) {
-        setErrors([e.message]);
-      }
-      return false;
-    }
+    await login(email, password, remember);
+    const user = await getUserData();
+    setUser(user);
   };
 
   useEffect(() => {
@@ -66,8 +48,6 @@ export const LoginContextProvider = ({ children }: React.PropsWithChildren) => {
     <LoginContext.Provider
       value={{
         user,
-        errorMsgs: errors,
-        at,
         logout: () => {
           logout();
         },
