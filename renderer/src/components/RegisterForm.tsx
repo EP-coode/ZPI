@@ -37,6 +37,7 @@ const RegisterForm = (props: Props) => {
 
       //TODO podpięcie do serwera
       setErrors(["Nie podięte do serwera"]);
+      formik.setSubmitting(false)
     },
   });
   const handleFormChange = (e: React.SyntheticEvent) => {
@@ -127,11 +128,23 @@ const RegisterForm = (props: Props) => {
         </div>
       ))}
 
-      <input
-        type="submit"
-        className="btn btn-primary w-full max-w-xs mx-auto my-3 mt-7"
-        value="Zarejestruj"
-      />
+      <button
+        className={classNames(
+          "btn btn-primary w-full max-w-xs mx-auto my-2 relative",
+          {
+            loading: formik.isSubmitting,
+          }
+        )}
+      >
+        <input
+          className={classNames("w-full h-full cursor-pointer absolute", {
+            "pointer-events-none": formik.isSubmitting,
+          })}
+          type="submit"
+          value=""
+        />
+        Zaloguj
+      </button>
 
       <div className="form-control ml-auto mr-0">
         <Link href={"/login"}>

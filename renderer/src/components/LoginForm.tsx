@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 
 import { useFormik } from "formik";
@@ -6,10 +6,14 @@ import * as Yup from "yup";
 
 import ErrorSvg from "../icons/ErrorSvg";
 import classNames from "classnames";
+import { LoginContext } from "../context/LoginContext";
+import { useRouter } from "next/router";
 
 type Props = {};
 
 const LoginForm = (props: Props) => {
+  const loginContext = useContext(LoginContext);
+  const router = useRouter();
   const [errors, setErrors] = useState<string[]>([]);
   const formik = useFormik({
     initialValues: {
@@ -25,13 +29,22 @@ const LoginForm = (props: Props) => {
     }),
     validateOnChange: false,
     validateOnBlur: false,
-    onSubmit: ({ email, password }) => {
+    onSubmit: async ({ email, password, remember }) => {
+      if (errors.length > 0) setErrors([]);
       alert(`Loguje jako: ${email}, ${password}`);
-
+      const loginSucces = await loginContext?.login(email, password, remember);
+      if (loginSucces) {
+        router.push("/");
+      }
       //TODO podpięcie do serwera
       setErrors(["Niepodpięte do serwera"]);
+      formik.setSubmitting(false);
     },
   });
+
+  useEffect(() => {
+    setErrors((errors) => errors.concat(loginContext?.errorMsgs ?? []));
+  }, [loginContext?.errorMsgs]);
 
   const handleFormChange = (e: React.SyntheticEvent) => {
     setErrors([]);
@@ -108,11 +121,23 @@ const LoginForm = (props: Props) => {
         </div>
       ))}
 
-      <input
-        type="submit"
-        className="btn btn-primary w-full max-w-xs mx-auto my-2"
-        value="Zaloguj"
-      />
+      <button
+        className={classNames("btn btn-primary w-full max-w-xs mx-auto my-2 relative", {
+          loading: formik.isSubmitting,
+        })}
+      >
+        <input
+          className={classNames(
+            "w-full h-full cursor-pointer absolute",
+            {
+              "pointer-events-none": formik.isSubmitting,
+            }
+          )}
+          type="submit"
+          value=""
+        />
+        Zaloguj
+      </button>
 
       <div className="form-control ml-auto mr-0">
         <Link href={"/register"}>

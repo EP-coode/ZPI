@@ -4,7 +4,7 @@ import { User } from "../model/User";
 const REFRESH_TOKEN = "rt";
 const ACCES_TOKEN = "at";
 const KEEP_LOGGED_IN = "keep_logged_in";
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL ?? "localhost:3000";
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL ?? "http://localhost:3000";
 
 interface TokenPayload {
   iat: number;
@@ -39,7 +39,7 @@ export async function login(
   email: string,
   password: string,
   remember: boolean
-) {
+): Promise<User | undefined> {
   try {
     const req = await fetch(`${AUTH_SERVICE_URL}/api/auth/login`, {
       method: "POST",
@@ -66,12 +66,14 @@ export async function login(
       sessionStorage.setItem(REFRESH_TOKEN, rt);
       sessionStorage.setItem(ACCES_TOKEN, at);
     }
+
+    return await getUserData();
   } catch (e: any) {
     throw new Error("Coś poszło nie tak");
   }
 }
 
-export function logout() {
+export async function logout(): Promise<void> {
   // TODO: FETCH TO LOGOUT FORM SERVER AND REMOVE RT
   sessionStorage.removeItem(REFRESH_TOKEN);
   localStorage.removeItem(REFRESH_TOKEN);
@@ -83,7 +85,7 @@ export function logout() {
  * @returns metadata about user storet in refresh token
  * if no user is logged in then returns undefined
  */
-export function getUserData(): User | undefined {
+export async function getUserData(): Promise<User | undefined> {
   const rt = getRefreshToken();
 
   if (!rt) return undefined;
