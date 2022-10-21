@@ -16,7 +16,7 @@ export const NavBar = (props: Props) => {
   };
 
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-base-100 sticky top-0">
       <div className="flex-1">
         <div className="hidden sm:block">
           <Link href="/">
