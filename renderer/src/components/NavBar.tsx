@@ -16,9 +16,9 @@ export const NavBar = (props: Props) => {
   };
 
   return (
-    <div className="navbar bg-base-100 sticky top-0">
+    <div className="navbar bg-base-100 sticky top-0 z-50">
       <div className="flex-1">
-        <div className="hidden sm:block">
+        <div className="hidden sm:block mr-2">
           <Link href="/">
             <a className="btn btn-ghost normal-case text-xl">Student Society</a>
           </Link>

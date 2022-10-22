@@ -1,4 +1,3 @@
 export interface Role {
-  canCreatePost: boolean;
-  //TODO
+  roleName: string
 }
