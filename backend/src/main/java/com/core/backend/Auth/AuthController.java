@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,9 +39,9 @@ public class AuthController {
     private TokenProvider tokenProvider;
 
     @PostMapping("/login")
-    void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String email  = request.getParameter("email");
-        String password = request.getParameter("password");
+    void login(@RequestBody LoginUser loginUser, HttpServletResponse response) throws IOException {
+        String email  = loginUser.getEmail();
+        String password = loginUser.getPassword();
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
