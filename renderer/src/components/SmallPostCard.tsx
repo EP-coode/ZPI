@@ -12,7 +12,7 @@ type Props = {
 
 const SmallPostCard = ({ post }: Props) => {
   return (
-    <div className="card bg-base-100 shadow-xl h-full w-full w-96 min-w-[20rem]">
+    <div className="card bg-base-100 shadow-xl h-full w-96 min-w-[20rem]">
       {post.imageUrl && (
         <figure className="relative h-40 flex-shrink-0 flex-grow-0">
           <Image
