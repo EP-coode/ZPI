@@ -22,9 +22,10 @@ export const LikesCounter = ({
             onDisLike && onDisLike();
           }}
           className={classNames(
-            "btn btn-ghost no-animation w-full text-2xl text-red-700 rounded-r-none",
+            "btn no-animation w-full text-2xl text-red-700 rounded-r-none",
             {
               "pointer-events-none btn-active": !(isLiked ?? true),
+              "btn-ghost": (isLiked ?? true),
             }
           )}
         >
@@ -40,9 +41,10 @@ export const LikesCounter = ({
             onLike && onLike();
           }}
           className={classNames(
-            "btn btn-ghostno-animation w-full text-2xl text-green-700 rounded-l-none",
+            "btn no-animation w-full text-2xl text-green-700 rounded-l-none",
             {
               "pointer-events-none btn-active":  (isLiked ?? false),
+              "btn-ghost":  !(isLiked ?? false),
             }
           )}
         >

@@ -21,7 +21,7 @@ const SmallPostCard = ({ post }: Props) => {
             layout="fill"
             alt="Ikona postu"
           />
-          <div className="absolute -bottom-5 right-4">
+          <div className="absolute -bottom-6 right-4">
             <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
           </div>
         </figure>
