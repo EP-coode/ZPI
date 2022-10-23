@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <div className="bg-base-300 min-h-screen p-10">
+    <div className="p-10">
       <div className="h-96 flex flex-row gap-4 w-full overflow-x-auto min-w-full p-2">
         {examplePost && <SmallPostCard post={examplePost} />}
         {examplePost && <SmallPostCard post={examplePost} />}
