@@ -12,16 +12,17 @@ const FullPageFormWrapper = ({ children }: Props) => {
       className={`
             min-w-full
             min-h-screen
+            flex flex-col p-2
             bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500`}
     >
       <Link href="/">
-        <a className="btn btn-outline fixed top-2 left-2 gap-2">
+        <a className="btn btn-outline m-2 max-w-xs gap-2">
           Powrót do storny głównej
           <HomeSvg height="60%" />
         </a>
       </Link>
       <div
-        className={`fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2  
+        className={`m-auto
             w-4/5
             min-w-fit
             flex justify-around
