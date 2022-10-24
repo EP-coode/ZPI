@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { Theme, ThemeContext } from "../context/ColorThemeContext";
 import { LoginContext } from "../context/LoginContext";
 import BellSvg from "../icons/BellSvg";
+import HomeSvg from "../icons/HomeSvg";
 import StudentSvg from "../icons/StudentSvg";
 
 type Props = {};
@@ -18,12 +19,17 @@ export const NavBar = (props: Props) => {
   return (
     <div className="navbar bg-base-100 sticky top-0 z-50">
       <div className="flex-1">
-        <div className="hidden sm:block mr-2">
-          <Link href="/">
-            <a className="btn btn-ghost normal-case text-xl">Student Society</a>
-          </Link>
-        </div>
-        <select onChange={themeChangeHandler} value={themeContext?.currentTheme} className="select w-fit">
+        <Link href="/">
+          <a className="btn btn-ghost normal-case text-xl">
+            <HomeSvg className="block sm:hidden" height="50%" />
+            <span className="hidden sm:block">Student Society</span>
+          </a>
+        </Link>
+        <select
+          onChange={themeChangeHandler}
+          value={themeContext?.currentTheme}
+          className="select w-fit"
+        >
           <option value={Theme.DEFAULT}>Domyślny</option>
           <option value={Theme.LIGHT}>Jasny</option>
           <option value={Theme.DARK}>Ciemny</option>
