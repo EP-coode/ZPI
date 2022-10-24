@@ -34,10 +34,10 @@ export const CountDown = ({ toDate }: Props) => {
 
     const tickInterval = setInterval(tick, 1000);
     return () => clearTimeout(tickInterval);
-  }, []);
+  }, [toDate]);
 
   return (
-    <div className="grid grid-flow-row text-center sm:grid-flow-col gap-5 text-center auto-cols-max">
+    <div className="grid grid-flow-row text-center sm:grid-flow-col gap-5 auto-cols-max">
       <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
         <div>
           <span className="countdown font-mono text-5xl">
