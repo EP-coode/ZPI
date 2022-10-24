@@ -12,7 +12,7 @@ type Props = {
 
 const SmallPostCard = ({ post }: Props) => {
   return (
-    <div className="card bg-base-100 shadow-xl h-full w-96 min-w-[20rem]">
+    <div className="card bg-base-100 shadow-md h-full w-96 min-w-[20rem]">
       {post.imageUrl && (
         <figure className="relative h-40 flex-shrink-0 flex-grow-0">
           <Image
@@ -41,13 +41,13 @@ const SmallPostCard = ({ post }: Props) => {
         )}
         <h2 className="card-title">{post.title}</h2>
         <h3>{post.author.email}</h3>
-        <p className="relative overflow-y-clip flex-shrink flex-grow basis-0">
+        <article className="relative overflow-y-clip flex-shrink flex-grow basis-0">
           <ReactMarkdown>{post.markdownContent}</ReactMarkdown>
           <div className="bg-gradient-to-t from-base-100 via-transparent to-transparent absolute top-0 w-full h-full"></div>
-        </p>
+        </article>
         <div className="card-actions justify-end flex-none">
           <Link href={`/post/${post.postId}`}>
-            <a className="btn btn-primary">Czytaj dalej</a>
+            <a className="btn btn-primary btn-md">Czytaj dalej</a>
           </Link>
         </div>
       </div>

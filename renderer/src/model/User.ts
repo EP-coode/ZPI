@@ -4,6 +4,6 @@ export interface User {
   email: string;
   emailConfirmed: boolean;
   studentStatusConfirmed: boolean;
-  avatarUrl?: string;
+  avatarUrl: string | null;
   role: Role;
 }

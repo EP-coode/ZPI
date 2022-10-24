@@ -6,8 +6,8 @@ export interface Post{
     postId: number
     title: string,
     markdownContent: string,
-    imageUrl?: string,
-    isLiked?: boolean,
+    imageUrl: string | null,
+    isLiked: boolean | null,
     totalLikes: number,
     totalDislikes: number,
     creationTime: string
