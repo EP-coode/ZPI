@@ -3,8 +3,8 @@ import type {
   InferGetServerSidePropsType,
   NextPage,
 } from "next";
-import { categoryGroupService, postsService } from "../src/api";
-import { Pagination } from "../src/api/interfaces/Pagination";
+import { categoryGroupService, postsService } from "../src/services";
+import { Pagination } from "../src/services/interfaces/Pagination";
 import CategoryGroupSlider from "../src/components/CategoryGroupSlider";
 import { CountDown } from "../src/components/CountDown";
 import ContentWrapper from "../src/layout/ContentWrapper";
