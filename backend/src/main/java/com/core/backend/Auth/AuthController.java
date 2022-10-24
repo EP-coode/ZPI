@@ -1,6 +1,7 @@
 package com.core.backend.Auth;
 
 import com.core.backend.Security.TokenProvider;
+import com.core.backend.dto.LoginUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
