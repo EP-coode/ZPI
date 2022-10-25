@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Calendar;
 
 @Controller
@@ -25,7 +25,7 @@ public class RegistrationController {
     ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/register")
-    ResponseEntity<Object> registerUser(@RequestBody RegisterUser userDto) {
+    ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUser userDto) {
         if (userDto != null) {
             try {
                 User registered = service.registerNewUserAccount(userDto);
@@ -38,7 +38,7 @@ public class RegistrationController {
         return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/confirm_registration")
+    @GetMapping("/confirm_registration")
     public ResponseEntity<Object> confirmRegistration(@RequestParam("token") String token) {
         VerificationToken verificationToken = service.getVerificationToken(token);
         if (verificationToken == null) {
@@ -51,6 +51,25 @@ public class RegistrationController {
         }
         user.setEmailConfirmed(true);
         service.saveRegisteredUser(user);
+        service.deleteVerificationToken(verificationToken);
         return new ResponseEntity<>("Użytkownik potwierdzony", HttpStatus.OK);
     }
+
+    @PostMapping("/reset_token")
+    public ResponseEntity<Object> resetVerificationToken(@RequestParam("email") String email) {
+        User user = service.getUserByEmail(email);
+        if(user == null){
+            return new ResponseEntity<>("Uzytkownik nie istnieje", HttpStatus.BAD_REQUEST);
+        }
+        if(user.isEmailConfirmed()){
+            return new ResponseEntity<>("Uzytkownik został już potwierdzony", HttpStatus.BAD_REQUEST);
+        }
+        VerificationToken verificationToken = service.getVerificationToken(user);
+        if(verificationToken != null){
+            service.deleteVerificationToken(verificationToken);
+        }
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
+        return new ResponseEntity<>("Nowy token zostal wygenerowany i wyslany na podanego emaila", HttpStatus.OK);
+    }
+
 }

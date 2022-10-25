@@ -9,9 +9,15 @@ public interface UserService {
     public User registerNewUserAccount(RegisterUser userDto) throws Exception;
     void createVerificationToken(User user, String token);
 
+    void deleteVerificationToken(VerificationToken token);
+
     VerificationToken getVerificationToken(String VerificationToken);
 
-    User getUser(String verificationToken);
+    VerificationToken getVerificationToken(User user);
+
+    User getUserByToken(String verificationToken);
+
+    User getUserByEmail(String email);
 
     User saveRegisteredUser(User user);
 }

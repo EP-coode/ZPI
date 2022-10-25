@@ -1,7 +1,16 @@
 package com.core.backend.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 public class RegisterUser {
+    @NotEmpty
+    @Email
     private String email;
+
+    @NotEmpty
+    @Size(min = 6, message = "password should have at least 8 characters")
     private String password;
 
     public String getEmail() {

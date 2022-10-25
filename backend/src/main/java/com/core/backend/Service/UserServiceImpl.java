@@ -31,14 +31,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
         if(user == null){
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         }
         else{
-            log.info("User found in the database: {}", username);
+            log.info("User found in the database: {}", email);
         }
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
@@ -78,17 +78,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public void deleteVerificationToken(VerificationToken token) {
+        tokenRepository.deleteById(token.getId());
+    }
+
+    @Override
     public VerificationToken getVerificationToken(String VerificationToken) {
         return tokenRepository.findByToken(VerificationToken);
     }
 
     @Override
-    public User saveRegisteredUser(User user) {
-        return userRepository.save(user);
+    public VerificationToken getVerificationToken(User user) {
+        return tokenRepository.findByUser(user);
     }
 
     @Override
-    public User getUser(String verificationToken) {
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User getUserByToken(String verificationToken) {
         return tokenRepository.findByToken(verificationToken).getUser();
+    }
+
+
+    @Override
+    public User saveRegisteredUser(User user) {
+        return userRepository.save(user);
     }
 }
