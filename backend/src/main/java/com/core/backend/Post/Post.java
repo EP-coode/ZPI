@@ -1,10 +1,12 @@
 package com.core.backend.Post;
 
+import com.core.backend.Comment.Comment;
 import com.core.backend.PostCategory.PostCategory;
 import com.core.backend.User.User;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 public class Post {
@@ -27,6 +29,9 @@ public class Post {
     private int totalDislikes;
     private Date approveTime;
     private Date creationTime;
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "postId", updatable = false, insertable = false)
+    private List<Comment> comments;
 
     public long getPostId() {
         return postId;
@@ -98,5 +103,13 @@ public class Post {
 
     public void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
