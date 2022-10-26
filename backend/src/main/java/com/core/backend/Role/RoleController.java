@@ -17,12 +17,11 @@ public class RoleController {
 
     @GetMapping(value = "/{roleName}")
     public ResponseEntity<Object> getRole(@PathVariable("roleName") String roleName) {
-        if (roleName != null) {
-            Optional<Role> roleOptional = roleRepository.findById(roleName);
-            if (roleOptional.isPresent())
-                return new ResponseEntity<>(roleOptional.get(), HttpStatus.OK);
-            return new ResponseEntity<>("Brak roli o podanym ID", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>("Brak wartości dla pola roleName", HttpStatus.BAD_REQUEST);
+        if (roleName == null)
+            return new ResponseEntity<>("Brak wartości dla pola roleName", HttpStatus.BAD_REQUEST);
+        Optional<Role> roleOptional = roleRepository.findById(roleName);
+        if (roleOptional.isPresent())
+            return new ResponseEntity<>(roleOptional.get(), HttpStatus.OK);
+        return new ResponseEntity<>("Brak roli o podanym ID", HttpStatus.NOT_FOUND);
     }
 }
