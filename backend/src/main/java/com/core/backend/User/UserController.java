@@ -8,10 +8,15 @@ import com.core.backend.utilis.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import javax.sound.midi.SysexMessage;
+import java.util.*;
+
+import static java.util.Arrays.stream;
 
 @Controller
 @RequestMapping(path = "/user")
@@ -26,6 +31,8 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     ResponseEntity<Object> getUser(@PathVariable(name = "id") String id) {
+        // tak można dostać email użytkownika który wysłał zapytanie
+        // System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
         long longId;
         try {
             longId = utilis.convertId(id);
@@ -95,6 +102,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     ResponseEntity<Object> deleteUser(@PathVariable String id) {
         long longId;
@@ -111,5 +119,6 @@ public class UserController {
         }
         return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
     }
+
 }
 
