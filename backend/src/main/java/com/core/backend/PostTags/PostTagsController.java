@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
-@RequestMapping(path = "postTags")
+@RestController
+@RequestMapping(path = "/post-tags")
 public class PostTagsController {
 
     @Autowired
@@ -29,7 +29,13 @@ public class PostTagsController {
     @Autowired
     Utilis utils;
 
-    @GetMapping("post/{postId}")
+    //not that useful
+    @GetMapping()
+    public ResponseEntity<Object> getAllPostTags() {
+        return new ResponseEntity<>(postTagsRepository.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/posts/{postId}")
     public ResponseEntity<Object> getPostTags(@PathVariable String postId) {
         long longId;
         try {
@@ -50,13 +56,13 @@ public class PostTagsController {
     }
 
     //to-do (maybe) ?       PathVar array&multiple tags
-    @GetMapping("tag/{postTagId}")
+    @GetMapping("/tags/{postTagId}")
     public ResponseEntity<Object> getPostsWithTag(@PathVariable String postTagId) {
         Iterable<PostTags> postTags = postTagsRepository.findAll();
-        List<String> postResultList = new ArrayList<>();
+        List<Post> postResultList = new ArrayList<>();
         for (PostTags pts : postTags) {
-            if(pts.getPrimaryKey().getTagName().equals(postTagId)) {
-                postResultList.add(pts.getPrimaryKey().getTagName().getTagName());
+            if(pts.getPrimaryKey().getTagName().getTagName().equals(postTagId)) {
+                postResultList.add(pts.getPrimaryKey().getPostId());
             }
         }
         return new ResponseEntity<>(postResultList, HttpStatus.OK);

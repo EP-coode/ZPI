@@ -11,9 +11,9 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long commentId;
-    @ManyToOne
-    @JoinColumn(name = "post_id_fk")
-    private Post postId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post")
+    private Post post;
     @ManyToOne
     @JoinColumn(name = "creator_id_fk")
     private User creatorId;
@@ -30,12 +30,12 @@ public class Comment {
         this.commentId = commentId;
     }
 
-    public Post getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(Post postId) {
-        this.postId = postId;
+    public void setPost(Post postId) {
+        this.post = postId;
     }
 
     public User getCreatorId() {

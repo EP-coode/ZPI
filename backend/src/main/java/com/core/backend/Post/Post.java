@@ -3,6 +3,7 @@ package com.core.backend.Post;
 import com.core.backend.Comment.Comment;
 import com.core.backend.PostCategory.PostCategory;
 import com.core.backend.User.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -29,8 +30,8 @@ public class Post {
     private int totalDislikes;
     private Date approveTime;
     private Date creationTime;
-    @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "postId", updatable = false, insertable = false)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     private List<Comment> comments;
 
     public long getPostId() {

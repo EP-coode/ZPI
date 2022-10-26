@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(path = "postTag")
+@RequestMapping(path = "/post-tag")
 public class PostTagController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class PostTagController {
         return new ResponseEntity<>(postTagRepository.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "{postTagId}")
+    @GetMapping(path = "/{postTagId}")
     public ResponseEntity<Object> getPostCategoryGroup(@PathVariable String postTagId) {
         Optional<PostTag> postTag = postTagRepository.findById(postTagId);
         if (postTag.isEmpty())

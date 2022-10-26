@@ -7,6 +7,7 @@ import com.core.backend.utilis.Utilis;
 import com.core.backend.utilis.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +15,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping(path = "/post")
+@RequestMapping(path = "/posts")
 public class PostController {
 
     @Autowired
@@ -31,10 +32,15 @@ public class PostController {
     @Autowired
     private Utilis utilis;
 
+
+    public static final int PAGE_SIZE = 5;
+
     @GetMapping
-    public ResponseEntity<Object> getPosts(int page, Sort.Direction sort, int pageSize) {
+    public ResponseEntity<Object> getPosts(@RequestParam(required = false) Integer page, Sort.Direction sort) {
+        page = page == null ? 0 : page;
+        Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "postId");
         return new ResponseEntity<>(postRepository
-                .findAllPosts(PageRequest.of(page, pageSize, Sort.by(sort, "postId"))), HttpStatus.OK);
+                .findAllPosts(pageableRequest), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{postId}")
@@ -54,7 +60,7 @@ public class PostController {
     }
 
     @GetMapping(value = "/{postId}/comments")
-    public ResponseEntity<Object> getComments(@PathVariable String postId, int page, Sort.Direction sort, int pageSize) {
+    public ResponseEntity<Object> getComments(@PathVariable String postId, @RequestParam(required = false) Integer page, Sort.Direction sort) {
         long longId;
         try {
             longId = utilis.convertId(postId);
@@ -67,11 +73,13 @@ public class PostController {
         if (postOptional.isEmpty())
             return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
         Post post = postOptional.get();
-        return new ResponseEntity<>(commentRepository.findByPostId(post.getPostId()
-                        , (Pageable) PageRequest.of(page, pageSize, Sort.by(sort, "commentId"))), HttpStatus.OK);
+        page = page == null ? 0 : page;
+        Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "commentId");
+        return new ResponseEntity<>(commentRepository.findAllCommentsByPostId(post.getPostId()
+                        , pageableRequest), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{postId}/comments/{comment}")
+    @GetMapping(value = "/{postId}/comments/{commentId}")
     public ResponseEntity<Object> getComment(@PathVariable String postId, @PathVariable String commentId) {
         long postLongId, commentLongId;
         try {
@@ -82,11 +90,14 @@ public class PostController {
         } catch (NoIdException e) {
             return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
         }
+
         Optional<Post> postOptional = postRepository.findById(postLongId);
         if (postOptional.isEmpty())
             return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
+
         Post post = postOptional.get();
-        List<Comment> comments = commentRepository.findByPostId(post.getPostId());
+        Long postIdRes = post.getPostId();
+        List<Comment> comments = commentRepository.findAllCommentsByPostId(postIdRes);
         comments = comments.stream()
                 .filter(comment -> comment.getCommentId() == commentLongId)
                 .collect(Collectors.toList());
