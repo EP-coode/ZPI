@@ -16,4 +16,18 @@ Content-Type: application/json
 //W nagłówku refresh token
 GET localhost:8080/auth/refresh_token
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsImlzcyI6IlwiU3R1ZGVudENvbW11bml0eVwiIiwiZXhwIjoxNjY2NDg1MDAwfQ.6gpJA52kAxT3hI0C4SZCDq8JhkMXqyu1uXAcz0Ccv7A
+###
 
+POST localhost:8080/registration/register
+Content-Type: application/json
+
+{"email": "user@gmail.com", "password": "123456"}
+###
+
+GET localhost:8080/registration/confirm_registration?token=jakistoken
+###
+
+POST localhost:8080/registration/reset_token
+Content-Type: application/x-www-form-urlencoded
+
+email=user2@gmail.com

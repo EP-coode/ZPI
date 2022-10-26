@@ -1,4 +1,4 @@
-package com.core.backend.Auth;
+package com.core.backend.dto;
 
 public class LoginUser {
     private String email;
