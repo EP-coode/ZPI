@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Post } from "../model/Post";
 import { formatDate } from "../utils/dateFormating";
@@ -12,9 +12,11 @@ type Props = {
 };
 
 const SmallPostCard = ({ post }: Props) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <div className="card relative bg-base-100 shadow-md h-full w-96 min-w-[20rem]">
-      <div className="absolute top-2 right-2 z-10 badge badge-ghost">
+      <div className="absolute top-2 right-2 z-20 badge badge-ghost">
         {formatDate(new Date(post.creationTime))}
       </div>
       {post.imageUrl && (
@@ -24,10 +26,14 @@ const SmallPostCard = ({ post }: Props) => {
             src={post.imageUrl}
             layout="fill"
             alt="Ikona postu"
+            onLoad={() => setImageLoaded(true)}
           />
-          <div className="absolute -bottom-4 right-4">
+          <div className="absolute -bottom-4 right-4 z-20">
             <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
           </div>
+          {!imageLoaded && (
+            <div className="bg-gray-300 animate-pulse w-full h-full z-10"></div>
+          )}
         </figure>
       )}
       <div
