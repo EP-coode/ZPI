@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Post } from "../model/Post";
+import { formatDate } from "../utils/dateFormating";
 import { LikesCounter } from "./LikesCounter";
 
 type Props = {
@@ -12,9 +13,12 @@ type Props = {
 
 const SmallPostCard = ({ post }: Props) => {
   return (
-    <div className="card bg-base-100 shadow-md h-full w-96 min-w-[20rem]">
+    <div className="card relative bg-base-100 shadow-md h-full w-96 min-w-[20rem]">
+      <div className="absolute top-2 right-2 z-10 badge badge-ghost">
+        {formatDate(new Date(post.creationTime))}
+      </div>
       {post.imageUrl && (
-        <figure className="relative h-40 flex-shrink-0 flex-grow-0">
+        <figure className="relative h-44 flex-shrink-0 flex-grow-0">
           <Image
             className="object-cover"
             src={post.imageUrl}
@@ -30,17 +34,24 @@ const SmallPostCard = ({ post }: Props) => {
         className={classNames(
           "card-body flex-shrink flex-grow basis-0 p-5 pt-8",
           {
-            "pt-20": !post.imageUrl,
+            "pt-12": !post.imageUrl,
           }
         )}
       >
         {!!post.imageUrl || (
-          <div className="absolute top-5 right-5">
+          <div className="self-end">
             <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
           </div>
         )}
         <h2 className="card-title">{post.title}</h2>
-        <h3>{post.author.email}</h3>
+        <div>
+          Autor:
+          <Link href={`/post/creator/${post.author.id}`}>
+            <a className="btn btn-sm btn-ghost self-start w-fit ml-1">
+              {post.author.email}
+            </a>
+          </Link>
+        </div>
         <article className="relative overflow-y-clip flex-shrink flex-grow basis-0 min-h-0">
           <ReactMarkdown>{post.markdownContent}</ReactMarkdown>
           <div className="bg-gradient-to-t from-base-100 via-transparent to-transparent absolute top-0 w-full h-full"></div>

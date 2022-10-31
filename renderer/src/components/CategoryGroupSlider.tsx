@@ -29,7 +29,7 @@ const CategoryGroupSlider = ({ categoryGroupPosts, categoryGroup }: Props) => {
           ))}
         </div>
       </div>
-      <div className="h-112 flex flex-row gap-4 w-full overflow-x-auto min-w-full p-3">
+      <div className="h-120 flex flex-row gap-4 w-full overflow-x-auto min-w-full p-3">
         {categoryGroupPosts.map((post) => (
           <SmallPostCard post={post} key={post.postId} />
         ))}
