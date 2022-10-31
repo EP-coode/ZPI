@@ -9,7 +9,7 @@ const ArrowSvg = (props: SVGProps<SVGSVGElement>) => (
     height="100%"
     fill="currentColor"
     stroke="currentColor"
-    stroke-width="3"
+    strokeWidth="3"
     {...props}
   >
     <path
