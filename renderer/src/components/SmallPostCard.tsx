@@ -21,7 +21,7 @@ const SmallPostCard = ({ post }: Props) => {
             layout="fill"
             alt="Ikona postu"
           />
-          <div className="absolute -bottom-6 right-4">
+          <div className="absolute -bottom-4 right-4">
             <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
           </div>
         </figure>
@@ -41,7 +41,7 @@ const SmallPostCard = ({ post }: Props) => {
         )}
         <h2 className="card-title">{post.title}</h2>
         <h3>{post.author.email}</h3>
-        <article className="relative overflow-y-clip flex-shrink flex-grow basis-0">
+        <article className="relative overflow-y-clip flex-shrink flex-grow basis-0 min-h-0">
           <ReactMarkdown>{post.markdownContent}</ReactMarkdown>
           <div className="bg-gradient-to-t from-base-100 via-transparent to-transparent absolute top-0 w-full h-full"></div>
         </article>
