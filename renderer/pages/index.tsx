@@ -18,7 +18,9 @@ interface IndexPageProps {
   categoryGroupsPosts: { [key: string]: Post[] };
 }
 
-export const getServerSideProps: GetServerSideProps<IndexPageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<
+  IndexPageProps
+> = async () => {
   const pagination: Pagination = {
     currentPage: 0,
     postPerPage: PAGE_SIZE,
@@ -28,10 +30,12 @@ export const getServerSideProps: GetServerSideProps<IndexPageProps> = async () =
   const categoryGroupsPosts: { [key: string]: Post[] } = {};
   await Promise.all(
     categoryGroups.map(async (categoryGroup) => {
-      const posts = await postsService.getPostsByCategoryGroup(
-        categoryGroup.name,
-        pagination
-      );
+      const posts = await postsService.getPosts(pagination, {
+        categoryGroup: categoryGroup.name,
+        category: null,
+        creatorId: null,
+        tagNames: null,
+      });
       categoryGroupsPosts[categoryGroup.name] = posts.posts;
     })
   );
@@ -49,8 +53,10 @@ const Home: NextPage<
 > = ({ categoryGroups, categoryGroupsPosts }) => {
   return (
     <ContentWrapper>
-      <div className="relative flex flex-row justify-center items-center gap-7 p-7 bg-base-200 p- w-min mx-auto rounded-xl my-7">    
-        <h2 className="text-3xl writing-vertical sm:writing-normal">Do sesji pozostało</h2>
+      <div className="relative flex flex-row justify-center items-center gap-7 p-7 bg-base-200 p- w-min mx-auto rounded-xl my-7">
+        <h2 className="text-3xl writing-vertical sm:writing-normal">
+          Do sesji pozostało
+        </h2>
         <CountDown toDate={new Date("03/02/2023")} />
       </div>
       <div className="flex flex-col gap-7">

@@ -10,12 +10,6 @@ export const postsService: PostService = {
     getPosts: function (pagination: Pagination): Promise<PostsWithPagination> {
         throw new Error("Function not implemented.");
     },
-    getPostsByCategory: function (categoryName: string, pagination: Pagination, postFilters?: PostFilters | undefined): Promise<PostsWithPagination> {
-        throw new Error("Function not implemented.");
-    },
-    getPostsByCategoryGroup: function (categoryGroupName: string, pagination: Pagination, postFilters?: PostFilters | undefined): Promise<PostsWithPagination> {
-        throw new Error("Function not implemented.");
-    },
     createPost: function (post: CreatePostDto): Promise<void> {
         throw new Error("Function not implemented.");
     },

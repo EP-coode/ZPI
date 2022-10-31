@@ -36,20 +36,8 @@ I tyle w temacie.`,
       isLiked: null,
     });
   },
-  getPosts: function (pagination: Pagination): Promise<PostsWithPagination> {
-    throw new Error("Function not implemented.");
-  },
-  getPostsByCategory: function (
-    categoryName: string,
-    pagination: Pagination,
-    postFilters?: PostFilters | undefined
-  ): Promise<PostsWithPagination> {
-    throw new Error("Function not implemented.");
-  },
-  getPostsByCategoryGroup: async function (
-    categoryGroupName: string,
-    pagination: Pagination,
-    postFilters?: PostFilters | undefined
+  getPosts: async function (
+    pagination: Pagination
   ): Promise<PostsWithPagination> {
     const posts = [];
 

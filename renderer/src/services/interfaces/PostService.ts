@@ -8,22 +8,15 @@ export interface PostsWithPagination {
 }
 
 export interface PostFilters {
-  tagNames: string[];
+  tagNames: string[] | null;
+  categoryGroup: string | null;
+  category: string | null;
+  creatorId: number | null
 }
 
 export interface PostService {
   getPost(postId: number): Promise<Post>;
-  getPosts(pagination: Pagination): Promise<PostsWithPagination>;
-  getPostsByCategory(
-    categoryName: string,
-    pagination: Pagination,
-    postFilters?: PostFilters
-  ): Promise<PostsWithPagination>;
-  getPostsByCategoryGroup(
-    categoryGroupName: string,
-    pagination: Pagination,
-    postFilters?: PostFilters
-  ): Promise<PostsWithPagination>;
+  getPosts(pagination: Pagination, filters?: PostFilters): Promise<PostsWithPagination>;
   createPost(post: CreatePostDto): Promise<void>;
   deletePost(postId: string): Promise<void>;
 }
