@@ -35,3 +35,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 * [classNames](https://www.npmjs.com/package/classnames) - ułatwie zarządzenie stylem w zależności od zmian stanu aplikacji
 * [eslint](https://eslint.org/) - biblioteka do wychwytywania problemów z JS (jescze nie skonfigurowana). 
     Jeśli chcesz użyć musisz posiadać odpowiednią wtyczkę od swojego IDE
+
+
+## Wybór źródła danych
+Aby wybrać odpowiednie źródło dancyhc podmień importy serwisów w pliku /src/services/index.ts

@@ -23,6 +23,7 @@ I tyle w temacie.`,
         { name: "legitymacje", totalPosts: 13 },
       ],
       author: {
+        id: 13,
         email: "jan@nowak.pl",
         avatarUrl: null,
         role: { roleName: "ADMIN" },

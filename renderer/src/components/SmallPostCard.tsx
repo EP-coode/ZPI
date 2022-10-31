@@ -46,7 +46,7 @@ const SmallPostCard = ({ post }: Props) => {
         <h2 className="card-title">{post.title}</h2>
         <div>
           Autor:
-          <Link href={`/post/creator/${post.author.id}`}>
+          <Link href={`/post/user/${post.author.id}`}>
             <a className="btn btn-sm btn-ghost self-start w-fit ml-1">
               {post.author.email}
             </a>
