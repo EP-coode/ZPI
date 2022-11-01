@@ -9,7 +9,7 @@ type BreadCrumbsProps = {
 
 export const BreadCrumbs = ({ crumbs }: BreadCrumbsProps) => {
   return (
-    <div className="text-sm breadcrumbs">
+    <div className="text-sm breadcrumbs px-5">
       <ul>
         {crumbs.map(({ title, href }) => (
           <li key={title}>
