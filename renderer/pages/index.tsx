@@ -7,11 +7,11 @@ import { categoryGroupService, postsService } from "../src/services";
 import { Pagination } from "../src/services/interfaces/Pagination";
 import CategoryGroupSlider from "../src/components/CategoryGroupSlider";
 import { CountDown } from "../src/components/CountDown";
-import ContentWrapper from "../src/layout/CollumnWrapper";
 import { CategoryGroup } from "../src/model/CategoryGroup";
 import { Post } from "../src/model/Post";
 import RightCollumn from "../src/layout/RightCollumn";
 import { LeftCollumn } from "../src/layout/LeftCollumn";
+import { ContentWrapper } from "../src/layout/ContentWrapper";
 
 const PAGE_SIZE = 3;
 
@@ -55,23 +55,21 @@ const Home: NextPage<
 > = ({ categoryGroups, categoryGroupsPosts }) => {
   return (
     <ContentWrapper>
-      <LeftCollumn>
-        <div className="relative flex flex-row justify-center items-center gap-7 p-7 bg-base-200 p- w-min mx-auto rounded-xl my-7">
-          <h2 className="text-3xl writing-vertical sm:writing-normal">
-            Do sesji pozostało
-          </h2>
-          <CountDown toDate={new Date("03/02/2023")} />
-        </div>
-        <div className="flex flex-col gap-7">
-          {categoryGroups.map((categoryGroup) => (
-            <CategoryGroupSlider
-              categoryGroup={categoryGroup}
-              categoryGroupPosts={categoryGroupsPosts[categoryGroup.name]}
-              key={categoryGroup.name}
-            />
-          ))}
-        </div>
-      </LeftCollumn>
+      <div className="relative flex flex-row justify-center items-center gap-7 p-7 bg-base-200 p- w-min mx-auto rounded-xl my-7">
+        <h2 className="text-3xl writing-vertical sm:writing-normal">
+          Do sesji pozostało
+        </h2>
+        <CountDown toDate={new Date("03/02/2023")} />
+      </div>
+      <div className="flex flex-col gap-7">
+        {categoryGroups.map((categoryGroup) => (
+          <CategoryGroupSlider
+            categoryGroup={categoryGroup}
+            categoryGroupPosts={categoryGroupsPosts[categoryGroup.name]}
+            key={categoryGroup.name}
+          />
+        ))}
+      </div>
     </ContentWrapper>
   );
 };

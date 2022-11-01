@@ -8,12 +8,13 @@ import React from "react";
 import { PostDetails } from "../../src/components/PostContent";
 import PostInfo from "../../src/components/PostInfo";
 import UserInfoCard from "../../src/components/PostAuthorInfo";
-import CollumnWrapper from "../../src/layout/CollumnWrapper";
 import { LeftCollumn } from "../../src/layout/LeftCollumn";
 import RightCollumn from "../../src/layout/RightCollumn";
 import { Post } from "../../src/model/Post";
 import { postsService } from "../../src/services";
 import { BreadCrumbs } from "../../src/components/BreadCrumbs";
+import { ContentWrapper } from "../../src/layout/ContentWrapper";
+import { CollumnWrapper } from "../../src/layout/CollumnWrapper";
 
 interface PostDetailPageProps {
   post: Post;
@@ -51,21 +52,36 @@ const PostDetailPage: NextPage<
   const router = useRouter();
   const { post_id } = router.query;
 
+  const crumbs = [
+    { title: "Główna", href: "/" },
+    {
+      title: post.category.catyegoryGroup.name,
+      href: `/posts/category/${post.category.catyegoryGroup.name}`,
+    },
+    {
+      title: post.category.displayName,
+      href: `/posts/category/${post.category.catyegoryGroup.name}/${post.category.displayName}`,
+    },
+  ];
+
   return (
-    <CollumnWrapper>
-      <LeftCollumn>
-        <PostDetails
-          contentMarkdown={post.markdownContent}
-          benerImageUrl={post.imageUrl}
-          title={post.title}
-          postId={post.postId}
-        />
-      </LeftCollumn>
-      <RightCollumn>
-        <UserInfoCard user={post.author} />
-        <PostInfo post={post} />
-      </RightCollumn>
-    </CollumnWrapper>
+    <ContentWrapper>
+      <BreadCrumbs crumbs={crumbs} />
+      <CollumnWrapper>
+        <LeftCollumn>
+          <PostDetails
+            contentMarkdown={post.markdownContent}
+            benerImageUrl={post.imageUrl}
+            title={post.title}
+            postId={post.postId}
+          />
+        </LeftCollumn>
+        <RightCollumn>
+          <UserInfoCard user={post.author} />
+          <PostInfo post={post} />
+        </RightCollumn>
+      </CollumnWrapper>
+    </ContentWrapper>
   );
 };
 

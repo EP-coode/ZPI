@@ -1,18 +1,27 @@
-import { useRouter } from "next/router";
+import Link from "next/link";
 import React from "react";
 
-export const BreadCrumbs = () => {
-  const router = useRouter();
+export type Crumb = { title: string; href: string | null };
+
+type BreadCrumbsProps = {
+  crumbs: Crumb[];
+};
+
+export const BreadCrumbs = ({ crumbs }: BreadCrumbsProps) => {
   return (
     <div className="text-sm breadcrumbs">
       <ul>
-        <li>
-          <a>Home</a>
-        </li>
-        <li>
-          <a>Documents</a>
-        </li>
-        <li>Add Document</li>
+        {crumbs.map(({ title, href }) => (
+          <li key={title}>
+            {href ? (
+              <Link href={href}>
+                <a>{title}</a>
+              </Link>
+            ) : (
+              <>{title}</>
+            )}
+          </li>
+        ))}
       </ul>
     </div>
   );

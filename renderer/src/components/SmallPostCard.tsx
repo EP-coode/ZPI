@@ -52,7 +52,7 @@ const SmallPostCard = ({ post }: Props) => {
         <h2 className="card-title">{post.title}</h2>
         <div>
           Autor:
-          <Link href={`/post/user/${post.author.id}`}>
+          <Link href={`/posts/user/${post.author.id}`}>
             <a className="btn btn-sm btn-ghost self-start w-fit ml-1">
               {post.author.email}
             </a>
@@ -63,7 +63,7 @@ const SmallPostCard = ({ post }: Props) => {
           <div className="bg-gradient-to-t from-base-100 via-transparent to-transparent absolute top-0 w-full h-full"></div>
         </article>
         <div className="card-actions justify-end flex-none">
-          <Link href={`/post/${post.postId}`}>
+          <Link href={`/posts/${post.postId}`}>
             <a className="btn btn-primary btn-md">Czytaj dalej</a>
           </Link>
         </div>
