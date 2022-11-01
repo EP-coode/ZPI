@@ -17,7 +17,7 @@ const SmallPostCard = ({ post }: Props) => {
   return (
     <div className="card relative bg-base-100 shadow-md h-full w-96 min-w-[20rem]">
       <div className="absolute top-2 right-2 z-20 badge badge-ghost">
-        {formatDate(new Date(post.creationTime))}
+        {formatDate(post.creationTime)}
       </div>
       {post.imageUrl && (
         <figure className="relative h-44 flex-shrink-0 flex-grow-0">

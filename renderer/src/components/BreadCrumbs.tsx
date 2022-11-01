@@ -1,16 +1,19 @@
-import React from 'react'
+import { useRouter } from "next/router";
+import React from "react";
 
-type BreadCrumbsEntry = {
-    text: string,
-    linkUrl: string
-}
-
-type Props = {
-    breadCrumbs: BreadCrumbsEntry[]
-}
-
-const BreadCrumbs = (props: Props) => {
+export const BreadCrumbs = () => {
+  const router = useRouter();
   return (
-    <div>BreadCrumbs</div>
-  )
-}
+    <div className="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a>Home</a>
+        </li>
+        <li>
+          <a>Documents</a>
+        </li>
+        <li>Add Document</li>
+      </ul>
+    </div>
+  );
+};

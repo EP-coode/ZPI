@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import Image from "next/image";
 import React from "react";
+import ContentPane from "../layout/ContentPane";
 import { User } from "../model/User";
 
 type Props = {
@@ -9,9 +10,9 @@ type Props = {
 
 const UserInfoCard = ({ user }: Props) => {
   return (
-    <div className="flex flex-wrap w-full bg-base-100 shadow-md rounded-md justify-center items-center mx-auto">
+    <ContentPane>
       {user.avatarUrl ? (
-        <div className="avatar m-5 w-fit h-fit">
+        <div className="avatar my-5 mx-2 w-fit h-fit">
           <div className="relative w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
             <Image
               src={user.avatarUrl}
@@ -43,7 +44,7 @@ const UserInfoCard = ({ user }: Props) => {
           <h2 className="inline-block ml-2">{user.role.roleName}</h2>
         </div>
       </div>
-    </div>
+    </ContentPane>
   );
 };
 

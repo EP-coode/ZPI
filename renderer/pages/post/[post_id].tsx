@@ -8,11 +8,12 @@ import React from "react";
 import { PostDetails } from "../../src/components/PostContent";
 import PostInfo from "../../src/components/PostInfo";
 import UserInfoCard from "../../src/components/PostAuthorInfo";
-import ContentWrapper from "../../src/layout/CollumnWrapper";
+import CollumnWrapper from "../../src/layout/CollumnWrapper";
 import { LeftCollumn } from "../../src/layout/LeftCollumn";
 import RightCollumn from "../../src/layout/RightCollumn";
 import { Post } from "../../src/model/Post";
 import { postsService } from "../../src/services";
+import { BreadCrumbs } from "../../src/components/BreadCrumbs";
 
 interface PostDetailPageProps {
   post: Post;
@@ -51,7 +52,7 @@ const PostDetailPage: NextPage<
   const { post_id } = router.query;
 
   return (
-    <ContentWrapper>
+    <CollumnWrapper>
       <LeftCollumn>
         <PostDetails
           contentMarkdown={post.markdownContent}
@@ -62,9 +63,9 @@ const PostDetailPage: NextPage<
       </LeftCollumn>
       <RightCollumn>
         <UserInfoCard user={post.author} />
-        <PostInfo />
+        <PostInfo post={post} />
       </RightCollumn>
-    </ContentWrapper>
+    </CollumnWrapper>
   );
 };
 

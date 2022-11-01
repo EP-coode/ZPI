@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { LikesCounter } from "./LikesCounter";
+import ContentPane from "../layout/ContentPane";
 
 type Props = {
   postId: number;
@@ -18,9 +19,9 @@ export const PostDetails = ({
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className="flex flex-col relative w-full bg-base-100 shadow-md rounded-md justify-center items-center p-7">
+    <ContentPane>
       <div className="flex flex-row items-center justify-center gap-7">
-        <h1 className="text-5xl font-semibold grow">{title}</h1>
+        <h1 className="text-3xl sm:text-5xl font-semibold grow">{title}</h1>
         <div className="shrink-0">
           <LikesCounter totalLikes={75} />
         </div>
@@ -42,6 +43,6 @@ export const PostDetails = ({
       <article className="p-7 prose">
         <ReactMarkdown>{contentMarkdown}</ReactMarkdown>
       </article>
-    </div>
+    </ContentPane>
   );
 };
