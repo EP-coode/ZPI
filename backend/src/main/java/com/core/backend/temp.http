@@ -7,10 +7,10 @@ POST localhost:8080/demo/add?name=Kacper&email=temp@temp.com
 Content-Type: application/json
 ###
 
-POST localhost:8080/auth/login
+POST http://localhost:8080/auth/login
 Content-Type: application/json
 
-{"email": "user@gmail.com", "password": "123456"}
+{"email": "dupa2@gmail.com", "password": "1234567"}
 ###
 
 //W nagłówku refresh token
@@ -18,13 +18,13 @@ GET localhost:8080/auth/refresh_token
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsImlzcyI6IlwiU3R1ZGVudENvbW11bml0eVwiIiwiZXhwIjoxNjY2NDg1MDAwfQ.6gpJA52kAxT3hI0C4SZCDq8JhkMXqyu1uXAcz0Ccv7A
 ###
 
-POST localhost:8080/registration/register
+POST http://localhost:8080/registration/register
 Content-Type: application/json
 
-{"email": "user@gmail.com", "password": "123456"}
+{"email": "dupa2@gmail.com", "password": "123456"}
 ###
 
-GET localhost:8080/registration/confirm_registration?token=jakistoken
+GET http://localhost:8080/registration/confirm_registration?token=e1f75de7-dab5-49fd-ba06-431a6d17e4ab
 ###
 
 POST localhost:8080/registration/reset_token

@@ -7,9 +7,10 @@ import * as Yup from "yup";
 
 import ErrorSvg from "../icons/ErrorSvg";
 
-type Props = {};
+const AUTH_SERVICE_URL =
+  process.env.AUTH_SERVICE_URL ?? "http://localhost:3000";
 
-const RegisterForm = (props: Props) => {
+const RegisterForm = () => {
   const [errors, setErrors] = useState<string[]>([]);
 
   const formik = useFormik({
@@ -33,13 +34,25 @@ const RegisterForm = (props: Props) => {
     }),
     validateOnChange: false,
     validateOnBlur: false,
-    onSubmit: ({ email, password }) => {
-      if(errors.length > 0) setErrors([])
-      alert(`Rejestruje jako: ${email}, ${password}`);
+    onSubmit: async ({ email, password }) => {
+      if (errors.length > 0) setErrors([]);
 
-      //TODO podpięcie do serwera
-      setErrors(["Nie podięte do serwera"]);
-      formik.setSubmitting(false)
+      try {
+        const result = await fetch(
+          `${AUTH_SERVICE_URL}/registration/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          }
+        );
+      } catch (e) {
+        console.error(e);
+      }
+
+      formik.setSubmitting(false);
     },
   });
 

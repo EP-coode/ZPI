@@ -41,8 +41,6 @@ const LoginForm = (props: Props) => {
           setErrors([e.message]);
         }
       }
-      //TODO podpięcie do serwera
-      setErrors(["Niepodpięte do serwera"]);
       formik.setSubmitting(false);
     },
   });
