@@ -20,4 +20,6 @@ public interface UserService {
     User getUserByEmail(String email);
 
     User saveRegisteredUser(User user);
+
+    void deleteUnconfirmedUser(User user);
 }

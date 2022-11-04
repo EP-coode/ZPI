@@ -1,7 +1,14 @@
 package com.core.backend.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
 public class LoginUser {
+    @NotEmpty
+    @Email
     private String email;
+
+    @NotEmpty
     private String password;
 
     public String getEmail() {
