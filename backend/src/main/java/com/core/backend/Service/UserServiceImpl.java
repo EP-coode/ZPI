@@ -57,11 +57,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User registerNewUserAccount(RegisterUser userDto) throws Exception{
-        if(userRepository.findByEmail(userDto.getEmail()) != null){
+        if (userRepository.findByEmail(userDto.getEmail()) != null) {
             throw new Exception("User: " + userDto.getEmail() + " already exists");
         }
         Optional<Role> role = roleRepository.findById("ROLE_USER");
-        if(role.isEmpty()){
+        if (role.isEmpty()) {
             throw new Exception("User role not exists");
         }
         User user = new User();

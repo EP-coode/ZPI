@@ -10,7 +10,7 @@ public class RegisterUser {
     private String email;
 
     @NotEmpty
-    @Size(min = 6, message = "password should have at least 8 characters")
+    @Size(min = 8, message = "password should have at least 8 characters")
     private String password;
 
     public String getEmail() {
