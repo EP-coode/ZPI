@@ -1,7 +1,7 @@
 package com.core.backend.utilis;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.core.backend.exception.NoIdException;
+import com.core.backend.exception.WrongIdException;
 import org.springframework.stereotype.Service;
 
 @Service

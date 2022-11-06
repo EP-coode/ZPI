@@ -1,7 +1,7 @@
-package com.core.backend.Registration;
+package com.core.backend.registration;
 
-import com.core.backend.Service.UserService;
-import com.core.backend.User.User;
+import com.core.backend.service.UserService;
+import com.core.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

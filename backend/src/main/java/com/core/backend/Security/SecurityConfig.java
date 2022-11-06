@@ -1,4 +1,4 @@
-package com.core.backend.Security;
+package com.core.backend.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().antMatchers("/auth/**", "/registration/**").permitAll()
+        http.authorizeRequests().antMatchers("/auth/**", "/registration/**", "/posts/**", "/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authorizationFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }

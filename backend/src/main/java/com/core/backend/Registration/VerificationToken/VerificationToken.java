@@ -1,6 +1,6 @@
-package com.core.backend.Registration.VerificationToken;
+package com.core.backend.registration.VerificationToken;
 
-import com.core.backend.User.User;
+import com.core.backend.model.User;
 
 import javax.persistence.*;
 import java.util.Calendar;
