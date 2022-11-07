@@ -33,8 +33,8 @@ export const getServerSideProps: GetServerSideProps<
   await Promise.all(
     categoryGroups.map(async (categoryGroup) => {
       const posts = await postsService.getPosts(pagination, {
-        categoryGroup: categoryGroup.name,
-        category: null,
+        categoryGroupId: categoryGroup.name,
+        categoryId: null,
         creatorId: null,
         tagNames: null,
       });
