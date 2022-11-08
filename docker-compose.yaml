@@ -63,7 +63,8 @@ services:
       - spring.mail.password=eisrazlpsvnbujhl
       - spring.mail.properties.mail.smtp.auth=true
       - spring.mail.properties.mail.smtp.starttls.enable=true
-      - spring.mvc.pathmatch.matching-strategy = ANT_PATH_MATCHER
-
+      - spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
+      - spring.jpa.defer-datasource-initialization=true
+      - spring.sql.init.mode=always
 volumes:
   mysql-data:
