@@ -1,9 +1,5 @@
 import React, { PropsWithChildren } from "react";
 
-type Props = {};
-
-const ContentWrapper = ({ children }: PropsWithChildren) => {
-  return <div className="max-w-6xl mx-auto px-0 md:px-3 py-7">{children}</div>;
+export const ContentWrapper = ({ children }: PropsWithChildren) => {
+  return <div className="flex flex-col justify-center max-w-6xl mx-auto px-0 py-7">{children}</div>;
 };
-
-export default ContentWrapper;

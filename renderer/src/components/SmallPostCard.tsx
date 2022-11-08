@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Post } from "../model/Post";
 import { formatDate } from "../utils/dateFormating";
@@ -12,10 +12,12 @@ type Props = {
 };
 
 const SmallPostCard = ({ post }: Props) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <div className="card relative bg-base-100 shadow-md h-full w-96 min-w-[20rem]">
-      <div className="absolute top-2 right-2 z-10 badge badge-ghost">
-        {formatDate(new Date(post.creationTime))}
+      <div className="absolute top-2 right-2 z-20 badge badge-ghost">
+        {formatDate(post.creationTime)}
       </div>
       {post.imageUrl && (
         <figure className="relative h-44 flex-shrink-0 flex-grow-0">
@@ -24,10 +26,14 @@ const SmallPostCard = ({ post }: Props) => {
             src={post.imageUrl}
             layout="fill"
             alt="Ikona postu"
+            onLoad={() => setImageLoaded(true)}
           />
-          <div className="absolute -bottom-4 right-4">
+          <div className="absolute -bottom-4 right-4 z-20">
             <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
           </div>
+          {!imageLoaded && (
+            <div className="bg-gray-300 animate-pulse w-full h-full z-10"></div>
+          )}
         </figure>
       )}
       <div
@@ -46,7 +52,7 @@ const SmallPostCard = ({ post }: Props) => {
         <h2 className="card-title">{post.title}</h2>
         <div>
           Autor:
-          <Link href={`/post/user/${post.author.id}`}>
+          <Link href={`/posts/user/${post.author.id}`}>
             <a className="btn btn-sm btn-ghost self-start w-fit ml-1">
               {post.author.email}
             </a>
@@ -57,7 +63,7 @@ const SmallPostCard = ({ post }: Props) => {
           <div className="bg-gradient-to-t from-base-100 via-transparent to-transparent absolute top-0 w-full h-full"></div>
         </article>
         <div className="card-actions justify-end flex-none">
-          <Link href={`/post/${post.postId}`}>
+          <Link href={`/posts/${post.postId}`}>
             <a className="btn btn-primary btn-md">Czytaj dalej</a>
           </Link>
         </div>

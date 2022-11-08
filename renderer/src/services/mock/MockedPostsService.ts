@@ -16,7 +16,14 @@ export const postsService: PostService = {
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytół
 I tyle w temacie.`,
-      category: { displayName: "W8", totalPosts: 103 },
+      category: {
+        displayName: "W8",
+        totalPosts: 103,
+        catyegoryGroup: {
+          name: "Wydziały",
+          totalPosts: 320,
+        },
+      },
       creationTime: new Date().toISOString(),
       tags: [
         { name: "dziekanat", totalPosts: 10 },
@@ -25,14 +32,14 @@ I tyle w temacie.`,
       author: {
         id: 13,
         email: "jan@nowak.pl",
-        avatarUrl: null,
+        avatarUrl: "https://placeimg.com/400/400/arch",
         role: { roleName: "ADMIN" },
         emailConfirmed: true,
         studentStatusConfirmed: true,
       },
       totalDislikes: 10,
       totalLikes: 100,
-      imageUrl: "https://placeimg.com/400/400/arch",
+      imageUrl: "https://placeimg.com/600/400/nature",
       isLiked: null,
     });
   },

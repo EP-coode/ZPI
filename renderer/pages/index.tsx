@@ -7,9 +7,11 @@ import { categoryGroupService, postsService } from "../src/services";
 import { Pagination } from "../src/services/interfaces/Pagination";
 import CategoryGroupSlider from "../src/components/CategoryGroupSlider";
 import { CountDown } from "../src/components/CountDown";
-import ContentWrapper from "../src/layout/ContentWrapper";
 import { CategoryGroup } from "../src/model/CategoryGroup";
 import { Post } from "../src/model/Post";
+import RightCollumn from "../src/layout/RightCollumn";
+import { LeftCollumn } from "../src/layout/LeftCollumn";
+import { ContentWrapper } from "../src/layout/ContentWrapper";
 
 const PAGE_SIZE = 3;
 

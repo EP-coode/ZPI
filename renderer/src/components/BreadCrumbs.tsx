@@ -1,16 +1,28 @@
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
-type BreadCrumbsEntry = {
-    text: string,
-    linkUrl: string
-}
+export type Crumb = { title: string; href: string | null };
 
-type Props = {
-    breadCrumbs: BreadCrumbsEntry[]
-}
+type BreadCrumbsProps = {
+  crumbs: Crumb[];
+};
 
-const BreadCrumbs = (props: Props) => {
+export const BreadCrumbs = ({ crumbs }: BreadCrumbsProps) => {
   return (
-    <div>BreadCrumbs</div>
-  )
-}
+    <div className="text-sm breadcrumbs px-5">
+      <ul>
+        {crumbs.map(({ title, href }) => (
+          <li key={title}>
+            {href ? (
+              <Link href={href}>
+                <a>{title}</a>
+              </Link>
+            ) : (
+              <>{title}</>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
