@@ -7,6 +7,9 @@ import * as Yup from "yup";
 
 import ErrorSvg from "../icons/ErrorSvg";
 
+const AUTH_SERVICE_URL =
+  process.env.AUTH_SERVICE_URL ?? "http://localhost:8080";
+
 type Props = {};
 
 const RegisterForm = (props: Props) => {
@@ -15,6 +18,7 @@ const RegisterForm = (props: Props) => {
   const formik = useFormik({
     initialValues: {
       email: "",
+      name: "",
       password: "",
       password_rpt: "",
     },
@@ -22,6 +26,9 @@ const RegisterForm = (props: Props) => {
       email: Yup.string()
         .email("E-mail jest niepoprawny")
         .required("Pole jest wymagane"),
+      name: Yup.string()
+        .required("Pole jest wymagane")
+        .min(3, "Nick użytkownika musi posiadać conajmniej 3 znaki"),
       password: Yup.string()
         .min(7, "Hasło musi mieć min. 7 znaków")
         .max(32, "Hasło może mieć max 32 znaki")
@@ -33,13 +40,34 @@ const RegisterForm = (props: Props) => {
     }),
     validateOnChange: false,
     validateOnBlur: false,
-    onSubmit: ({ email, password }) => {
-      if(errors.length > 0) setErrors([])
-      alert(`Rejestruje jako: ${email}, ${password}`);
+    onSubmit: async ({ email, password, name }) => {
+      if (errors.length > 0) setErrors([]);
 
-      //TODO podpięcie do serwera
-      setErrors(["Nie podięte do serwera"]);
-      formik.setSubmitting(false)
+      const result = await fetch(
+        `http://localhost:8080/registration/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            name,
+          }),
+        }
+      );
+
+      debugger;
+
+      if (!result.ok) {
+        setErrors([await result.text()]);
+      } else {
+        alert("Wszysko poszło zgodnie z planem");
+        setErrors([]);
+      }
+
+      formik.setSubmitting(false);
     },
   });
 
@@ -75,6 +103,48 @@ const RegisterForm = (props: Props) => {
           )}
         </label>
       </div>
+
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text">Podaj nick</span>
+        </label>
+        <input
+          type="string"
+          name="name"
+          placeholder="nick..."
+          className={classNames("input input-bordered w-full", {
+            "input-error": formik.errors.name,
+          })}
+          onChange={formik.handleChange}
+          value={formik.values.name}
+        />
+        <label className="label">
+          {formik.errors.name && (
+            <span className="label-text text-error">{formik.errors.name}</span>
+          )}
+        </label>
+      </div>
+
+      {/* <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text">Podaj nick</span>
+        </label>
+        <input
+          type="string"
+          name="string"
+          placeholder="twój nick..."
+          className={classNames("input input-bordered w-full", {
+            "input-error": formik.errors.name,
+          })}
+          onChange={formik.handleChange}
+          value={formik.values.name}
+        />
+        <label className="label">
+          {formik.errors.name && (
+            <span className="label-text text-error">{formik.errors.name}</span>
+          )}
+        </label>
+      </div> */}
 
       <div className="form-control w-full">
         <label className="label">
@@ -146,7 +216,7 @@ const RegisterForm = (props: Props) => {
           type="submit"
           value=""
         />
-        Zaloguj
+        Zarejestuj
       </button>
 
       <div className="form-control ml-auto mr-0">

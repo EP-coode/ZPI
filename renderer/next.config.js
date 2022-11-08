@@ -6,7 +6,10 @@ const nextConfig = {
   // NOW ONLY MOCK DOMAINS
   images: {
     domains: ['placeimg.com']
-  }
+  },
+  env: {
+    AUTH_SERVICE_URL: 'AUTH_SERVICE_URL',
+  },
 }
 
 module.exports = nextConfig
