@@ -58,7 +58,7 @@ public class PostServiceImpl implements PostService{
         longId = utilis.convertId(postId);
         Optional<Post> post = postRepository.findById(longId);
         if (post.isEmpty()) throw new NoPostException();
-        return PostMapper.toPostDto(postRepository.findById(longId).get());
+        return PostMapper.toPostDto(post.get());
     }
 
     @Override

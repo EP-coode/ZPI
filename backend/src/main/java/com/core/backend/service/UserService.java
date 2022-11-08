@@ -1,12 +1,12 @@
 package com.core.backend.service;
 
-import com.core.backend.registration.VerificationToken.VerificationToken;
+import com.core.backend.registration.verificationToken.VerificationToken;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
 
 public interface UserService {
 
-    public User registerNewUserAccount(RegisterUser userDto) throws Exception;
+    User registerNewUserAccount(RegisterUser userDto) throws Exception;
     void createVerificationToken(User user, String token);
 
     void deleteVerificationToken(VerificationToken token);

@@ -24,6 +24,8 @@ public class Post {
     private int totalDislikes;
     private Date approveTime;
     private Date creationTime;
+    @Column(length = 65535, columnDefinition = "TEXT")
+    private String markdownContent;
 
     public long getPostId() {
         return postId;
@@ -103,5 +105,13 @@ public class Post {
 
     public void setCategory(PostCategory category) {
         this.category = category;
+    }
+
+    public String getMarkdownContent() {
+        return markdownContent;
+    }
+
+    public void setMarkdownContent(String markdownContent) {
+        this.markdownContent = markdownContent;
     }
 }

@@ -1,7 +1,7 @@
 package com.core.backend.service;
 
-import com.core.backend.registration.VerificationToken.VerificationToken;
-import com.core.backend.registration.VerificationToken.VerificationTokenRepository;
+import com.core.backend.registration.verificationToken.VerificationToken;
+import com.core.backend.registration.verificationToken.VerificationTokenRepository;
 import com.core.backend.model.Role;
 import com.core.backend.repository.RoleRepository;
 import com.core.backend.model.User;
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if(userRepository.findByEmail(userDto.getEmail()) != null){
             throw new Exception("User: " + userDto.getEmail() + " already exists");
         }
-        Optional<Role> role = roleRepository.findById("ROLE_USER");
+        Optional<Role> role = roleRepository.findById("user");
         if(role.isEmpty()){
             throw new Exception("User role not exists");
         }

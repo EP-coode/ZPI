@@ -1,7 +1,7 @@
 package com.core.backend.controller;
 
 import com.core.backend.registration.OnRegistrationCompleteEvent;
-import com.core.backend.registration.VerificationToken.VerificationToken;
+import com.core.backend.registration.verificationToken.VerificationToken;
 import com.core.backend.service.UserService;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
