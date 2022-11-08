@@ -27,6 +27,21 @@ services:
   # należy poczekać aż kontener mysql zacznie działać,
   # a następnie uruchomić kontener backednu jeszcze raz
 
+#  php_my_admin:
+#    container_name: "phpMyAdmin"
+#    depends_on:
+#      - mysql
+#    image: phpmyadmin:5
+#    environment:
+#      PMA_ARBITRARY: 1
+#    ports:
+#      - "8081:80"
+
+  # Aby zalogować się, należy wejść na stronę localhost:8081 i wpisać:
+  # Server: mysql
+  # User: root
+
+
   backend:
     depends_on:
       - mysql
@@ -35,6 +50,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - spring.jpa.hibernate.ddl-auto=update
       - spring.datasource.url=jdbc:mysql://mysql_database:3306/db_example
       - spring.datasource.username=root
       - spring.datasource.password=
