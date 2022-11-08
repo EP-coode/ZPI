@@ -1,7 +1,7 @@
-package com.core.backend.Service;
+package com.core.backend.service;
 
-import com.core.backend.Registration.VerificationToken.VerificationToken;
-import com.core.backend.User.User;
+import com.core.backend.registration.VerificationToken.VerificationToken;
+import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
 
 public interface UserService {

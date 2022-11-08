@@ -1,6 +1,6 @@
-package com.core.backend.Registration;
+package com.core.backend.registration;
 
-import com.core.backend.User.User;
+import com.core.backend.model.User;
 import org.springframework.context.ApplicationEvent;
 
 public class OnRegistrationCompleteEvent extends ApplicationEvent {

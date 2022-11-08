@@ -1,15 +1,11 @@
 package com.core.backend;
 
-import com.core.backend.Role.Role;
-import com.core.backend.Role.RoleRepository;
-import com.core.backend.User.User;
-import com.core.backend.User.UserRepository;
+import com.core.backend.repository.RoleRepository;
+import com.core.backend.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication

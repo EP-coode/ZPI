@@ -1,21 +1,19 @@
-package com.core.backend.Service;
+package com.core.backend.service;
 
-import com.core.backend.Registration.VerificationToken.VerificationToken;
-import com.core.backend.Registration.VerificationToken.VerificationTokenRepository;
-import com.core.backend.Role.Role;
-import com.core.backend.Role.RoleRepository;
-import com.core.backend.User.User;
-import com.core.backend.User.UserRepository;
+import com.core.backend.registration.VerificationToken.VerificationToken;
+import com.core.backend.registration.VerificationToken.VerificationTokenRepository;
+import com.core.backend.model.Role;
+import com.core.backend.repository.RoleRepository;
+import com.core.backend.model.User;
+import com.core.backend.repository.UserRepository;
 import com.core.backend.dto.RegisterUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

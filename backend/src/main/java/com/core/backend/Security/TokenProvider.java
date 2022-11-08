@@ -1,4 +1,4 @@
-package com.core.backend.Security;
+package com.core.backend.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
