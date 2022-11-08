@@ -5,7 +5,13 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      height: {
+        '112': '28rem',
+        '112': '28rem',
+        '120': '30rem'
+      }
+    },
   },
   plugins: [require('@tailwindcss/typography'), require("daisyui")],
 }

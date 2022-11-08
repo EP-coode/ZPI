@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .writing-vertical {
+    writing-mode: vertical-rl;
+  }
+
+  .writing-normal {
+    writing-mode: horizontal-tb;
+  }
+}

@@ -15,8 +15,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeContextProvider>
       <LoginContextProvider>
-        {renderNavbar && <NavBar />}
-        <Component {...pageProps} />
+        <div className="bg-base-300 min-h-screen ">
+          {renderNavbar && <NavBar />}
+          <Component {...pageProps} />
+        </div>
       </LoginContextProvider>
     </ThemeContextProvider>
   );
