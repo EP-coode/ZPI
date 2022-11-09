@@ -1,7 +1,7 @@
 package com.core.backend.service;
 
-import com.core.backend.registration.verificationToken.VerificationToken;
-import com.core.backend.registration.verificationToken.VerificationTokenRepository;
+import com.core.backend.model.VerificationToken;
+import com.core.backend.repository.VerificationTokenRepository;
 import com.core.backend.model.Role;
 import com.core.backend.repository.RoleRepository;
 import com.core.backend.model.User;

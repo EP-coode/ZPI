@@ -1,6 +1,6 @@
 package com.core.backend.service;
 
-import com.core.backend.registration.verificationToken.VerificationToken;
+import com.core.backend.model.VerificationToken;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
 

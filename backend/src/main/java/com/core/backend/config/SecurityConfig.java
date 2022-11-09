@@ -1,5 +1,6 @@
-package com.core.backend.security;
+package com.core.backend.config;
 
+import com.core.backend.security.JWTAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/**",
                         "/configuration/security",
                         "/swagger-ui.html",
-                        "/webjars/**").permitAll()
+                        "/webjars/**",
+                        "/blob/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authorizationFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
