@@ -58,10 +58,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User registerNewUserAccount(RegisterUser userDto) throws IllegalArgumentException{
         if (userRepository.findByEmail(userDto.getEmail()) != null) {
-            throw new IllegalArgumentException("User: " + userDto.getEmail() + " already exists");
+            throw new IllegalArgumentException("Użytkownik o emailu: " + userDto.getEmail() + " już istnieje");
         }
         if (userRepository.findByName(userDto.getName()) != null) {
-            throw new IllegalArgumentException("User: " + userDto.getName() + " already exists");
+            throw new IllegalArgumentException("Użytkownik o nazwie: " + userDto.getName() + " już istnieje");
         }
         Optional<Role> role = roleRepository.findById("ROLE_USER");
         if (role.isEmpty()) {

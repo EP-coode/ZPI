@@ -46,7 +46,7 @@ public class AuthController {
     @PostMapping("/login")
     ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser, BindingResult result) throws AuthenticationException {
         if(result.hasErrors()){
-            return new ResponseEntity<>("Incorrect login data", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Niepoprawne dane logowania", HttpStatus.BAD_REQUEST);
         }
         String email  = loginUser.getEmail();
         String password = loginUser.getPassword();
@@ -91,7 +91,7 @@ public class AuthController {
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
         } else {
-            throw new RuntimeException("Refresh token is missing");
+            throw new RuntimeException("Nie znaleziono refresh tokenu");
         }
     }
 }
