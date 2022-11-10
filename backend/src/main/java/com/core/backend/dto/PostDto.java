@@ -22,4 +22,5 @@ public class PostDto {
     private int totalDislikes;
     private Date approveTime;
     private Date creationTime;
+    private String markdownContent;
 }
