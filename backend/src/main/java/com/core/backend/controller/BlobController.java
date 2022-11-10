@@ -17,21 +17,25 @@ public class BlobController {
 
     @GetMapping("/download")
     public ResponseEntity<Object> readBlobFile(@RequestParam("fileName") String fileName){
-        ByteArrayResource file = fileService.downloadFile(fileName);
-        return new ResponseEntity<>(file, HttpStatus.OK);
+        try {
+            ByteArrayResource file = fileService.downloadFile(fileName);
+            return new ResponseEntity<>(file, HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Object> deleteFile(@RequestParam("fileName") String fileName){
         if(fileService.deleteFile(fileName))
             return new ResponseEntity<>("plik usunięty", HttpStatus.OK);
-        return new ResponseEntity<>("nie udało się usunąć pliku", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("plik nie istnieje", HttpStatus.BAD_REQUEST);
     }
 
    @PostMapping(path = "/upload")
    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file){
         try {
-            if (fileService.uploadFile(file))
+            if (fileService.uploadFile(file, null))
                 return new ResponseEntity<>("plik zapisany", HttpStatus.OK);
             return new ResponseEntity<>("nie udało się zapisać pliku", HttpStatus.BAD_REQUEST);
         }catch(Exception e){

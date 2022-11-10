@@ -4,6 +4,7 @@ import com.core.backend.security.TokenProvider;
 import com.core.backend.dto.LoginUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,6 +40,12 @@ public class AuthController {
     @Autowired
     private TokenProvider tokenProvider;
 
+    @Value("${jwt.token.access-token.expiration-time}")
+    private int accessTokenExp;
+
+    @Value("${jwt.token.refresh-token.expiration-time}")
+    private int refreshTokenExp;
+
     @PostMapping("/login")
     void login(@RequestBody LoginUser loginUser, HttpServletResponse response) throws IOException {
         String email  = loginUser.getEmail();
@@ -49,8 +56,8 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String username = authentication.getName();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        final String accessToken = tokenProvider.generateAccessToken(username, authorities, 10*60*1000);
-        final String refreshToken = tokenProvider.generateRefreshToken(username, 24*60*60*1000);
+        final String accessToken = tokenProvider.generateAccessToken(username, authorities, accessTokenExp);
+        final String refreshToken = tokenProvider.generateRefreshToken(username, refreshTokenExp);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_toke", refreshToken);
@@ -66,7 +73,7 @@ public class AuthController {
                 String refreshToken = authorizationHeader.substring("Bearer ".length());
                 String email = tokenProvider.getUsernameFromToken(refreshToken);
                 UserDetails user = userService.loadUserByUsername(email);
-                String accessToken = tokenProvider.generateAccessToken(user.getUsername(), user.getAuthorities(), 10*60*1000);
+                String accessToken = tokenProvider.generateAccessToken(user.getUsername(), user.getAuthorities(), accessTokenExp);
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("access_token", accessToken);
                 tokens.put("refresh_toke", refreshToken);

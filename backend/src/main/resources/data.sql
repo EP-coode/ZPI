@@ -1,11 +1,13 @@
 INSERT INTO db_example.role (role_name, can_approve_post, can_create_post, can_read_post, post_per_day_limit)
 VALUES
-    ('user', false, true, true, 10),
-    ('admin', true, true, true, -1);
+    ('ROLE_USER', false, true, true, 10),
+    ('ROLE_ADMIN', true, true, true, -1);
 
+--hasło: 123456
 INSERT INTO db_example.user (user_id, avatar_url, email, email_confirmation_token, email_confirmed, password_hash,
                              refresh_token, student_status_confirmed, role_fk)
-VALUES (1, '""', 'studentcommunityzpi@gmail.com', '""', true, '""', '""', true, 'admin');
+VALUES (1, '""', 'studentcommunityzpi@gmail.com', '""', true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_ADMIN'),
+       (2, '""', 'user@gmail.com', '""', true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_USER');
 
 INSERT INTO db_example.post_category_group (post_category_group_id, display_name, total_posts)
 VALUES

@@ -51,7 +51,7 @@ public class RegistrationController {
             return new ResponseEntity<>("Token stracił ważność", HttpStatus.BAD_REQUEST);
         }
         user.setEmailConfirmed(true);
-        service.saveRegisteredUser(user);
+        service.saveUser(user);
         service.deleteVerificationToken(verificationToken);
         return new ResponseEntity<>("Użytkownik potwierdzony", HttpStatus.OK);
     }

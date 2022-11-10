@@ -19,9 +19,13 @@ public class FileServiceImpl implements FileService{
     private BlobContainerClient blobContainerClient;
 
     @Override
-    public Boolean uploadFile(MultipartFile file) {
+    public Boolean uploadFile(MultipartFile file, String newFileName) {
         boolean isSuccess = true;
-        String filename = file.getOriginalFilename();
+        String filename;
+        if(newFileName == null)
+            filename = file.getOriginalFilename();
+        else
+            filename = newFileName;
         try {
             BlockBlobClient blockBlobClient = blobContainerClient.getBlobClient(filename).getBlockBlobClient();
             if (blockBlobClient.exists()) {

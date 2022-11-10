@@ -1,4 +1,4 @@
-package com.core.backend.registration;
+package com.core.backend.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

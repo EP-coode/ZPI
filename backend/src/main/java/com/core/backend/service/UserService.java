@@ -3,6 +3,7 @@ package com.core.backend.service;
 import com.core.backend.model.VerificationToken;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
@@ -19,5 +20,9 @@ public interface UserService {
 
     User getUserByEmail(String email);
 
-    User saveRegisteredUser(User user);
+    User saveUser(User user);
+
+    void changeAvatar(String email, String fileExtension);
+
+    void deleteAvatar(String email);
 }
