@@ -1,7 +1,7 @@
 package com.core.backend.service;
 
-import com.core.backend.registration.verificationToken.VerificationToken;
-import com.core.backend.registration.verificationToken.VerificationTokenRepository;
+import com.core.backend.model.VerificationToken;
+import com.core.backend.repository.VerificationTokenRepository;
 import com.core.backend.model.Role;
 import com.core.backend.repository.RoleRepository;
 import com.core.backend.model.User;
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if(userRepository.findByEmail(userDto.getEmail()) != null){
             throw new Exception("User: " + userDto.getEmail() + " already exists");
         }
-        Optional<Role> role = roleRepository.findById("user");
+        Optional<Role> role = roleRepository.findById("ROLE_USER");
         if(role.isEmpty()){
             throw new Exception("User role not exists");
         }
@@ -102,7 +102,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
-    public User saveRegisteredUser(User user) {
+    public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public void changeAvatar(String email, String fileExtension) {
+        String newFileName = "avatar_" + email + "." + fileExtension;
+        User user = getUserByEmail(email);
+        user.setAvatarUrl(newFileName);
+        saveUser(user);
+    }
+
+    @Override
+    public void deleteAvatar(String email) {
+        User user = getUserByEmail(email);
+        user.setAvatarUrl(null);
+        saveUser(user);
     }
 }

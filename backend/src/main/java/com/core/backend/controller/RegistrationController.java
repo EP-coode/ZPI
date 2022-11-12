@@ -1,7 +1,7 @@
 package com.core.backend.controller;
 
 import com.core.backend.registration.OnRegistrationCompleteEvent;
-import com.core.backend.registration.verificationToken.VerificationToken;
+import com.core.backend.model.VerificationToken;
 import com.core.backend.service.UserService;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
@@ -51,7 +51,7 @@ public class RegistrationController {
             return new ResponseEntity<>("Token stracił ważność", HttpStatus.BAD_REQUEST);
         }
         user.setEmailConfirmed(true);
-        service.saveRegisteredUser(user);
+        service.saveUser(user);
         service.deleteVerificationToken(verificationToken);
         return new ResponseEntity<>("Użytkownik potwierdzony", HttpStatus.OK);
     }

@@ -1,4 +1,4 @@
-package com.core.backend.registration.verificationToken;
+package com.core.backend.model;
 
 import com.core.backend.model.User;
 
