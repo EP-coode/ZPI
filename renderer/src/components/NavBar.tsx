@@ -65,7 +65,7 @@ export const NavBar = (props: Props) => {
                 <a className="justify-between">Opcje konta</a>
               </li>
               <li>
-                <a>Wyloguj</a>
+                <a onClick={() => loginContext.logout()}>Wyloguj</a>
               </li>
             </ul>
           </div>

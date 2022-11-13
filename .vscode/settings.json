@@ -2,17 +2,17 @@
     "sqltools.connections": [
         {
             "mysqlOptions": {
-                "authProtocol": "default"
+                "authProtocol": "xprotocol"
             },
             "previewLimit": 50,
             "server": "localhost",
-            "port": 3306,
+            "port": 33060,
             "driver": "MySQL",
-            "password": "",
-            "username": "root",
+            "name": "local_mysql",
             "database": "db_example",
-            "name": "local_docker",
-            "connectionTimeout": 100
+            "username": "root",
+            "password": "",
+            "connectionTimeout": 15
         }
     ]
 }

@@ -12,6 +12,7 @@ const AUTH_SERVICE_URL =
 
 const RegisterForm = () => {
   const [errors, setErrors] = useState<string[]>([]);
+  const [showSuccesModal, setShowSuccesModal] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -56,12 +57,11 @@ const RegisterForm = () => {
         }
       );
 
-      debugger;
-
       if (!result.ok) {
         setErrors([await result.text()]);
       } else {
-        alert("Wszysko poszło zgodnie z planem");
+        setShowSuccesModal(true);
+        formik.resetForm();
         setErrors([]);
       }
 
@@ -122,27 +122,6 @@ const RegisterForm = () => {
           )}
         </label>
       </div>
-
-      {/* <div className="form-control w-full">
-        <label className="label">
-          <span className="label-text">Podaj nick</span>
-        </label>
-        <input
-          type="string"
-          name="string"
-          placeholder="twój nick..."
-          className={classNames("input input-bordered w-full", {
-            "input-error": formik.errors.name,
-          })}
-          onChange={formik.handleChange}
-          value={formik.values.name}
-        />
-        <label className="label">
-          {formik.errors.name && (
-            <span className="label-text text-error">{formik.errors.name}</span>
-          )}
-        </label>
-      </div> */}
 
       <div className="form-control w-full">
         <label className="label">
@@ -216,6 +195,43 @@ const RegisterForm = () => {
         />
         Zarejestuj
       </button>
+
+      <input
+        type="checkbox"
+        id="my-modal-3"
+        className="modal-toggle"
+        onChange={(e) => setShowSuccesModal(e.target.checked)}
+        checked={showSuccesModal}
+      />
+      <div className="modal">
+        <div className="modal-box relative">
+          <label
+            htmlFor="my-modal-3"
+            className="btn btn-sm btn-circle absolute right-2 top-2"
+          >
+            ✕
+          </label>
+          <h3 className="text-lg font-bold">
+            Pomyślnie zarejestrowano w portalu.
+          </h3>
+          <p className="py-4">
+            Aby zacząć korzystać ze swojego konta musisz jescze potwierdzić swój
+            adres emali kikając na wysłany przez nas link.
+          </p>
+          <div className="modal-action">
+            <Link href={"/login"}>
+              <a href="#" className="btn">
+                ekran logowania
+              </a>
+            </Link>
+            <Link href={"/"}>
+              <a href="#" className="btn btn-primary">
+                strona główna
+              </a>
+            </Link>
+          </div>
+        </div>
+      </div>
 
       <div className="form-control ml-auto mr-0">
         <Link href={"/login"}>

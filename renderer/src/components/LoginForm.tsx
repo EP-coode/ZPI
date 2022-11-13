@@ -32,7 +32,7 @@ const LoginForm = (props: Props) => {
     validateOnBlur: false,
     onSubmit: async ({ email, password, remember }) => {
       if (errors.length > 0) setErrors([]);
-      alert(`Loguje jako: ${email}, ${password}`);
+
       try {
         await loginContext?.login(email, password, remember);
         router.push("/");

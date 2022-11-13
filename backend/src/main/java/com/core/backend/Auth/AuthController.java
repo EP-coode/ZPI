@@ -1,7 +1,11 @@
 package com.core.backend.Auth;
 
+import com.auth0.jwt.exceptions.JWTCreationException;
 import com.core.backend.Security.TokenProvider;
+import com.core.backend.Service.UserService;
+import com.core.backend.User.User;
 import com.core.backend.dto.LoginUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,31 +42,35 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserDetailsService userService;
+    private UserService userService;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private TokenProvider tokenProvider;
 
     @PostMapping("/login")
-    ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser, BindingResult result) throws AuthenticationException {
-        if(result.hasErrors()){
+    ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser, BindingResult result)
+            throws AuthenticationException, JsonProcessingException, IllegalArgumentException, JWTCreationException {
+        if (result.hasErrors()) {
             return new ResponseEntity<>("Niepoprawne dane logowania", HttpStatus.BAD_REQUEST);
         }
-        String email  = loginUser.getEmail();
+        String email = loginUser.getEmail();
         String password = loginUser.getPassword();
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password)
-            );
-        }catch(AuthenticationException ex){
+                    new UsernamePasswordAuthenticationToken(email, password));
+        } catch (AuthenticationException ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String username = authentication.getName();
+        User user = userService.getUserByEmail(username);
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        final String accessToken = tokenProvider.generateAccessToken(username, authorities, 10*60*1000);
-        final String refreshToken = tokenProvider.generateRefreshToken(username, 24*60*60*1000);
+        final String accessToken = tokenProvider.generateAccessToken(user, authorities, 10 * 60 * 1000);
+        final String refreshToken = tokenProvider.generateRefreshToken(user, 24 * 60 * 60 * 1000);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
@@ -72,18 +80,20 @@ public class AuthController {
     @GetMapping("/refresh_token")
     void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String refreshToken = authorizationHeader.substring("Bearer ".length());
                 String email = tokenProvider.getUsernameFromToken(refreshToken);
-                UserDetails user = userService.loadUserByUsername(email);
-                String accessToken = tokenProvider.generateAccessToken(user.getUsername(), user.getAuthorities(), 10*60*1000);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                User user = userService.getUserByEmail(email);
+                String accessToken = tokenProvider.generateAccessToken(user, userDetails.getAuthorities(),
+                        10 * 60 * 1000);
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("access_token", accessToken);
-                tokens.put("refresh_toke", refreshToken);
+                tokens.put("refresh_token", refreshToken);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-            }catch (Exception exception){
+            } catch (Exception exception) {
                 response.setStatus(FORBIDDEN.value());
                 Map<String, String> error = new HashMap<>();
                 error.put("error_message", exception.getMessage());

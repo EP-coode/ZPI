@@ -4,16 +4,18 @@ import { User } from "../model/User";
 const REFRESH_TOKEN = "rt";
 const ACCES_TOKEN = "at";
 const KEEP_LOGGED_IN = "keep_logged_in";
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL ?? "http://localhost:3000";
+const AUTH_SERVICE_URL =
+  process.env.AUTH_SERVICE_URL ?? "http://localhost:3000";
 
 interface TokenPayload {
-  iat: number;
   exp: number;
+  iss: string;
   sub: string;
+  roles: string[];
 }
 
 interface RefreshTokenPayload extends TokenPayload {
-  user: User;
+  user_id: number;
 }
 
 /**
@@ -39,9 +41,9 @@ export async function login(
   email: string,
   password: string,
   remember: boolean
-): Promise<User | undefined> {
+): Promise<void> {
   try {
-    const req = await fetch(`${AUTH_SERVICE_URL}/api/auth/login`, {
+    const req = await fetch(`${AUTH_SERVICE_URL}/auth/login`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -53,10 +55,9 @@ export async function login(
       }),
     });
 
-    if (!req.ok) throw new Error("Coś poszło nie tak");
+    if (!req.ok) throw new Error(await req.text());
 
-    const { rt, at } = await req.json();
-
+    const { refresh_token: rt, access_token: at } = await req.json();
     localStorage.setItem(KEEP_LOGGED_IN, remember ? "1" : "0");
 
     if (remember) {
@@ -66,9 +67,10 @@ export async function login(
       sessionStorage.setItem(REFRESH_TOKEN, rt);
       sessionStorage.setItem(ACCES_TOKEN, at);
     }
-
-    return await getUserData();
   } catch (e: any) {
+    if (e instanceof Error) {
+      throw e;
+    }
     throw new Error("Coś poszło nie tak");
   }
 }
@@ -79,6 +81,7 @@ export async function logout(): Promise<void> {
   localStorage.removeItem(REFRESH_TOKEN);
   sessionStorage.removeItem(ACCES_TOKEN);
   localStorage.removeItem(KEEP_LOGGED_IN);
+  location.reload();
 }
 
 /**
@@ -90,24 +93,26 @@ export async function getUserData(): Promise<User | undefined> {
 
   if (!rt) return undefined;
 
-  const { user } = jwt_decode<RefreshTokenPayload>(rt);
+  const { user_id } = jwt_decode<RefreshTokenPayload>(rt);
 
-  return user;
+  const userReq = await fetch(`${AUTH_SERVICE_URL}/user/${user_id}`);
+
+  return await userReq.json();
 }
 
 export async function refreshTokens() {
   const rt = getRefreshToken();
 
-  const req = await fetch(`${AUTH_SERVICE_URL}/api/auth/rt`, {
+  const req = await fetch(`${AUTH_SERVICE_URL}/auth/refresh_token`, {
     headers: {
       Accept: "application/json",
       Authorization: `Bearer ${rt}`,
     },
   });
 
-  const { rt: newRt, at: newAt } = await req.json();
+  const { refresh_token: newRt, access_token: newAt } = await req.json();
 
-  const remember = localStorage.getItem(KEEP_LOGGED_IN);
+  const remember = parseInt(localStorage.getItem(KEEP_LOGGED_IN) ?? "0") === 1;
 
   if (remember) {
     localStorage.setItem(REFRESH_TOKEN, newRt);
@@ -130,7 +135,8 @@ export function getAccesToken(): string | undefined {
 export function isTokenValid(token: string): boolean {
   const rtPayload = jwt_decode<TokenPayload>(token);
   const currentTime = new Date().getTime();
-  const isValid = rtPayload.exp - currentTime > 0;
+  const isValid = rtPayload.exp * 1000 - currentTime > 0;
+
   return isValid;
 }
 

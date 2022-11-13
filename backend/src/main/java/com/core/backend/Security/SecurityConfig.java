@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().antMatchers("/auth/**", "/registration/**").permitAll()
+        http.authorizeRequests().antMatchers("/auth/**", "/registration/**", "/user/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authorizationFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
