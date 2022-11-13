@@ -1,4 +1,5 @@
 import jwt_decode from "jwt-decode";
+import AuthError from "../errors/AuthError";
 import { User } from "../model/User";
 
 const REFRESH_TOKEN = "rt";
@@ -55,7 +56,7 @@ export async function login(
       }),
     });
 
-    if (!req.ok) throw new Error(await req.text());
+    if (!req.ok) throw new AuthError(await req.text());
 
     const { refresh_token: rt, access_token: at } = await req.json();
     localStorage.setItem(KEEP_LOGGED_IN, remember ? "1" : "0");
@@ -68,9 +69,10 @@ export async function login(
       sessionStorage.setItem(ACCES_TOKEN, at);
     }
   } catch (e: any) {
-    if (e instanceof Error) {
+    if (e instanceof AuthError) {
       throw e;
     }
+    console.error(e);
     throw new Error("Coś poszło nie tak");
   }
 }
@@ -95,7 +97,11 @@ export async function getUserData(): Promise<User | undefined> {
 
   const { user_id } = jwt_decode<RefreshTokenPayload>(rt);
 
+  debugger;
+
   const userReq = await fetch(`${AUTH_SERVICE_URL}/user/${user_id}`);
+
+  if(!userReq.ok) throw new Error("Nie można pobrać danych użytkownika")
 
   return await userReq.json();
 }

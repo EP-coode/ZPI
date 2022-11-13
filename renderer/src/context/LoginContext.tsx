@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import AuthError from "../errors/AuthError";
 import { User } from "../model/User";
 import {
   getUserData,
@@ -29,7 +30,11 @@ export const LoginContextProvider = ({ children }: React.PropsWithChildren) => {
       const user = await getUserData();
       setUser(user);
     } catch (e: any) {
-      throw e;
+      if (e instanceof AuthError) {
+        throw e;
+      } else {
+        console.error(e);
+      }
     }
   };
 
