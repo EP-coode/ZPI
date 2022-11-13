@@ -97,8 +97,6 @@ export async function getUserData(): Promise<User | undefined> {
 
   const { user_id } = jwt_decode<RefreshTokenPayload>(rt);
 
-  debugger;
-
   const userReq = await fetch(`${AUTH_SERVICE_URL}/user/${user_id}`);
 
   if(!userReq.ok) throw new Error("Nie można pobrać danych użytkownika")
