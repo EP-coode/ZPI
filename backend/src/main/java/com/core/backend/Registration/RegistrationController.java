@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,15 +26,24 @@ public class RegistrationController {
     ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/register")
-    ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUser userDto) {
+    ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUser userDto, BindingResult result) {
+        if(result.hasErrors()){
+            return new ResponseEntity<>("Niepoprawne dane rejestracji", HttpStatus.BAD_REQUEST);
+        }
+        User registered = null;
         if (userDto != null) {
             try {
-                User registered = service.registerNewUserAccount(userDto);
+                registered = service.registerNewUserAccount(userDto);
                 eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered));
-            } catch (Exception e) {
+            }
+            catch (IllegalArgumentException ex){
+                return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            }
+            catch (Exception e) {
+                service.deleteUnconfirmedUser(registered);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return new ResponseEntity<>("Użytkownik zarejestrowany. Należy go potwierdzic za pomoca emaila", HttpStatus.CREATED);
+            return new ResponseEntity<>("Użytkownik zarejestrowany. Musi zostać potwierdzony za pomocą email", HttpStatus.CREATED);
         }
         return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
     }
@@ -42,7 +52,7 @@ public class RegistrationController {
     public ResponseEntity<Object> confirmRegistration(@RequestParam("token") String token) {
         VerificationToken verificationToken = service.getVerificationToken(token);
         if (verificationToken == null) {
-            return new ResponseEntity<>("Podany token nie istnieje", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Nie znaleziono tokenu", HttpStatus.NOT_FOUND);
         }
         User user = verificationToken.getUser();
         Calendar cal = Calendar.getInstance();
@@ -59,17 +69,16 @@ public class RegistrationController {
     public ResponseEntity<Object> resetVerificationToken(@RequestParam("email") String email) {
         User user = service.getUserByEmail(email);
         if(user == null){
-            return new ResponseEntity<>("Uzytkownik nie istnieje", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Użytkownik nie znaleziony", HttpStatus.BAD_REQUEST);
         }
         if(user.isEmailConfirmed()){
-            return new ResponseEntity<>("Uzytkownik został już potwierdzony", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Użytkownik został już potwierdzony", HttpStatus.BAD_REQUEST);
         }
         VerificationToken verificationToken = service.getVerificationToken(user);
         if(verificationToken != null){
             service.deleteVerificationToken(verificationToken);
         }
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
-        return new ResponseEntity<>("Nowy token zostal wygenerowany i wyslany na podanego emaila", HttpStatus.OK);
+        return new ResponseEntity<>("Nowy token został wysłany na email", HttpStatus.OK);
     }
-
 }

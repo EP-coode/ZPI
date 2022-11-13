@@ -4,21 +4,25 @@ import com.core.backend.Security.TokenProvider;
 import com.core.backend.dto.LoginUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
 
@@ -40,12 +44,20 @@ public class AuthController {
     private TokenProvider tokenProvider;
 
     @PostMapping("/login")
-    void login(@RequestBody LoginUser loginUser, HttpServletResponse response) throws IOException {
+    ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser, BindingResult result) throws AuthenticationException {
+        if(result.hasErrors()){
+            return new ResponseEntity<>("Niepoprawne dane logowania", HttpStatus.BAD_REQUEST);
+        }
         String email  = loginUser.getEmail();
         String password = loginUser.getPassword();
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
-        );
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+        }catch(AuthenticationException ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String username = authentication.getName();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -53,9 +65,8 @@ public class AuthController {
         final String refreshToken = tokenProvider.generateRefreshToken(username, 24*60*60*1000);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
-        tokens.put("refresh_toke", refreshToken);
-        response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        tokens.put("refresh_token", refreshToken);
+        return new ResponseEntity<>(tokens, HttpStatus.OK);
     }
 
     @GetMapping("/refresh_token")
@@ -80,7 +91,7 @@ public class AuthController {
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
         } else {
-            throw new RuntimeException("Refresh token is missing");
+            throw new RuntimeException("Nie znaleziono refresh tokenu");
         }
     }
 }
