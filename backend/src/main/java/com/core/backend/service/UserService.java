@@ -22,6 +22,8 @@ public interface UserService {
 
     User saveUser(User user);
 
+    void deleteUnconfirmedUser(User user);
+
     void changeAvatar(String email, String fileExtension);
 
     void deleteAvatar(String email);

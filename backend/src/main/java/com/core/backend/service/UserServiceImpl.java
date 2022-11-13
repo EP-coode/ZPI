@@ -56,7 +56,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User registerNewUserAccount(RegisterUser userDto) throws Exception{
         if(userRepository.findByEmail(userDto.getEmail()) != null){
-            throw new Exception("User: " + userDto.getEmail() + " already exists");
+            throw new IllegalArgumentException("Użytkownik o emailu: " + userDto.getEmail() + " już istnieje");
+        }
+        if (userRepository.findByName(userDto.getName()) != null) {
+            throw new IllegalArgumentException("Użytkownik o nazwie: " + userDto.getName() + " już istnieje");
         }
         Optional<Role> role = roleRepository.findById("ROLE_USER");
         if(role.isEmpty()){
@@ -64,6 +67,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         User user = new User();
         user.setRole(role.get());
+        user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
         return userRepository.save(user);
@@ -104,6 +108,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUnconfirmedUser(User user) {
+        deleteVerificationToken(getVerificationToken(user));
+        userRepository.deleteById(user.getUserId());
     }
 
     @Override
