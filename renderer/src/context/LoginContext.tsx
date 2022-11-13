@@ -34,6 +34,7 @@ export const LoginContextProvider = ({ children }: React.PropsWithChildren) => {
         throw e;
       } else {
         console.error(e);
+        throw new AuthError("Coś poszło nie tak");
       }
     }
   };

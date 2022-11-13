@@ -1,8 +1,10 @@
 package com.core.backend.utilis;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.core.backend.exception.NoIdException;
+import com.core.backend.exception.WrongIdException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class Utilis {
@@ -17,5 +19,11 @@ public class Utilis {
             throw new WrongIdException("Podane id nie jest liczbą");
         }
         return longId;
+    }
+
+    public Optional<String> getExtensionByStringHandling(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 }

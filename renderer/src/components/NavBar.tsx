@@ -27,7 +27,7 @@ export const NavBar = (props: Props) => {
         </Link>
         <select
           onChange={themeChangeHandler}
-          value={themeContext?.currentTheme}
+          value={themeContext?.currentTheme || Theme.DEFAULT}
           className="select w-fit"
         >
           <option value={Theme.DEFAULT}>Domyślny</option>
