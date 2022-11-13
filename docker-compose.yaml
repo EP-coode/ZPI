@@ -10,6 +10,9 @@ services:
     working_dir: /app
     volumes:
       - ./renderer:/app
+    environment:
+      - AUTH_SERVICE_URL=http://locahost:8080
+      - DATA_PROVIDER_URL=http://locahost:8080
     command: sh -c "npm install && npm run dev"
 
   mysql:
