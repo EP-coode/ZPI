@@ -112,7 +112,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void deleteUnconfirmedUser(User user) {
-        deleteVerificationToken(getVerificationToken(user));
+        VerificationToken token = getVerificationToken(user);
+        if (token != null)
+            deleteVerificationToken(token);
         userRepository.deleteById(user.getUserId());
     }
 
