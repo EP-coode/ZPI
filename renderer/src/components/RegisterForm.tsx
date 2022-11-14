@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import ErrorSvg from "../icons/ErrorSvg";
 
 const AUTH_SERVICE_URL =
-  process.env.AUTH_SERVICE_URL ?? "http://localhost:3000";
+  process.env.AUTH_SERVICE_URL ?? "http://localhost:8080";
 
 const RegisterForm = () => {
   const [errors, setErrors] = useState<string[]>([]);

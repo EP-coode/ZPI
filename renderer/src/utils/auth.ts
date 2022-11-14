@@ -6,7 +6,7 @@ const REFRESH_TOKEN = "rt";
 const ACCES_TOKEN = "at";
 const KEEP_LOGGED_IN = "keep_logged_in";
 const AUTH_SERVICE_URL =
-  process.env.AUTH_SERVICE_URL ?? "http://localhost:3000";
+  process.env.AUTH_SERVICE_URL ?? "http://localhost:8080";
 
 interface TokenPayload {
   exp: number;
