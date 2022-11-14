@@ -8,6 +8,7 @@ import ErrorSvg from "../icons/ErrorSvg";
 import classNames from "classnames";
 import { LoginContext } from "../context/LoginContext";
 import { useRouter } from "next/router";
+import AuthError from "../errors/AuthError";
 
 type Props = {};
 
@@ -32,17 +33,15 @@ const LoginForm = (props: Props) => {
     validateOnBlur: false,
     onSubmit: async ({ email, password, remember }) => {
       if (errors.length > 0) setErrors([]);
-      alert(`Loguje jako: ${email}, ${password}`);
+
       try {
         await loginContext?.login(email, password, remember);
         router.push("/");
       } catch (e: any) {
-        if (e instanceof Error) {
+        if (e instanceof AuthError) {
           setErrors([e.message]);
         }
       }
-      //TODO podpięcie do serwera
-      setErrors(["Niepodpięte do serwera"]);
       formik.setSubmitting(false);
     },
   });

@@ -68,8 +68,7 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(path = "/adminPanel/{id}")
+    @GetMapping(path = "/{id}")
     ResponseEntity<Object> getUser(@PathVariable(name = "id") String id) {
         long longId;
         try {
@@ -103,6 +102,7 @@ public class UserController {
     ResponseEntity<Object> updateUser(@PathVariable(name = "id") String id,
                                       @RequestParam String roleName,
                                       @RequestParam String avatarUrl,
+                                      @RequestParam String name,
                                       @RequestParam String email,
                                       @RequestParam String emailConfirmationToken,
                                       @RequestParam Boolean emailConfirmed,
@@ -129,6 +129,8 @@ public class UserController {
         userToSave.setAvatarUrl(avatarUrl); // użytkownik może usunąć zdjęcie avatara
         if (email != null)
             userToSave.setEmail(email);
+        if (name != null)
+            userToSave.setName(name);
         if (emailConfirmationToken != null)
             userToSave.setEmailConfirmationToken(emailConfirmationToken);
         if (emailConfirmed != null)
