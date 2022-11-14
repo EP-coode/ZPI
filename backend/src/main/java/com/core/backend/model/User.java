@@ -5,11 +5,12 @@ import javax.persistence.*;
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
     @ManyToOne
     @JoinColumn(name = "role_fk", referencedColumnName = "roleName")
     private Role role;
+    private String name;
     private String email;
     private String passwordHash;
     private boolean emailConfirmed;
@@ -32,6 +33,14 @@ public class User {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

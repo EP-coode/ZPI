@@ -5,14 +5,18 @@ import com.core.backend.model.User;
 import com.core.backend.repository.RoleRepository;
 import com.core.backend.repository.UserRepository;
 import com.core.backend.exception.NoIdException;
+import com.core.backend.service.FileService;
+import com.core.backend.service.UserService;
 import com.core.backend.utilis.Utilis;
 import com.core.backend.exception.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -29,10 +33,43 @@ public class UserController {
     @Autowired
     private Utilis utilis;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private FileService fileService;
+
+    @PostMapping(path = "/avatar")
+    public ResponseEntity<Object> changeAvatar(@RequestParam("file") MultipartFile file) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String extension = utilis.getExtensionByStringHandling(file.getOriginalFilename()).get();
+        userService.changeAvatar(email, extension);
+        User user = userService.getUserByEmail(email);
+        try {
+            fileService.uploadFile(file, user.getAvatarUrl());
+        }catch(Exception e){
+            userService.deleteAvatar(email);
+            return new ResponseEntity<>("nie udało się zmienić zdjęcia profilowego", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("zdjęcie profilowe zmienione", HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/avatar")
+    public ResponseEntity<Object> deleteAvatar() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String filename = userService.getUserByEmail(email).getAvatarUrl();
+        try {
+            fileService.deleteFile(filename);
+            userService.deleteAvatar(email);
+        }catch(Exception e){
+            return new ResponseEntity<>("nie udało się usunąć zdjęcia profilowego", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("zdjęcie profilowe usunięte", HttpStatus.OK);
+    }
+
+
     @GetMapping(path = "/{id}")
     ResponseEntity<Object> getUser(@PathVariable(name = "id") String id) {
-        // tak można dostać email użytkownika który wysłał zapytanie
-        // System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
         long longId;
         try {
             longId = utilis.convertId(id);
@@ -47,7 +84,8 @@ public class UserController {
         return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
     }
 
-    @PostMapping()
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/adminPanel")
     ResponseEntity<Object> createUser(@RequestBody User user) {
         if (user == null)
             return new ResponseEntity<>("Zły payload", HttpStatus.BAD_REQUEST);
@@ -59,10 +97,12 @@ public class UserController {
         return new ResponseEntity<>("Użytkownik zarejestrowany", HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("adminPanel/{id}")
     ResponseEntity<Object> updateUser(@PathVariable(name = "id") String id,
                                       @RequestParam String roleName,
                                       @RequestParam String avatarUrl,
+                                      @RequestParam String name,
                                       @RequestParam String email,
                                       @RequestParam String emailConfirmationToken,
                                       @RequestParam Boolean emailConfirmed,
@@ -89,6 +129,8 @@ public class UserController {
         userToSave.setAvatarUrl(avatarUrl); // użytkownik może usunąć zdjęcie avatara
         if (email != null)
             userToSave.setEmail(email);
+        if (name != null)
+            userToSave.setName(name);
         if (emailConfirmationToken != null)
             userToSave.setEmailConfirmationToken(emailConfirmationToken);
         if (emailConfirmed != null)
@@ -103,7 +145,7 @@ public class UserController {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("adminPanel/{id}")
     ResponseEntity<Object> deleteUser(@PathVariable String id) {
         long longId;
         try {
@@ -119,6 +161,5 @@ public class UserController {
         }
         return new ResponseEntity<>("Brak użytkownika o podanym ID", HttpStatus.NOT_FOUND);
     }
-
 }
 

@@ -1,7 +1,7 @@
 package com.core.backend.service;
 
-import com.core.backend.registration.verificationToken.VerificationToken;
-import com.core.backend.registration.verificationToken.VerificationTokenRepository;
+import com.core.backend.model.VerificationToken;
+import com.core.backend.repository.VerificationTokenRepository;
 import com.core.backend.model.Role;
 import com.core.backend.repository.RoleRepository;
 import com.core.backend.model.User;
@@ -56,14 +56,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User registerNewUserAccount(RegisterUser userDto) throws Exception{
         if(userRepository.findByEmail(userDto.getEmail()) != null){
-            throw new Exception("User: " + userDto.getEmail() + " already exists");
+            throw new IllegalArgumentException("Użytkownik o emailu: " + userDto.getEmail() + " już istnieje");
         }
-        Optional<Role> role = roleRepository.findById("user");
+        if (userRepository.findByName(userDto.getName()) != null) {
+            throw new IllegalArgumentException("Użytkownik o nazwie: " + userDto.getName() + " już istnieje");
+        }
+        Optional<Role> role = roleRepository.findById("ROLE_USER");
         if(role.isEmpty()){
             throw new Exception("User role not exists");
         }
         User user = new User();
         user.setRole(role.get());
+        user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
         return userRepository.save(user);
@@ -102,7 +106,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
-    public User saveRegisteredUser(User user) {
+    public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUnconfirmedUser(User user) {
+        VerificationToken token = getVerificationToken(user);
+        if (token != null)
+            deleteVerificationToken(token);
+        userRepository.deleteById(user.getUserId());
+    }
+
+    @Override
+    public void changeAvatar(String email, String fileExtension) {
+        String newFileName = "avatar_" + email + "." + fileExtension;
+        User user = getUserByEmail(email);
+        user.setAvatarUrl(newFileName);
+        saveUser(user);
+    }
+
+    @Override
+    public void deleteAvatar(String email) {
+        User user = getUserByEmail(email);
+        user.setAvatarUrl(null);
+        saveUser(user);
     }
 }
