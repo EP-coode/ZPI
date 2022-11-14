@@ -1,9 +1,12 @@
 package com.core.backend.model;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -26,6 +29,30 @@ public class Post {
     private Date creationTime;
     @Column(length = 65535, columnDefinition = "TEXT")
     private String markdownContent;
+
+    public Post(User creator, User approver, PostCategory category, String title, String imageUrl, String markdownContent) {
+        this.creator = creator;
+        this.approver = approver;
+        this.category = category;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.markdownContent = markdownContent;
+        this.totalDislikes = 0;
+        this.totalLikes = 0;
+        this.creationTime = new Date(System.currentTimeMillis());
+        this.approveTime = new Date(System.currentTimeMillis());
+    }
+
+    public Post(PostCategory category, String title, String imageUrl, String markdownContent) {
+        this.category = category;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.markdownContent = markdownContent;
+        this.totalDislikes = 0;
+        this.totalLikes = 0;
+        this.creationTime = new Date(System.currentTimeMillis());
+        this.approveTime = new Date(System.currentTimeMillis());
+    }
 
     public long getPostId() {
         return postId;

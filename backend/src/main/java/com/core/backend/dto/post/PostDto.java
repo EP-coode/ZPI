@@ -1,4 +1,4 @@
-package com.core.backend.dto;
+package com.core.backend.dto.post;
 
 import com.core.backend.model.PostCategory;
 import com.core.backend.model.User;

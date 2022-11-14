@@ -1,6 +1,7 @@
 package com.core.backend.controller;
 
-import com.core.backend.dto.PostDto;
+import com.core.backend.dto.post.PostCreateUpdateDto;
+import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.service.PostService;
@@ -10,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
 
 @Controller
 @RequestMapping(path = "/posts")
@@ -55,6 +56,49 @@ public class PostController {
 
         return new ResponseEntity<>(postDto, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Transactional
+    @PostMapping
+    public ResponseEntity<Object> addPost(@RequestBody PostCreateUpdateDto postCreateDto) {
+        try {
+            postCreateDto = postService.addPost(postCreateDto);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(postCreateDto, HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Transactional
+    @PutMapping("/{postId}")
+    public ResponseEntity<Object> updatePost(@PathVariable String postId, @RequestBody PostCreateUpdateDto postDto) {
+        try {
+            postService.updatePost(postId, postDto);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Zaktualizowano post", HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Transactional
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Object> deletePost(@PathVariable String postId) {
+        try {
+            postService.deletePost(postId);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
+            return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Post usunięto pomyślnie", HttpStatus.OK);
+    }
+
+
+
 
 
 }

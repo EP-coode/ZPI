@@ -26,7 +26,6 @@ public class PostTagsController {
     @Autowired
     Utilis utils;
 
-    //not that useful
     @GetMapping()
     public ResponseEntity<Object> getAllPostTags() {
         return new ResponseEntity<>(postTagsRepository.findAll(), HttpStatus.OK);
