@@ -68,7 +68,9 @@ public class AuthController {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
         } catch (AuthenticationException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            if(Objects.equals(ex.getMessage(), "User is disabled"))
+                return new ResponseEntity<>("Użytkownik niepotwierdzony", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Niepoprawne email lub hasło", HttpStatus.BAD_REQUEST);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String username = authentication.getName();
