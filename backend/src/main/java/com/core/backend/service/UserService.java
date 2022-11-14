@@ -1,5 +1,10 @@
 package com.core.backend.service;
 
+import com.core.backend.exception.NoIdException;
+import com.core.backend.exception.NoRoleException;
+import com.core.backend.exception.NoUserException;
+import com.core.backend.exception.WrongIdException;
+import com.core.backend.model.Role;
 import com.core.backend.model.VerificationToken;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
@@ -16,11 +21,19 @@ public interface UserService {
 
     VerificationToken getVerificationToken(User user);
 
+    Role getRole(String id) throws NoRoleException;
+
     User getUserByToken(String verificationToken);
+
+    User getUserById(String id) throws WrongIdException, NoIdException, NoUserException;
 
     User getUserByEmail(String email);
 
+    User getUserByName(String name);
+
     User saveUser(User user);
+
+    void deleteUser(User user);
 
     void deleteUnconfirmedUser(User user);
 

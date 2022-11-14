@@ -1,5 +1,8 @@
 package com.core.backend.service;
 
+import com.core.backend.dto.mapper.PostMapper;
+import com.core.backend.exception.*;
+import com.core.backend.model.Post;
 import com.core.backend.model.VerificationToken;
 import com.core.backend.repository.VerificationTokenRepository;
 import com.core.backend.model.Role;
@@ -7,8 +10,10 @@ import com.core.backend.repository.RoleRepository;
 import com.core.backend.model.User;
 import com.core.backend.repository.UserRepository;
 import com.core.backend.dto.RegisterUser;
+import com.core.backend.utilis.Utilis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,8 +30,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final VerificationTokenRepository tokenRepository;
-
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Autowired
+    private Utilis utilis;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -95,8 +102,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public Role getRole(String id) throws NoRoleException {
+        Optional<Role> role = roleRepository.findById(id);
+        if(role.isEmpty()) throw new NoRoleException();
+        return role.get();
+    }
+
+    @Override
+    public User getUserById(String id) throws WrongIdException, NoIdException, NoUserException {
+        long longId = utilis.convertId(id);
+        Optional<User> user = userRepository.findById(longId);
+        if (user.isEmpty()) throw new NoUserException();
+        return user.get();
+    }
+
+    @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User getUserByName(String name) {
+        return userRepository.findByName(name);
     }
 
     @Override
@@ -104,10 +131,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return tokenRepository.findByToken(verificationToken).getUser();
     }
 
-
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(User user){
+        userRepository.deleteById(user.getUserId());
     }
 
     @Override
@@ -115,7 +146,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         VerificationToken token = getVerificationToken(user);
         if (token != null)
             deleteVerificationToken(token);
-        userRepository.deleteById(user.getUserId());
+        deleteUser(user);
     }
 
     @Override

@@ -40,9 +40,9 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ByteArrayResource downloadFile(String fileName) {
+    public byte[] downloadFile(String fileName) {
         BlockBlobClient blockBlobClient = blobContainerClient.getBlobClient(fileName).getBlockBlobClient();
-        return new ByteArrayResource(blockBlobClient.downloadContent().toBytes());
+        return blockBlobClient.downloadContent().toBytes();
     }
 
     @Override
