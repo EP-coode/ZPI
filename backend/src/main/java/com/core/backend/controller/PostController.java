@@ -4,6 +4,8 @@ import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.NoIdException;
+import com.core.backend.model.User;
+import com.core.backend.service.FileService;
 import com.core.backend.service.PostService;
 import com.core.backend.utilis.Utilis;
 import com.core.backend.exception.WrongIdException;
@@ -12,10 +14,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping(path = "/posts")
@@ -60,9 +66,9 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @Transactional
     @PostMapping
-    public ResponseEntity<Object> addPost(@RequestBody PostCreateUpdateDto postCreateDto) {
+    public ResponseEntity<Object> addPost(@RequestBody PostCreateUpdateDto postCreateDto, @RequestBody(required = false) MultipartFile photo) {
         try {
-            postCreateDto = postService.addPost(postCreateDto);
+            postCreateDto = postService.addPost(postCreateDto, photo);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -72,9 +78,10 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @Transactional
     @PutMapping("/{postId}")
-    public ResponseEntity<Object> updatePost(@PathVariable String postId, @RequestBody PostCreateUpdateDto postDto) {
+    public ResponseEntity<Object> updatePost(@PathVariable String postId, @RequestBody PostCreateUpdateDto postDto,
+                                             @RequestBody(required = false) MultipartFile photo) {
         try {
-            postService.updatePost(postId, postDto);
+            postService.updatePost(postId, postDto, photo);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

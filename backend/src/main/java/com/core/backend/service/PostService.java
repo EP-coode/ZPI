@@ -9,6 +9,7 @@ import com.core.backend.exception.NoIdException;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.WrongIdException;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,9 +26,9 @@ public interface PostService {
 
     List<CommentDto> getCommentsPagination(String postId, Integer page, Sort.Direction sort) throws WrongIdException, NoIdException, NoPostException;
 
-    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto) throws Exception;
+    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws Exception;
 
-    void updatePost(String postId, PostCreateUpdateDto postDto) throws Exception;
+    void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws Exception;
 
     void deletePost(String postId) throws Exception;
 

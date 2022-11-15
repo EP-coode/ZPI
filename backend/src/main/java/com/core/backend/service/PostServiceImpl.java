@@ -17,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +30,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
+
+    @Autowired
+    private FileService fileService;
+
     @Autowired
     private PostRepository postRepository;
 
@@ -106,7 +113,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public PostCreateUpdateDto addPost(PostCreateUpdateDto postDto) {
+    public PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) {
         Post post;
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         post = PostMapper.toPost(postDto, user);
@@ -116,21 +123,23 @@ public class PostServiceImpl implements PostService{
                 .collect(Collectors.toList()));
 
         List<PostTag> postTagList = StreamSupport.stream(postTags.spliterator(), false).toList();
-        for (PostTag tag: postDto.getTags()) {
-            if (!postTagList.contains(tag))  postTagRepository.save(tag);
+        for (PostTag tag : postDto.getTags()) {
+            if (!postTagList.contains(tag)) postTagRepository.save(tag);
             postTagsRepository.save(
                     new PostTags(new PostTagsId(post, tag)));
         }
+        if (photo.isEmpty())   return postDto;
+        String path = String.format("post_%s", post.getPostId());
+        fileService.uploadFile(photo, path);
         return postDto;
     }
 
     @Override
-    public void updatePost(String postId, PostCreateUpdateDto postDto) throws Exception {
-        //check if user is creator of the post in database
+    public void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws Exception {
         long longId;
         longId = utilis.convertId(postId);
         Optional<Post> postOpt = postRepository.findById(longId);
-        if (postOpt.isEmpty())  throw new NoPostException("Post nie istnieje");
+        if (postOpt.isEmpty()) throw new NoPostException("Post nie istnieje");
         Post post = postOpt.get();
         if (!Objects.equals(SecurityContextHolder.getContext().getAuthentication().getName(),
                 post.getCreator().getEmail())) {
@@ -141,7 +150,9 @@ public class PostServiceImpl implements PostService{
         post.setMarkdownContent(postDto.getMarkdownContent());
         post.setTitle(postDto.getTitle());
         postRepository.save(post);
-        //fileservice delete photo
+        if (photo.isEmpty())   return;
+        String path = String.format("post_%d", longId);
+        fileService.uploadFile(photo, path);
     }
 
     @Override
@@ -151,13 +162,14 @@ public class PostServiceImpl implements PostService{
         Optional<Post> post = postRepository.findById(longId);
         if (post.isEmpty()) {}
         else if ((!Objects.equals(SecurityContextHolder.getContext().getAuthentication().getName(),
-                post.get().getCreator().getEmail())))   throw new Exception("Możesz usunąć tylko swój post");
+                post.get().getCreator().getEmail()))) throw new Exception("Możesz usunąć tylko swój post");
         else {
+            String photoToDelete = String.format("post_%s", postId);
             List<PostTags> postTags = postTagsRepository.findByPostTagsIdPostId(post.get());
             for (PostTags p : postTags) postTagsRepository.deleteById(p.getPostTagsId());
             postRepository.deleteById(longId);
+            fileService.deleteFile(photoToDelete);
         }
-        //fileservice delete photo
     }
 
     @Override
@@ -166,7 +178,7 @@ public class PostServiceImpl implements PostService{
         longId = utilis.convertId(postId);
         User creator = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         Optional<Post> post = postRepository.findById(longId);
-        if (post.isEmpty())  throw new NoPostException("Post nie istnieje");
+        if (post.isEmpty()) throw new NoPostException("Post nie istnieje");
         commentRepository.save(CommentMapper.toComment(commentCreateUpdateDto, creator, post.get()));
         return commentCreateUpdateDto;
     }
@@ -177,9 +189,9 @@ public class PostServiceImpl implements PostService{
         longPostId = utilis.convertId(postId);
         longCommentId = utilis.convertId(commentId);
         Optional<Post> post = postRepository.findById(longPostId);
-        if (post.isEmpty())  throw new NoPostException("Post nie istnieje");
+        if (post.isEmpty()) throw new NoPostException("Post nie istnieje");
         Optional<Comment> comment = commentRepository.findById(longCommentId);
-        if (comment.isEmpty())  throw new Exception("Komentarz nie istnieje");
+        if (comment.isEmpty()) throw new Exception("Komentarz nie istnieje");
         comment.get().setContent(commentUpdateDto.getContent());
         commentRepository.save(comment.get());
     }
@@ -189,9 +201,9 @@ public class PostServiceImpl implements PostService{
         long longId;
         longId = utilis.convertId(commentId);
         Optional<Comment> comment = commentRepository.findById(longId);
-        if (comment.isEmpty()) {}
-        else if ((!Objects.equals(SecurityContextHolder.getContext().getAuthentication().getName(),
-                comment.get().getCreator().getEmail())))   throw new Exception("Możesz usunąć tylko swój komentarz");
+        if (comment.isEmpty()) {
+        } else if ((!Objects.equals(SecurityContextHolder.getContext().getAuthentication().getName(),
+                comment.get().getCreator().getEmail()))) throw new Exception("Możesz usunąć tylko swój komentarz");
         else commentRepository.deleteById(longId);
     }
 
