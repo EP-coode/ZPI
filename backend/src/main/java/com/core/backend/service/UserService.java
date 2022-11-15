@@ -8,7 +8,10 @@ import com.core.backend.model.Role;
 import com.core.backend.model.VerificationToken;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -22,6 +25,8 @@ public interface UserService {
     VerificationToken getVerificationToken(User user);
 
     Role getRole(String id) throws NoRoleException;
+
+    List<User> getAllUsers(String name, Integer page, Sort.Direction sort);
 
     User getUserByToken(String verificationToken);
 

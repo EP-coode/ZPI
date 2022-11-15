@@ -14,6 +14,9 @@ import com.core.backend.utilis.Utilis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service @RequiredArgsConstructor @Slf4j
@@ -31,6 +35,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final RoleRepository roleRepository;
     private final VerificationTokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    public static final int PAGE_SIZE = 5;
 
     @Autowired
     private Utilis utilis;
@@ -106,6 +111,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Optional<Role> role = roleRepository.findById(id);
         if(role.isEmpty()) throw new NoRoleException();
         return role.get();
+    }
+
+    @Override
+    public List<User> getAllUsers(String name, Integer page, Sort.Direction sort) {
+        page = page == null ? 0 : page;
+        Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "name");
+        return name == null ? userRepository.findAll(pageableRequest) : userRepository.findAllByNameContaining(name, pageableRequest);
     }
 
     @Override

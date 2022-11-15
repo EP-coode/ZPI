@@ -66,7 +66,7 @@ public class RegistrationController {
         return new ResponseEntity<>("Użytkownik potwierdzony", HttpStatus.OK);
     }
 
-    @PostMapping("/reset_token")
+    @GetMapping("/reset_token")
     public ResponseEntity<Object> resetVerificationToken(@RequestParam("email") String email) {
         User user = service.getUserByEmail(email);
         if(user == null){

@@ -1,5 +1,7 @@
 package com.core.backend.controller;
 
+import com.core.backend.dto.UserDto;
+import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.dto.mapper.UserDetailsMapper;
 import com.core.backend.dto.mapper.UserMapper;
 import com.core.backend.exception.NoRoleException;
@@ -12,6 +14,7 @@ import com.core.backend.service.UserService;
 import com.core.backend.utilis.Utilis;
 import com.core.backend.exception.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -35,6 +41,20 @@ public class UserController {
     @Autowired
     private FileService fileService;
 
+
+    @GetMapping()
+    ResponseEntity<Object> getAllUsersPagination(@RequestParam(required = false) String name,
+                                                 @RequestParam(required = false) Integer page,
+                                                 @RequestParam(defaultValue = "DESC") Sort.Direction sort) {
+        try {
+            List<UserDto> users = userService.getAllUsers(name, page, sort).stream()
+                    .map(UserMapper::toUserDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(path = "/{id}")
     ResponseEntity<Object> getUser(@PathVariable(name = "id") String id) {
