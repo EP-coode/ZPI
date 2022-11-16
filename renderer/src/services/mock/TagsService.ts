@@ -19,7 +19,7 @@ export const tagsService: TagsService = {
     ];
 
     return Promise.resolve({
-      tags: exampleTags.filter((tag) => tag.name.startsWith(prefix)),
+      tags: exampleTags.filter((tag) => tag.name.toLowerCase().startsWith(prefix.toLowerCase())),
     });
   },
   addTag: function (tagName: string): Promise<void> {

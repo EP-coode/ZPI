@@ -21,7 +21,7 @@ export const PostFilterContextProvider = ({
   const [postOrdering, setPostOrdering] = useState<PostOrdering>(
     PostOrdering.LikesDsc
   );
-  
+
   const [maxPostAgeInDays, setMaxPostAgeInDays] = useState<number>(30);
 
   const router = useRouter();
@@ -40,7 +40,25 @@ export const PostFilterContextProvider = ({
   }, [tags]);
 
   const handleAddTagFilter = (tagName: string) => {
-    setActiveFilters((prev) => [...prev, tagName]);
+    const newActiveTagFilters = [...activeTagFilters, tagName];
+    setActiveFilters(newActiveTagFilters);
+
+    const query = { ...router.query };
+
+    if (newActiveTagFilters.length > 0) {
+      query["tags"] = newActiveTagFilters.join(",");
+    } else {
+      delete query.tags;
+    }
+
+    router.replace(
+      {
+        pathname: router.pathname,
+        query,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   const handlePostOrderingChange = (postOrdering: PostOrdering) => {
@@ -81,8 +99,8 @@ export const PostFilterContextProvider = ({
         activeTagFilters: activeTagFilters,
         maxPostAgeInDays: maxPostAgeInDays,
         postOrdering: postOrdering,
-        setMaxPostAge: setMaxPostAgeInDays,
-        setPostOrdering: setPostOrdering,
+        setMaxPostAge: handleMaxPostAgeInDaysChange,
+        setPostOrdering: handlePostOrderingChange,
         addTag: handleAddTagFilter,
         removeTag: handleRemoveTagFilter,
       }}
