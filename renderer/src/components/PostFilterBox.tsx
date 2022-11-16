@@ -80,7 +80,6 @@ const PostFilterBox = (props: Props) => {
 
   const handleSelectMaxAgeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedMaxAgeInDays = parseInt(e.target.value);
-    console.log("DUPA");
     
     postFilterContext?.setMaxPostAge(selectedMaxAgeInDays);
   };

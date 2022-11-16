@@ -12,8 +12,6 @@ type Props = {
 const usePosts = ({ page, filters,postsPerPage = 15 }: Props) : [Post[], number] => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
-
-  console.log("DUPA");
   
   useEffect(() => {
     let isCanceled = false;

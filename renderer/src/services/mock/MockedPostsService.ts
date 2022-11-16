@@ -59,7 +59,7 @@ I tyle w temacie.`,
       postCount: {
         itemsCount: pagination.postPerPage * pagination.currentPage + 100,
       },
-      posts: posts.filter(post => filters ? filters.tagNames?.every(tagName => post.tags.some(tag => tag.name.toLowerCase() == tagName.toLowerCase())) : true),
+      posts: posts.filter(post => filters ? filters.tagNames?.every(tagName => post.tags.some(tag => tag.name.toLowerCase() == tagName.toLowerCase())) ?? true : true),
     };
   },
   createPost: function (post: CreatePostDto): Promise<void> {
