@@ -34,10 +34,7 @@ const PostFilterBox = (props: Props) => {
 
   tagSearchResult?.forEach((tagName) => {
     searchResultTagBadges.push(
-      <li
-        className="badge badge-secondary badge-lg gap-2"
-        key={tagName}
-      >
+      <li className="badge badge-secondary badge-lg gap-2" key={tagName}>
         {tagName}
         <PlusIcon
           onClick={() => postFilterContext?.addTag(tagName)}
@@ -83,7 +80,15 @@ const PostFilterBox = (props: Props) => {
 
   const handleSelectMaxAgeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedMaxAgeInDays = parseInt(e.target.value);
+    console.log("DUPA");
+    
     postFilterContext?.setMaxPostAge(selectedMaxAgeInDays);
+  };
+
+  const handleSelectOrdering = (e: ChangeEvent<HTMLSelectElement>) => {
+    const postOrdering = e.target.value as PostOrdering;
+    console.log("DUP DUP");
+    postFilterContext?.setPostOrdering(postOrdering);
   };
 
   return (
@@ -109,34 +114,22 @@ const PostFilterBox = (props: Props) => {
           <h3 className="font-semibold">Szukaj postów z:</h3>
           <select
             className="select select-bordered w-full mt-1"
-            onSelect={handleSelectMaxAgeChange}
+            onChange={handleSelectMaxAgeChange}
             defaultValue={postFilterContext?.maxPostAgeInDays ?? 30}
           >
-            <option
-              value={1}
-            >
-              Ostatni dzień
-            </option>
-            <option
-              value={7}
-            >
-              Ostatni tydzień
-            </option>
-            <option
-              value={30}
-            >
-              Ostatni miesiąc
-            </option>
-            <option
-              value={-1}
-            >
-              Wszyskie
-            </option>
+            <option value={1}>Ostatni dzień</option>
+            <option value={7}>Ostatni tydzień</option>
+            <option value={30}>Ostatni miesiąc</option>
+            <option value={-1}>Wszyskie</option>
           </select>
         </div>
         <div>
           <h3 className="font-semibold">Sortuj po:</h3>
-          <select className="select select-bordered w-full mt-1">
+          <select
+            className="select select-bordered w-full mt-1"
+            onChange={handleSelectOrdering}
+            defaultValue={postFilterContext?.postOrdering ?? PostOrdering.LikesDsc}
+          >
             <option value={PostOrdering.DateAsc}>Najstarsze</option>
             <option value={PostOrdering.DateDsc}>Najnowsze</option>
             <option value={PostOrdering.LikesAsc}>Najgorzej oceniane</option>

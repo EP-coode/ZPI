@@ -16,23 +16,22 @@ const PostCategoryGroupPage: NextPage = () => {
 
   const crumbs = [{ title: "Główna", href: "/" }];
 
-  if (typeof category_group == "string") {
+  if (typeof category_group == "string" && category_group.length > 0) {
     crumbs.push({
       title: category_group,
-      href: `/posts/${category_group}`,
+      href: `/posts/category/${category_group}`,
     });
-  }
 
-  if (typeof category == "string") {
-    crumbs.push({
-      title: category,
-      href: `/posts/category/${category}`,
-    });
+    if (typeof category == "string" && category.length > 0) {
+      crumbs.push({
+        title: category,
+        href: `/posts/category/${category_group}/${category}`,
+      });
+    }
   }
 
   return (
     <ContentWrapper>
-      <PostFilterContextProvider>
         <BreadCrumbs crumbs={crumbs} />
         <CollumnWrapper>
           <LeftCollumn>WYNIKI WYSZUKIWANIA</LeftCollumn>
@@ -41,7 +40,6 @@ const PostCategoryGroupPage: NextPage = () => {
             <CategoryTree />
           </RightCollumn>
         </CollumnWrapper>
-      </PostFilterContextProvider>
     </ContentWrapper>
   );
 };

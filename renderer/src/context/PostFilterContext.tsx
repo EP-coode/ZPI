@@ -26,6 +26,7 @@ export const PostFilterContextProvider = ({
 
   const router = useRouter();
   const { tags } = router.query;
+  
 
   useEffect(() => {
     let parsedTags: string[] = [];

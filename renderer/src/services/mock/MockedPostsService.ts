@@ -44,7 +44,7 @@ I tyle w temacie.`,
     });
   },
   getPosts: async function (
-    pagination: Pagination
+    pagination: Pagination, filters?: PostFilters
   ): Promise<PostsWithPagination> {
     const posts = [];
 
@@ -59,7 +59,7 @@ I tyle w temacie.`,
       postCount: {
         itemsCount: pagination.postPerPage * pagination.currentPage + 100,
       },
-      posts: posts,
+      posts: posts.filter(post => filters ? filters.tagNames?.every(tagName => post.tags.some(tag => tag.name.toLowerCase() == tagName.toLowerCase())) : true),
     };
   },
   createPost: function (post: CreatePostDto): Promise<void> {
