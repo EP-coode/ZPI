@@ -6,6 +6,7 @@ import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.dto.mapper.CommentMapper;
 import com.core.backend.dto.mapper.PostMapper;
+import com.core.backend.exception.NoAccessException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.WrongIdException;
@@ -17,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,7 +76,7 @@ public class PostServiceImpl implements PostService {
         long longId;
         longId = utilis.convertId(postId);
         Optional<Post> post = postRepository.findById(longId);
-        if (post.isEmpty()) throw new NoPostException();
+        System.out.println(post.get());
         return PostMapper.toPostDto(post.get());
     }
 
@@ -115,9 +114,19 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) {
         Post post;
+        boolean isPhotoEmpty = photo.isEmpty();
+        String path ="";
+        postDto.setImageUrl(path);
+
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         post = PostMapper.toPost(postDto, user);
         post = postRepository.save(post);
+        if (!isPhotoEmpty)  {
+            path = String.format("post_%d", post.getPostId());
+            post.setImageUrl(path);
+            postRepository.save(post);
+        }
+
         Iterable<PostTag> postTags = postTagRepository.findAllById(postDto.getTags().stream()
                 .map(PostTag::getTagName)
                 .collect(Collectors.toList()));
@@ -129,13 +138,13 @@ public class PostServiceImpl implements PostService {
                     new PostTags(new PostTagsId(post, tag)));
         }
         if (photo.isEmpty())   return postDto;
-        String path = String.format("post_%s", post.getPostId());
+
         fileService.uploadFile(photo, path);
         return postDto;
     }
 
     @Override
-    public void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws Exception {
+    public void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException {
         long longId;
         longId = utilis.convertId(postId);
         Optional<Post> postOpt = postRepository.findById(longId);
@@ -143,26 +152,46 @@ public class PostServiceImpl implements PostService {
         Post post = postOpt.get();
         if (!Objects.equals(SecurityContextHolder.getContext().getAuthentication().getName(),
                 post.getCreator().getEmail())) {
-            throw new Exception("Próba edycji nie swojego postu");
+            throw new NoAccessException("Próba edycji nie swojego postu");
         }
+        boolean isPhotoEmpty = photo.isEmpty();
+        String path = isPhotoEmpty ? String.format("post_%d", longId) : "";
+
         post.setCategory(postDto.getCategory());
-        post.setImageUrl(postDto.getImageUrl());
+        post.setImageUrl(path);
         post.setMarkdownContent(postDto.getMarkdownContent());
         post.setTitle(postDto.getTitle());
         postRepository.save(post);
-        if (photo.isEmpty())   return;
-        String path = String.format("post_%d", longId);
+
+        Iterable<PostTag> postTags = postTagRepository.findAllById(postDto.getTags().stream()
+                .map(PostTag::getTagName)
+                .collect(Collectors.toList()));
+
+        List<PostTag> postTagList = StreamSupport.stream(postTags.spliterator(), false).toList();
+        for (PostTag tag : postDto.getTags()) {
+            if (!postTagList.contains(tag)) postTagRepository.save(tag);
+            postTagsRepository.save(
+                    new PostTags(new PostTagsId(post, tag)));
+        }
+        for (PostTag tag : postTagList) {
+            if (!postDto.getTags().contains(tag))   {
+                postTagsRepository.deleteById(new PostTagsId(post, tag));
+            }
+        }
+
+
+        if (isPhotoEmpty)   return;
         fileService.uploadFile(photo, path);
     }
 
     @Override
-    public void deletePost(String postId) throws Exception {
+    public void deletePost(String postId) throws NoAccessException, WrongIdException, NoIdException {
         long longId;
         longId = utilis.convertId(postId);
         Optional<Post> post = postRepository.findById(longId);
         if (post.isEmpty()) {}
         else if ((!Objects.equals(SecurityContextHolder.getContext().getAuthentication().getName(),
-                post.get().getCreator().getEmail()))) throw new Exception("Możesz usunąć tylko swój post");
+                post.get().getCreator().getEmail()))) throw new NoAccessException("Możesz usunąć tylko swój post");
         else {
             String photoToDelete = String.format("post_%s", postId);
             List<PostTags> postTags = postTagsRepository.findByPostTagsIdPostId(post.get());
@@ -184,26 +213,26 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updateComment(String postId, String commentId, CommentCreateUpdateDto commentUpdateDto) throws Exception {
+    public void updateComment(String postId, String commentId, CommentCreateUpdateDto commentUpdateDto) throws NoPostException, NoAccessException, WrongIdException, NoIdException {
         long longPostId, longCommentId;
         longPostId = utilis.convertId(postId);
         longCommentId = utilis.convertId(commentId);
         Optional<Post> post = postRepository.findById(longPostId);
         if (post.isEmpty()) throw new NoPostException("Post nie istnieje");
         Optional<Comment> comment = commentRepository.findById(longCommentId);
-        if (comment.isEmpty()) throw new Exception("Komentarz nie istnieje");
+        if (comment.isEmpty()) throw new NoAccessException("Komentarz nie istnieje");
         comment.get().setContent(commentUpdateDto.getContent());
         commentRepository.save(comment.get());
     }
 
     @Override
-    public void deleteComment(String commentId) throws Exception {
+    public void deleteComment(String commentId) throws NoAccessException, WrongIdException, NoIdException {
         long longId;
         longId = utilis.convertId(commentId);
         Optional<Comment> comment = commentRepository.findById(longId);
         if (comment.isEmpty()) {
         } else if ((!Objects.equals(SecurityContextHolder.getContext().getAuthentication().getName(),
-                comment.get().getCreator().getEmail()))) throw new Exception("Możesz usunąć tylko swój komentarz");
+                comment.get().getCreator().getEmail()))) throw new NoAccessException("Możesz usunąć tylko swój komentarz");
         else commentRepository.deleteById(longId);
     }
 

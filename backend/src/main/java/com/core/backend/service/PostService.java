@@ -5,6 +5,7 @@ import com.core.backend.dto.comment.CommentCreateUpdateDto;
 import com.core.backend.dto.comment.CommentDto;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
+import com.core.backend.exception.NoAccessException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.WrongIdException;
@@ -26,15 +27,15 @@ public interface PostService {
 
     List<CommentDto> getCommentsPagination(String postId, Integer page, Sort.Direction sort) throws WrongIdException, NoIdException, NoPostException;
 
-    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws Exception;
+    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException;
 
-    void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws Exception;
+    void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException;
 
-    void deletePost(String postId) throws Exception;
+    void deletePost(String postId) throws NoAccessException, WrongIdException, NoIdException;
 
     CommentCreateUpdateDto addComment(String postId, CommentCreateUpdateDto commentCreateUpdateDto) throws NoPostException, WrongIdException, NoIdException;
 
-    void updateComment(String postId, String commentId, CommentCreateUpdateDto commentCreateUpdateDto) throws Exception;
+    void updateComment(String postId, String commentId, CommentCreateUpdateDto commentCreateUpdateDto) throws NoAccessException, WrongIdException, NoIdException, NoPostException;
 
-    void deleteComment(String commentId) throws Exception;
+    void deleteComment(String commentId) throws NoAccessException, WrongIdException, NoIdException;
 }
