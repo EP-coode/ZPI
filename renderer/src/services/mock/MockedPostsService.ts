@@ -57,7 +57,7 @@ I tyle w temacie.`,
 
     return {
       postCount: {
-        itemsCount: pagination.postPerPage * pagination.currentPage + 100,
+        itemsCount: pagination.postPerPage * pagination.currentPage,
       },
       posts: posts.filter(post => filters ? filters.tagNames?.every(tagName => post.tags.some(tag => tag.name.toLowerCase() == tagName.toLowerCase())) ?? true : true),
     };

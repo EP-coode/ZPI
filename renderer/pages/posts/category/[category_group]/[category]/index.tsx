@@ -1,15 +1,16 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { BreadCrumbs } from "../../../../../src/components/BreadCrumbs";
 import CategoryTree from "../../../../../src/components/CategoryTree";
+import PaginationPicker from "../../../../../src/components/PaginationPicker";
 import PostFilterBox from "../../../../../src/components/PostFilterBox";
+import PostList from "../../../../../src/components/PostList";
 import SmallPostCard from "../../../../../src/components/SmallPostCard";
 import {
   PostFilterContext,
   PostFilterContextProvider,
 } from "../../../../../src/context/PostFilterContext";
-import usePosts from "../../../../../src/hooks/usePost";
 import { CollumnWrapper } from "../../../../../src/layout/CollumnWrapper";
 import { ContentWrapper } from "../../../../../src/layout/ContentWrapper";
 import { LeftCollumn } from "../../../../../src/layout/LeftCollumn";
@@ -19,43 +20,16 @@ import {
   PostOrdering,
 } from "../../../../../src/services/interfaces/PostService";
 
+const POST_PER_PAGE = 7;
+
 const PostCategoryPage: NextPage = () => {
+  const [currnetPage, setCurrentPage] = useState<number>(0);
   const postFilterContext = useContext(PostFilterContext);
   const router = useRouter();
   let { category_group, category } = router.query;
 
-
-  // TODO: simplify it with REDUCERS
-  const filters = useMemo<PostFilters>(() => {
-    // only to match types
-    if (typeof category_group != "string") {
-      category_group = "";
-    }
-
-    if (typeof category != "string") {
-      category = "";
-    }
-    return {
-      categoryGroupId: category_group,
-      categoryId: category,
-      creatorId: null,
-      maxPostDaysAge: postFilterContext?.maxPostAgeInDays ?? 30,
-      orderBy: postFilterContext?.postOrdering ?? PostOrdering.LikesDsc,
-      tagNames: postFilterContext?.activeTagFilters ?? [],
-    };
-  }, [
-    category_group,
-    category,
-    postFilterContext?.maxPostAgeInDays,
-    postFilterContext?.postOrdering,
-    postFilterContext?.activeTagFilters,
-  ]);
-
-  const [posts, totalPost] = usePosts({
-    page: 1,
-    filters: filters,
-    postsPerPage: 7,
-  });
+  // only to match types
+  if (typeof category != "string") category = "";
 
   const crumbs = [{ title: "Główna", href: "/" }];
 
@@ -78,13 +52,15 @@ const PostCategoryPage: NextPage = () => {
       <BreadCrumbs crumbs={crumbs} />
       <CollumnWrapper>
         <LeftCollumn>
-          <div className="flex flex-col gap-3 m-2 md:m-0">
-            {posts.map((post) => (
-              <div className="h-112 w-full" key={post.postId}>
-                <SmallPostCard post={post} />
-              </div>
-            ))}
-          </div>
+          <PostList
+            categoryGroupId={null}
+            categoryId={category}
+            tagNames={postFilterContext?.activeTagFilters ?? []}
+            postPerPage={7}
+            creatorId={null}
+            maxPostDaysAge={postFilterContext?.maxPostAgeInDays ?? 30}
+            orderBy={postFilterContext?.postOrdering ?? PostOrdering.LikesDsc}
+          />
         </LeftCollumn>
         <RightCollumn className="m-2 md:m-0">
           <PostFilterBox />
