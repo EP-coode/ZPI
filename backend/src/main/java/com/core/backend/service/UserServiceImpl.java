@@ -33,31 +33,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private Utilis utilis;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if(user == null){
-            log.error("User not found in the database");
-            throw new UsernameNotFoundException("User not found in the database");
-        }
-        else{
-            log.info("User found in the database: {}", email);
-        }
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName()));
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPasswordHash(),
-                user.isEmailConfirmed(),
-                accountNonExpired,
-                credentialsNonExpired,
-                accountNonLocked,
-                authorities);
-    }
-
-    @Override
     public Role getRole(String id) throws NoRoleException {
         Optional<Role> role = roleRepository.findById(id);
         if(role.isEmpty()) throw new NoRoleException();
@@ -112,5 +87,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = getUserByEmail(email);
         user.setAvatarUrl(null);
         saveUser(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username);
+        if(user == null){
+            log.error("User not found in the database");
+            throw new UsernameNotFoundException("User not found in the database");
+        }
+        else{
+            log.info("User found in the database: {}", username);
+        }
+        boolean accountNonExpired = true;
+        boolean credentialsNonExpired = true;
+        boolean accountNonLocked = true;
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName()));
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPasswordHash(),
+                user.isEmailConfirmed(),
+                accountNonExpired,
+                credentialsNonExpired,
+                accountNonLocked,
+                authorities);
     }
 }
