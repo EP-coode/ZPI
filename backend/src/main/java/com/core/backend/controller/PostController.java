@@ -11,8 +11,10 @@ import com.core.backend.service.PostService;
 import com.core.backend.utilis.Utilis;
 import com.core.backend.exception.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -109,6 +111,26 @@ public class PostController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("Post usunięto pomyślnie", HttpStatus.OK);
+    }
+
+
+    @GetMapping("/{postId}/photo")
+    public ResponseEntity<Object> getPhotoByPostId(@PathVariable String postId) {
+        ByteArrayResource photo;
+        try {
+            photo = postService.getPhotoByPostId(postId);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
+            return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
+        } catch (NoPostException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        long contentLength = photo == null ? 0 : photo.contentLength();
+        return ResponseEntity.ok()
+                .contentLength(contentLength)
+                .contentType(MediaType.IMAGE_PNG)
+                .body(photo);
     }
 
 

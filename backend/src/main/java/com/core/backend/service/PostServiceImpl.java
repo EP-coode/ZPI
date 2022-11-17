@@ -13,6 +13,7 @@ import com.core.backend.model.*;
 import com.core.backend.repository.*;
 import com.core.backend.utilis.Utilis;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -276,6 +276,18 @@ public class PostServiceImpl implements PostService {
                 comment.get().getCreator().getEmail())) && authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) throw new NoAccessException("Możesz usunąć tylko swój komentarz");
         else commentRepository.deleteById(longId);
     }
+
+    @Override
+    public ByteArrayResource getPhotoByPostId(String postId) throws NoIdException, NoPostException, WrongIdException {
+        long longId;
+        longId = utilis.convertId(postId);
+        Optional<Post> post = postRepository.findById(longId);
+        if (post.isEmpty()) throw new NoPostException("Post nie istnieje");
+        String fileName = String.format("post_%d", longId);
+        ByteArrayResource byteArrayResource = fileService.downloadFile(fileName);
+        return byteArrayResource;
+    }
+
 
 
 }
