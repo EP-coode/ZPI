@@ -13,6 +13,7 @@ import { PostOrdering } from "../services/interfaces/PostService";
 import { tagsService } from "../services";
 import { Tag } from "../model/Tag";
 import PlusIcon from "../icons/PlusIcon";
+import { LoadingState } from "../common/LoadingState";
 
 type Props = {};
 
@@ -20,6 +21,7 @@ const PostFilterBox = (props: Props) => {
   const postFilterContext = useContext(PostFilterContext);
   const [tagFilterPrefix, setTagFilterPrefix] = useState<string>("");
   const [tagSearchResult, setTagSearchResult] = useState<string[]>([]);
+  const [tagSearchState, setTagSearchState] = useState(LoadingState.IDDLE);
   const tagBadges: ReactNode[] = [];
   const searchResultTagBadges: ReactNode[] = [];
 
@@ -37,7 +39,10 @@ const PostFilterBox = (props: Props) => {
       <li className="badge badge-secondary badge-lg gap-2" key={tagName}>
         {tagName}
         <PlusIcon
-          onClick={() => postFilterContext?.addTag(tagName)}
+          onClick={() => {
+            postFilterContext?.addTag(tagName);
+            setTagSearchResult(tagSearchResult.filter(tag => tag != tagName))
+          }}
           className="cursor-pointer"
         />
       </li>
@@ -46,6 +51,7 @@ const PostFilterBox = (props: Props) => {
 
   useEffect(() => {
     let isCanceled = false;
+    setTagSearchState(LoadingState.LOADING);
 
     const f = async () => {
       const tags = await tagsService.getTagsByPrefix(tagFilterPrefix, 15);
@@ -60,6 +66,7 @@ const PostFilterBox = (props: Props) => {
 
       if (!isCanceled) {
         setTagSearchResult(newTagsResult);
+        setTagSearchState(LoadingState.LOADED);
       }
     };
 

@@ -1,4 +1,5 @@
 import { Tag } from "../../model/Tag";
+import { sleep } from "../../utils/sleep";
 import { TagsService } from "../interfaces/TagsService";
 
 export const tagsService: TagsService = {
@@ -17,6 +18,8 @@ export const tagsService: TagsService = {
       { name: "Koła naukowe", totalPosts: 32 },
       { name: "Humor", totalPosts: 32 },
     ];
+
+    await sleep(1000)
 
     return Promise.resolve({
       tags: exampleTags.filter((tag) => tag.name.toLowerCase().startsWith(prefix.toLowerCase())),

@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const routesWithoutNavbar = ["/register", "/login"];
   const renderNavbar = !routesWithoutNavbar.some(
     (route) => router.pathname == route
-  );
+  ); 
 
   return (
     <ThemeContextProvider>

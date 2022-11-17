@@ -3,10 +3,8 @@ import { useRouter } from "next/router";
 import React, { useContext, useMemo, useState } from "react";
 import { BreadCrumbs } from "../../../../../src/components/BreadCrumbs";
 import CategoryTree from "../../../../../src/components/CategoryTree";
-import PaginationPicker from "../../../../../src/components/PaginationPicker";
 import PostFilterBox from "../../../../../src/components/PostFilterBox";
 import PostList from "../../../../../src/components/PostList";
-import SmallPostCard from "../../../../../src/components/SmallPostCard";
 import {
   PostFilterContext,
   PostFilterContextProvider,

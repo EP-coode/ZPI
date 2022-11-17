@@ -26,9 +26,12 @@ export const PostFilterContextProvider = ({
 
   const router = useRouter();
   const { tags } = router.query;
-  
 
   useEffect(() => {
+    if (!router.pathname.startsWith("/posts")) {
+      return;
+    }
+
     let parsedTags: string[] = [];
 
     if (typeof tags == "string") {
@@ -38,7 +41,7 @@ export const PostFilterContextProvider = ({
     }
 
     setActiveFilters(parsedTags);
-  }, [tags]);
+  }, [router.pathname, tags]);
 
   const handleAddTagFilter = (tagName: string) => {
     const newActiveTagFilters = [...activeTagFilters, tagName];
