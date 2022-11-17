@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface PostTagsRepository extends CrudRepository<PostTags, PostTagsId> {
     List<PostTags> findByPostTagsIdPostId(Post post);
+    List<PostTags> findAllByPostTagsIdPostIdIn(List<Post> postList);
 }

@@ -9,5 +9,5 @@ public class PostFilters {
     private String[] tagNames;
     private String categoryGroup;
     private String category;
-    private long creatorId;
+    private Long creatorId;
 }

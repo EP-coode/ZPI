@@ -1,5 +1,6 @@
 package com.core.backend.controller;
 
+import com.core.backend.dto.filter.PostFilters;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.NoPostException;
@@ -35,16 +36,22 @@ public class PostController {
 
     public static final int PAGE_SIZE = 5;
 
-    @GetMapping
-    public ResponseEntity<Object> getPosts() {
-        return new ResponseEntity<>(postService
-                .getAllPosts(), HttpStatus.OK);
-    }
+//    @GetMapping
+//    public ResponseEntity<Object> getPosts() {
+//        return new ResponseEntity<>(postService
+//                .getAllPosts(), HttpStatus.OK);
+//    }
+//
+//    @GetMapping(params = "page")
+//    public ResponseEntity<Object> getPostsPagination(@RequestParam(required = false) Integer page, Sort.Direction sort) {
+//        return new ResponseEntity<>(postService
+//                .getAllPostsPagination(page, sort), HttpStatus.OK);
+//    }
 
-    @GetMapping(params = "page")
-    public ResponseEntity<Object> getPostsPagination(@RequestParam(required = false) Integer page, Sort.Direction sort) {
+    @GetMapping
+    public ResponseEntity<Object> getPostsFiltered(@RequestBody PostFilters postFilters) {
         return new ResponseEntity<>(postService
-                .getAllPostsPagination(page, sort), HttpStatus.OK);
+                .getPostsFiltered(postFilters), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{postId}")
