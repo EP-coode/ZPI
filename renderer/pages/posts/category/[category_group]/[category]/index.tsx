@@ -78,15 +78,15 @@ const PostCategoryPage: NextPage = () => {
       <BreadCrumbs crumbs={crumbs} />
       <CollumnWrapper>
         <LeftCollumn>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 m-2 md:m-0">
             {posts.map((post) => (
-              <div className="h-120 w-full" key={post.postId}>
+              <div className="h-112 w-full" key={post.postId}>
                 <SmallPostCard post={post} />
               </div>
             ))}
           </div>
         </LeftCollumn>
-        <RightCollumn>
+        <RightCollumn className="m-2 md:m-0">
           <PostFilterBox />
           <CategoryTree />
         </RightCollumn>

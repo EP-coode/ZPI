@@ -24,7 +24,7 @@ const CategoryTree = () => {
   return (
     <ContentPane className="flex-col gap-5">
       <h2 className="text-2xl font-semibold">Kategorie postów</h2>
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         {categoryGroups.map((categoryGroup) => (
           <CategoryTreeItem
             categoryGroup={categoryGroup}

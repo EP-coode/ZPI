@@ -16,7 +16,7 @@ export const CategoryTreeItem = ({
     <div
       tabIndex={0}
       className={classNames(
-        "collapse collapse-arrow border border-base-300 bg-base-100 last:rounded-b-xl first:rounded-t-xl w-full max-w-md cursor-pointer",
+        "collapse collapse-arrow border border-base-300 bg-base-100 last:rounded-b-xl first:rounded-t-xl w-full cursor-pointer",
         {
           "collapse-open": isOpen,
           "collapse-close": !isOpen,

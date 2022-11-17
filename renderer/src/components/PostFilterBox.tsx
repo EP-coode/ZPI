@@ -80,60 +80,72 @@ const PostFilterBox = (props: Props) => {
 
   const handleSelectMaxAgeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedMaxAgeInDays = parseInt(e.target.value);
-    
+
     postFilterContext?.setMaxPostAge(selectedMaxAgeInDays);
   };
 
   const handleSelectOrdering = (e: ChangeEvent<HTMLSelectElement>) => {
     const postOrdering = e.target.value as PostOrdering;
-    console.log("DUP DUP");
     postFilterContext?.setPostOrdering(postOrdering);
   };
 
   return (
     <ContentPane className="flex-col justify-center align-middle">
-      <h2 className="text-xl font-semibold">Filtruj posty</h2>
-      <div className="flex flex-col max-w-xl gap-3 w-full mt-3">
-        <div>
-          <h3 className="font-semibold">Musi zazwierać tagi:</h3>
-          <ul className="flex flex-wrap gap-2 mt-1">{tagBadges}</ul>
-        </div>
-        <div>
-          <h3 className="font-semibold">Dodaj tagi do wyszukiwania:</h3>
-          <input
-            placeholder="Wyszukaj tagi po nazwie"
-            type="text"
-            onChange={(e) => setTagFilterPrefix(e.target.value)}
-            value={tagFilterPrefix}
-            className="input input-bordered w-full mt-1"
-          />
-          <ul className="flex flex-wrap gap-2 mt-3">{searchResultTagBadges}</ul>
-        </div>
-        <div>
-          <h3 className="font-semibold">Szukaj postów z:</h3>
-          <select
-            className="select select-bordered w-full mt-1"
-            onChange={handleSelectMaxAgeChange}
-            defaultValue={postFilterContext?.maxPostAgeInDays ?? 30}
-          >
-            <option value={1}>Ostatni dzień</option>
-            <option value={7}>Ostatni tydzień</option>
-            <option value={30}>Ostatni miesiąc</option>
-            <option value={-1}>Wszyskie</option>
-          </select>
-        </div>
-        <div>
-          <h3 className="font-semibold">Sortuj po:</h3>
-          <select
-            className="select select-bordered w-full mt-1"
-            onChange={handleSelectOrdering}
-            defaultValue={postFilterContext?.postOrdering ?? PostOrdering.LikesDsc}
-          >
-            <option value={PostOrdering.DateAsc}>Najstarsze</option>
-            <option value={PostOrdering.DateDsc}>Najnowsze</option>
-            <option value={PostOrdering.LikesAsc}>Najgorzej oceniane</option>
-            <option value={PostOrdering.LikesDsc}>Najlepiej oceniane</option>
-          </select>
+      <div
+        tabIndex={0}
+        className="collapse collapse-arrow border sm:border-none border-base-300 rounded-box sm:collapse-open w-full"
+      >
+        <h2 className="text-xl font-semibold collapse-title">Filtruj posty</h2>
+        <div className="flex flex-col max-w-xl gap-3 w-full collapse-content">
+          <div>
+            <h3 className="font-semibold">Musi zazwierać tagi:</h3>
+            <ul className="flex flex-wrap gap-2 mt-1">{tagBadges}</ul>
+          </div>
+          <div>
+            <h3 className="font-semibold">Dodaj tagi do wyszukiwania:</h3>
+            <input
+              placeholder="Wyszukaj tagi po nazwie"
+              type="text"
+              onChange={(e) => setTagFilterPrefix(e.target.value)}
+              value={tagFilterPrefix}
+              className="input input-bordered w-full mt-1"
+            />
+            <ul className="flex flex-wrap gap-2 mt-3">
+              {searchResultTagBadges}
+            </ul>
+          </div>
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">Szukaj postów z okresu</span>
+            </label>
+            <select
+              className="select select-bordered w-full mt-1"
+              onChange={handleSelectMaxAgeChange}
+              defaultValue={postFilterContext?.maxPostAgeInDays ?? 30}
+            >
+              <option value={1}>Ostatni dzień</option>
+              <option value={7}>Ostatni tydzień</option>
+              <option value={30}>Ostatni miesiąc</option>
+              <option value={-1}>Wszyskie</option>
+            </select>
+          </div>
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">Sortuj po</span>
+            </label>
+            <select
+              className="select select-bordered w-full mt-1"
+              onChange={handleSelectOrdering}
+              defaultValue={
+                postFilterContext?.postOrdering ?? PostOrdering.LikesDsc
+              }
+            >
+              <option value={PostOrdering.DateAsc}>Najstarsze</option>
+              <option value={PostOrdering.DateDsc}>Najnowsze</option>
+              <option value={PostOrdering.LikesAsc}>Najgorzej oceniane</option>
+              <option value={PostOrdering.LikesDsc}>Najlepiej oceniane</option>
+            </select>
+          </div>
         </div>
       </div>
     </ContentPane>
