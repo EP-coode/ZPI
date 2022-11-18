@@ -63,6 +63,18 @@ const PostList = ({
   ]);
   // TODO: remove this nasty dependency array
 
+  useEffect(() => {
+    setCurrentPage(0)
+  }, [
+    postPerPage,
+    categoryGroupId,
+    categoryId,
+    creatorId,
+    maxPostDaysAge,
+    orderBy,
+    tagNames,
+  ]);
+
   const handlePageSelect = (page: number) => {
     setCurrentPage(page);
     window?.scrollTo({
