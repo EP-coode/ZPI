@@ -1,11 +1,13 @@
 import React from "react";
 
-type Props = {};
+type Props = {
+  className?: string
+};
 
-const LoadingPlaceholder = (props: Props) => {
+const LoadingPlaceholder = ({className}: Props) => {
   return (
-    <div className="w-100 m-auto p-10"> 
-      <progress className="progress w-56"></progress>
+    <div className="w-100 m-auto p-10 flex justify-center"> 
+      <progress className={`progress w-56 ${className}`}></progress>
     </div>
   );
 };

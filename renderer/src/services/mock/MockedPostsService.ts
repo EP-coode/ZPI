@@ -60,7 +60,7 @@ I tyle w temacie.`,
     const filteredPosts = posts.filter(post => filters ? filters.tagNames?.every(tagName => post.tags.some(tag => tag.name.toLowerCase() == tagName.toLowerCase())) ?? true : true);
     return {
       postCount: {
-        itemsCount: filteredPosts.length,
+        itemsCount: filteredPosts.length + (filteredPosts.length > 0 ? 100 : 0),
       },
       posts: filteredPosts,
     };

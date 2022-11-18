@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { createContext, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { PostOrdering } from "../services/interfaces/PostService";
 
 export interface IPostFilterContext {
@@ -12,7 +13,18 @@ export interface IPostFilterContext {
   addTag: (tagName: string) => void;
 }
 
-export const PostFilterContext = createContext<IPostFilterContext | null>(null);
+const DEFAULT_FILTERS: IPostFilterContext = {
+  activeTagFilters: [],
+  postOrdering: PostOrdering.LikesDsc,
+  maxPostAgeInDays: 30,
+  setPostOrdering: () => {},
+  setMaxPostAge: () => {},
+  removeTag: () => {},
+  addTag: () => {},
+};
+
+export const PostFilterContext =
+  createContext<IPostFilterContext>(DEFAULT_FILTERS);
 
 export const PostFilterContextProvider = ({
   children,
@@ -43,59 +55,68 @@ export const PostFilterContextProvider = ({
     setActiveFilters(parsedTags);
   }, [router.pathname, tags]);
 
-  const handleAddTagFilter = (tagName: string) => {
-    const newActiveTagFilters = [...activeTagFilters, tagName];
-    setActiveFilters(newActiveTagFilters);
+  const handleAddTagFilter = useCallback(
+    (tagName: string) => {
+      const newActiveTagFilters = [...activeTagFilters, tagName];
+      setActiveFilters(newActiveTagFilters);
 
-    const query = { ...router.query };
+      const query = { ...router.query };
 
-    if (newActiveTagFilters.length > 0) {
-      query["tags"] = newActiveTagFilters.join(",");
-    } else {
-      delete query.tags;
-    }
+      if (newActiveTagFilters.length > 0) {
+        query["tags"] = newActiveTagFilters.join(",");
+      } else {
+        delete query.tags;
+      }
 
-    router.replace(
-      {
-        pathname: router.pathname,
-        query,
-      },
-      undefined,
-      { shallow: true }
-    );
-  };
+      router.replace(
+        {
+          pathname: router.pathname,
+          query,
+        },
+        undefined,
+        { shallow: true }
+      );
+    },
+    [activeTagFilters, router]
+  );
 
-  const handlePostOrderingChange = (postOrdering: PostOrdering) => {
+  const handlePostOrderingChange = useCallback((postOrdering: PostOrdering) => {
     setPostOrdering(postOrdering);
-  };
+  }, []);
 
-  const handleMaxPostAgeInDaysChange = (maxPostAgeInDays: number) => {
-    setMaxPostAgeInDays(maxPostAgeInDays);
-  };
+  const handleMaxPostAgeInDaysChange = useCallback(
+    (maxPostAgeInDays: number) => {
+      setMaxPostAgeInDays(maxPostAgeInDays);
+    },
+    []
+  );
 
-  const handleRemoveTagFilter = (tagName: string) => {
-    const newActiveTagFilters = activeTagFilters.filter(
-      (_tagName) => _tagName != tagName
-    );
-    setActiveFilters(newActiveTagFilters);
+  const handleRemoveTagFilter = useCallback(
+    (tagName: string) => {
+      const newActiveTagFilters = activeTagFilters.filter(
+        (_tagName) => _tagName != tagName
+      );
+      setActiveFilters(newActiveTagFilters);
 
-    const query = { ...router.query };
+      const query = { ...router.query };
 
-    if (newActiveTagFilters.length > 0) {
-      query["tags"] = newActiveTagFilters.join(",");
-    } else {
-      delete query.tags;
-    }
+      if (newActiveTagFilters.length > 0) {
+        query["tags"] = newActiveTagFilters.join(",");
+      } else {
+        delete query.tags;
+      }
 
-    router.replace(
-      {
-        pathname: router.pathname,
-        query,
-      },
-      undefined,
-      { shallow: true }
-    );
-  };
+      router.replace(
+        {
+          pathname: router.pathname,
+          query,
+        },
+        undefined,
+        { shallow: true }
+      );
+    },
+    [activeTagFilters, router]
+  );
 
   return (
     <PostFilterContext.Provider

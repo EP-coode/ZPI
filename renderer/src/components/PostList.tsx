@@ -63,24 +63,32 @@ const PostList = ({
   ]);
   // TODO: remove this nasty dependency array
 
+  const handlePageSelect = (page: number) => {
+    setCurrentPage(page);
+    window?.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    });
+  };
+
   return (
     <div className="flex flex-col gap-3 m-2 md:m-0 min-h-screen">
       {totalPosts == 0 && LoadingState.LOADED == postLoadingState && (
         <div className="w-full my-auto text-center">nie znaleziono postów</div>
       )}
       {LoadingState.LOADING == postLoadingState && <LoadingPlaceholder />}
-      {posts.map((post) => (
-        <div className="h-112 w-full" key={post.postId}>
-          <SmallPostCard post={post} />
-        </div>
-      ))}
+      {LoadingState.LOADED == postLoadingState &&
+        posts.map((post) => (
+          <div className="h-112 w-full" key={post.postId}>
+            <SmallPostCard post={post} />
+          </div>
+        ))}
       <PaginationPicker
         className="mb-0 mt-auto mx-auto"
-        onPageSelect={(page) => setCurrentPage(page)}
+        onPageSelect={handlePageSelect}
         currentPage={currentPage}
-        totalPages={
-          totalPosts / postPerPage + (totalPosts % postPerPage) == 0 ? 0 : 1
-        }
+        totalPages={Math.ceil(totalPosts / postPerPage)}
       />
     </div>
   );

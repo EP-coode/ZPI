@@ -1,4 +1,8 @@
-import { NextPage } from "next";
+import {
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+  NextPage,
+} from "next";
 import { useRouter } from "next/router";
 import React, { useContext, useMemo, useState } from "react";
 import { BreadCrumbs } from "../../../../../src/components/BreadCrumbs";
@@ -20,16 +24,23 @@ import {
 
 const POST_PER_PAGE = 7;
 
-const PostCategoryPage: NextPage = () => {
-  const [currnetPage, setCurrentPage] = useState<number>(0);
-  const postFilterContext = useContext(PostFilterContext);
-  const router = useRouter();
-  let { category_group, category } = router.query;
+type Crumbs = { title: string; href: string };
+
+type PageProps = {
+  crumbs: Crumbs[];
+  category: string;
+};
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  context
+) => {
+  let category = context.params?.category;
+  let category_group = context.params?.category_group;
 
   // only to match types
   if (typeof category != "string") category = "";
 
-  const crumbs = [{ title: "Główna", href: "/" }];
+  const crumbs: Crumbs[] = [{ title: "Główna", href: "/" }];
 
   if (typeof category_group == "string" && category_group.length > 0) {
     crumbs.push({
@@ -45,6 +56,19 @@ const PostCategoryPage: NextPage = () => {
     }
   }
 
+  return {
+    props: {
+      crumbs,
+      category,
+    },
+  };
+};
+
+const PostCategoryPage: NextPage<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ crumbs, category }) => {
+  const postFilterContext = useContext(PostFilterContext);
+
   return (
     <ContentWrapper>
       <BreadCrumbs crumbs={crumbs} />
@@ -54,7 +78,7 @@ const PostCategoryPage: NextPage = () => {
             categoryGroupId={null}
             categoryId={category}
             tagNames={postFilterContext?.activeTagFilters ?? []}
-            postPerPage={7}
+            postPerPage={POST_PER_PAGE}
             creatorId={null}
             maxPostDaysAge={postFilterContext?.maxPostAgeInDays ?? 30}
             orderBy={postFilterContext?.postOrdering ?? PostOrdering.LikesDsc}
