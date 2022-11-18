@@ -1,7 +1,10 @@
 package com.core.backend.service;
 
 import com.core.backend.exception.*;
+import com.core.backend.id.FollowedUserId;
+import com.core.backend.model.FollowedUser;
 import com.core.backend.model.Role;
+import com.core.backend.repository.FollowedUserRepository;
 import com.core.backend.repository.RoleRepository;
 import com.core.backend.model.User;
 import com.core.backend.repository.UserRepository;
@@ -22,11 +25,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service @RequiredArgsConstructor @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final FollowedUserRepository followedUserRepository;
     public static final int PAGE_SIZE = 5;
 
     @Autowired
@@ -87,6 +92,43 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = getUserByEmail(email);
         user.setAvatarUrl(null);
         saveUser(user);
+    }
+
+    @Override
+    public void followUnfollowUser(String email, String id) throws WrongIdException, NoUserException, NoIdException {
+        User user = userRepository.findByEmail(email);
+        User userToFollow = getUserById(id);
+        FollowedUserId followedUserId = new FollowedUserId();
+        followedUserId.setUserId(user);
+        followedUserId.setFollowedUserId(userToFollow);
+        Optional<FollowedUser> followedUser = followedUserRepository.findById(followedUserId);
+        if(followedUser.isPresent()){
+            followedUserRepository.delete(followedUser.get());
+        }else{
+            FollowedUser newFollow = new FollowedUser();
+            newFollow.setPrimaryKey(followedUserId);
+            followedUserRepository.save(newFollow);
+        }
+    }
+
+    @Override
+    public List<User> getFollowers(String id) throws WrongIdException, NoUserException, NoIdException {
+        User user = getUserById(id);
+        return followedUserRepository.findAllByPrimaryKey_FollowedUserId(user)
+                .stream()
+                .map(FollowedUser::getPrimaryKey)
+                .map(FollowedUserId::getUserId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> getFollowings(String id) throws WrongIdException, NoUserException, NoIdException {
+        User user = getUserById(id);
+        return followedUserRepository.findAllByPrimaryKey_UserId(user)
+                .stream()
+                .map(FollowedUser::getPrimaryKey)
+                .map(FollowedUserId::getFollowedUserId)
+                .collect(Collectors.toList());
     }
 
     @Override

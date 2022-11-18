@@ -30,5 +30,29 @@ GET http://localhost:8080/registration/confirm_registration?token=jakistoken
 GET http://localhost:8080/registration/reset_token?email=user2@gmail.com
 ###
 
-###
 GET http://localhost:8080/users/2
+
+### Followanie
+
+GET http://localhost:8080/followedUsers/followUnfollow/2
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50Y29tbXVuaXR5enBpQGdtYWlsLmNvbSIsInVzZXJfaWQiOjEsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiXCJTdHVkZW50Q29tbXVuaXR5XCIiLCJleHAiOjE2Njg3OTY1MTR9.Tvdf1NbZ-xfXajrKqfcyaKS0aUUhJEb2S5lJ9ORBX-Y
+###
+
+GET http://localhost:8080/followedUsers/followers/2
+###
+
+GET http://localhost:8080/followedUsers/followings/1
+
+### User
+
+GET http://localhost:8080/users?name=123&page=0
+###
+
+GET http://localhost:8080/users/2
+###
+
+GET http://localhost:8080/users/details
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50Y29tbXVuaXR5enBpQGdtYWlsLmNvbSIsInVzZXJfaWQiOjEsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiXCJTdHVkZW50Q29tbXVuaXR5XCIiLCJleHAiOjE2Njg3OTY1MTR9.Tvdf1NbZ-xfXajrKqfcyaKS0aUUhJEb2S5lJ9ORBX-Y
+###
+
+GET http://localhost:8080/users/avatar/user123

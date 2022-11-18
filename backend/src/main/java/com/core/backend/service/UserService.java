@@ -29,4 +29,10 @@ public interface UserService {
     void changeAvatar(String email, String fileExtension);
 
     void deleteAvatar(String email);
+
+    void followUnfollowUser(String email, String id) throws WrongIdException, NoUserException, NoIdException;
+
+    List<User> getFollowers(String id) throws WrongIdException, NoUserException, NoIdException;
+
+    List<User> getFollowings(String id) throws WrongIdException, NoUserException, NoIdException;
 }
