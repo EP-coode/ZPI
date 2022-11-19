@@ -5,8 +5,8 @@ import FullPageFormWrapper from "../src/layout/FullPageFormWrapper";
 const Confirmation: NextPage = () => {
   return (
     <FullPageFormWrapper>
-    <ConfirmationLoading></ConfirmationLoading>
-  </FullPageFormWrapper>
+      <ConfirmationLoading></ConfirmationLoading>
+    </FullPageFormWrapper>
   );
 };
 
