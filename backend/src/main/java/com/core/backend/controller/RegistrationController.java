@@ -1,8 +1,10 @@
 package com.core.backend.controller;
 
+import com.core.backend.exception.NoUserException;
+import com.core.backend.exception.NoVerificationTokenException;
+import com.core.backend.exception.TokenExpiredException;
 import com.core.backend.registration.OnRegistrationCompleteEvent;
-import com.core.backend.model.VerificationToken;
-import com.core.backend.service.UserService;
+import com.core.backend.service.RegistrationService;
 import com.core.backend.model.User;
 import com.core.backend.dto.RegisterUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +16,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Calendar;
 
 @Controller
 @RequestMapping(path = "/registration")
 public class RegistrationController {
 
     @Autowired
-    private UserService service;
+    private RegistrationService service;
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
@@ -51,33 +52,27 @@ public class RegistrationController {
 
     @GetMapping("/confirm_registration")
     public ResponseEntity<Object> confirmRegistration(@RequestParam("token") String token) {
-        VerificationToken verificationToken = service.getVerificationToken(token);
-        if (verificationToken == null) {
-            return new ResponseEntity<>("Nie znaleziono tokenu", HttpStatus.NOT_FOUND);
+        try {
+            service.confirmUser(token);
+        }catch(NoVerificationTokenException e){
+            return new ResponseEntity<>("Podany token nie istnieje", HttpStatus.NOT_FOUND);
+        }catch(TokenExpiredException e){
+            return new ResponseEntity<>("Token stracił ważność", HttpStatus.GONE);
+        }catch(NoUserException e){
+            return new ResponseEntity<>("Użytkownik skojarzony z tokenem nie istnieje", HttpStatus.NOT_FOUND);
         }
-        User user = verificationToken.getUser();
-        Calendar cal = Calendar.getInstance();
-        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            return new ResponseEntity<>("Token stracił ważność", HttpStatus.BAD_REQUEST);
-        }
-        user.setEmailConfirmed(true);
-        service.saveUser(user);
-        service.deleteVerificationToken(verificationToken);
         return new ResponseEntity<>("Użytkownik potwierdzony", HttpStatus.OK);
     }
 
-    @PostMapping("/reset_token")
+    @GetMapping("/reset_token")
     public ResponseEntity<Object> resetVerificationToken(@RequestParam("email") String email) {
-        User user = service.getUserByEmail(email);
-        if(user == null){
+        User user;
+        try {
+            user = service.resetVerificationToken(email);
+        }catch(NoUserException e){
             return new ResponseEntity<>("Uzytkownik nie znaleziony", HttpStatus.BAD_REQUEST);
-        }
-        if(user.isEmailConfirmed()){
+        }catch(IllegalArgumentException e){
             return new ResponseEntity<>("Uzytkownik został już potwierdzony", HttpStatus.BAD_REQUEST);
-        }
-        VerificationToken verificationToken = service.getVerificationToken(user);
-        if(verificationToken != null){
-            service.deleteVerificationToken(verificationToken);
         }
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
         return new ResponseEntity<>("Nowy token został wysłany na email", HttpStatus.OK);

@@ -1,30 +1,38 @@
 package com.core.backend.service;
 
-import com.core.backend.model.VerificationToken;
+import com.core.backend.exception.NoIdException;
+import com.core.backend.exception.NoRoleException;
+import com.core.backend.exception.NoUserException;
+import com.core.backend.exception.WrongIdException;
+import com.core.backend.model.Role;
 import com.core.backend.model.User;
-import com.core.backend.dto.RegisterUser;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
 
 public interface UserService {
 
-    User registerNewUserAccount(RegisterUser userDto) throws Exception;
-    void createVerificationToken(User user, String token);
+    Role getRole(String id) throws NoRoleException;
 
-    void deleteVerificationToken(VerificationToken token);
+    List<User> getAllUsers(String name, Integer page, Sort.Direction sort);
 
-    VerificationToken getVerificationToken(String VerificationToken);
-
-    VerificationToken getVerificationToken(User user);
-
-    User getUserByToken(String verificationToken);
+    User getUserById(String id) throws WrongIdException, NoIdException, NoUserException;
 
     User getUserByEmail(String email);
 
+    User getUserByName(String name);
+
     User saveUser(User user);
 
-    void deleteUnconfirmedUser(User user);
+    void deleteUser(User user);
 
     void changeAvatar(String email, String fileExtension);
 
     void deleteAvatar(String email);
+
+    void followUnfollowUser(String email, String id) throws WrongIdException, NoUserException, NoIdException;
+
+    List<User> getFollowers(String id) throws WrongIdException, NoUserException, NoIdException;
+
+    List<User> getFollowings(String id) throws WrongIdException, NoUserException, NoIdException;
 }

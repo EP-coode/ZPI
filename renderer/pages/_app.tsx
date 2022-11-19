@@ -8,7 +8,7 @@ import { PostFilterContextProvider } from "../src/context/PostFilterContext";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const routesWithoutNavbar = ["/register", "/login"];
+  const routesWithoutNavbar = ["/register", "/login", "/confirmation"];
   const renderNavbar = !routesWithoutNavbar.some(
     (route) => router.pathname == route
   ); 

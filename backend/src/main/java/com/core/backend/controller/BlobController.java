@@ -18,7 +18,7 @@ public class BlobController {
     @GetMapping("/download")
     public ResponseEntity<Object> readBlobFile(@RequestParam("fileName") String fileName){
         try {
-            ByteArrayResource file = fileService.downloadFile(fileName);
+            byte[] file = fileService.downloadFile(fileName);
             return new ResponseEntity<>(file, HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
