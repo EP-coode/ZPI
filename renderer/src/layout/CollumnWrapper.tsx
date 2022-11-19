@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from "react";
 
 export const CollumnWrapper = ({ children }: PropsWithChildren) => {
   return (
-    <div className="flex flex-wrap-reverse justify-center items-end">
+    <div className="grid grid-cols-1 grid-rows-[auto_] sm:grid-cols-[2fr_minmax(16rem,_1fr)]">
       {children}
     </div>
   );

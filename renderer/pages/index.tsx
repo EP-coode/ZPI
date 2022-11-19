@@ -12,6 +12,7 @@ import { Post } from "../src/model/Post";
 import RightCollumn from "../src/layout/RightCollumn";
 import { LeftCollumn } from "../src/layout/LeftCollumn";
 import { ContentWrapper } from "../src/layout/ContentWrapper";
+import { PostOrdering } from "../src/services/interfaces/PostService";
 
 const PAGE_SIZE = 3;
 
@@ -33,10 +34,12 @@ export const getServerSideProps: GetServerSideProps<
   await Promise.all(
     categoryGroups.map(async (categoryGroup) => {
       const posts = await postsService.getPosts(pagination, {
-        categoryGroup: categoryGroup.name,
-        category: null,
+        categoryGroupId: categoryGroup.name,
+        categoryId: null,
         creatorId: null,
         tagNames: null,
+        maxPostDaysAge: 30,
+        orderBy: PostOrdering.LikesDsc
       });
       categoryGroupsPosts[categoryGroup.name] = posts.posts;
     })

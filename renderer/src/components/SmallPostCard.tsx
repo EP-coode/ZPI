@@ -9,18 +9,19 @@ import { LikesCounter } from "./LikesCounter";
 
 type Props = {
   post: Post;
+  className?: string
 };
 
-const SmallPostCard = ({ post }: Props) => {
+const SmallPostCard = ({ post, className }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className="card relative bg-base-100 shadow-md h-full w-96 min-w-[20rem]">
+    <div className={`card relative bg-base-100 shadow-md h-full min-w-[20rem] ${className}`}>
       <div className="absolute top-2 right-2 z-20 badge badge-ghost">
         {formatDate(post.creationTime)}
       </div>
       {post.imageUrl && (
-        <figure className="relative h-44 flex-shrink-0 flex-grow-0">
+        <figure className="relative h-2/5 flex-shrink-0 flex-grow-0">
           <Image
             className="object-cover"
             src={post.imageUrl}
