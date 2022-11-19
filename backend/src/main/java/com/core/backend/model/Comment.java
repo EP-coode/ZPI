@@ -1,15 +1,21 @@
 package com.core.backend.model;
 
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@NoArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long commentId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post")
+    @JoinColumn(name = "post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
     @ManyToOne
     @JoinColumn(name = "creator_id_fk")
@@ -18,6 +24,15 @@ public class Comment {
     private int totalDislikes;
     private String content;
     private Date creationTime;
+
+    public Comment(Post post, User creator, String content) {
+        this.post = post;
+        this.creator = creator;
+        this.content = content;
+        this.creationTime = new Date(System.currentTimeMillis());
+        this.totalLikes = 0;
+        this.totalDislikes = 0;
+    }
 
     public long getCommentId() {
         return commentId;

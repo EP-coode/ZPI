@@ -1,4 +1,4 @@
-package com.core.backend.dto;
+package com.core.backend.dto.comment;
 
 import com.core.backend.model.User;
 import lombok.*;
