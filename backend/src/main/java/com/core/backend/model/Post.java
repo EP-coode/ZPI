@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -21,6 +22,13 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "post_category_id_fk")
     private PostCategory category;
+    @ManyToMany
+    @JoinTable(
+        name = "post_post_tag",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_name")
+    )
+    Set<PostTag> postTags;
     private String title;
     private String imageUrl;
     private int totalLikes;
@@ -52,6 +60,14 @@ public class Post {
         this.totalLikes = 0;
         this.creationTime = new Date(System.currentTimeMillis());
         this.approveTime = new Date(System.currentTimeMillis());
+    }
+
+    public Set<PostTag> getPostTags() {
+        return postTags;
+    }
+
+    public void setPostTags(Set<PostTag> postTags) {
+        this.postTags = postTags;
     }
 
     public long getPostId() {
