@@ -55,9 +55,11 @@ public class RegistrationController {
         try {
             service.confirmUser(token);
         }catch(NoVerificationTokenException e){
-            return new ResponseEntity<>("Nie znaleziono tokenu", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Podany token nie istnieje", HttpStatus.NOT_FOUND);
         }catch(TokenExpiredException e){
-            return new ResponseEntity<>("Token stracił ważność", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Token stracił ważność", HttpStatus.GONE);
+        }catch(NoUserException e){
+            return new ResponseEntity<>("Użytkownik skojarzony z tokenem nie istnieje", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Użytkownik potwierdzony", HttpStatus.OK);
     }

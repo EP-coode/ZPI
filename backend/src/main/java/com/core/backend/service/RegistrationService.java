@@ -10,7 +10,7 @@ public interface RegistrationService {
 
     User registerNewUserAccount(RegisterUser userDto) throws Exception;
 
-    void confirmUser(String token) throws NoVerificationTokenException, TokenExpiredException;
+    void confirmUser(String token) throws NoVerificationTokenException, TokenExpiredException, NoUserException;
 
     void deleteUnconfirmedUser(User user);
 

@@ -7,11 +7,13 @@ import com.core.backend.exception.TokenExpiredException;
 import com.core.backend.model.Role;
 import com.core.backend.model.User;
 import com.core.backend.model.VerificationToken;
+import com.core.backend.registration.OnRegistrationCompleteEvent;
 import com.core.backend.repository.RoleRepository;
 import com.core.backend.repository.UserRepository;
 import com.core.backend.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,8 @@ public class RegistrationServiceImpl implements RegistrationService{
     private final RoleRepository roleRepository;
     private final VerificationTokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public User registerNewUserAccount(RegisterUser userDto) throws Exception{
@@ -49,13 +53,15 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     @Override
-    public void confirmUser(String token) throws NoVerificationTokenException, TokenExpiredException {
+    public void confirmUser(String token) throws NoVerificationTokenException, TokenExpiredException, NoUserException {
         VerificationToken verificationToken = tokenRepository.findByToken(token);
         if (verificationToken == null) {
             throw new NoVerificationTokenException();
         }
         Calendar cal = Calendar.getInstance();
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            User user = resetVerificationToken(verificationToken.getUser().getEmail());
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
             throw new TokenExpiredException();
         }
         User user = verificationToken.getUser();
@@ -80,7 +86,7 @@ public class RegistrationServiceImpl implements RegistrationService{
             throw new IllegalArgumentException();
         }
         VerificationToken verificationToken = tokenRepository.findByUser(user);
-        if(verificationToken != null){
+        if(verificationToken != null) {
             tokenRepository.deleteById(verificationToken.getId());
         }
         return user;

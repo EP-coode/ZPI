@@ -34,8 +34,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         service.createVerificationToken(user, token);
 
         String recipientAddress = user.getEmail();
-        String subject = "Registration Confirmation";
-        String message = "Your verification token: " + token;
+        String subject = "Potwierdzenie rejestracji";
+        String message = "Kliknij w ten link aby potwierdzić rejestrację: http://localhost:3000/confirmation?token=" + token;
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
