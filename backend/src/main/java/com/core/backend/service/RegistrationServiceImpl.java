@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +50,9 @@ public class RegistrationServiceImpl implements RegistrationService{
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        createVerificationToken(user);
+        return user;
     }
 
     @Override
@@ -71,9 +74,15 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     @Override
-    public void createVerificationToken(User user, String token) {
+    public void createVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
         VerificationToken myToken = new VerificationToken(token, user);
         tokenRepository.save(myToken);
+    }
+
+    @Override
+    public VerificationToken getVerificationToken(User user) {
+        return tokenRepository.findByUser(user);
     }
 
     @Override
@@ -89,6 +98,7 @@ public class RegistrationServiceImpl implements RegistrationService{
         if(verificationToken != null) {
             tokenRepository.deleteById(verificationToken.getId());
         }
+        createVerificationToken(user);
         return user;
     }
 
