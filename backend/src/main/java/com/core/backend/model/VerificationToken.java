@@ -1,7 +1,5 @@
 package com.core.backend.model;
 
-import com.core.backend.model.User;
-
 import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
