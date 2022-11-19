@@ -116,7 +116,7 @@ public class PostController {
 
     @GetMapping("/{postId}/photo")
     public ResponseEntity<Object> getPhotoByPostId(@PathVariable String postId) {
-        ByteArrayResource photo;
+        byte[] photo;
         try {
             photo = postService.getPhotoByPostId(postId);
         } catch (WrongIdException e) {
@@ -126,7 +126,7 @@ public class PostController {
         } catch (NoPostException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        long contentLength = photo == null ? 0 : photo.contentLength();
+        long contentLength = photo == null ? 0 : photo.length;
         return ResponseEntity.ok()
                 .contentLength(contentLength)
                 .contentType(MediaType.IMAGE_PNG)

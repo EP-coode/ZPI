@@ -7,7 +7,6 @@ import com.core.backend.dto.filter.PostFilters;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.*;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,5 +37,5 @@ public interface PostService {
 
     void deleteComment(String commentId) throws NoAccessException, WrongIdException, NoIdException;
 
-    ByteArrayResource getPhotoByPostId(String postId) throws NoIdException, NoPostException, WrongIdException;
+    byte[] getPhotoByPostId(String postId) throws NoIdException, NoPostException, WrongIdException;
 }
