@@ -16,7 +16,7 @@ const SmallPostCard = ({ post, className }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className={`card relative bg-base-100 shadow-md h-full min-w-[20rem] ${className}`}>
+    <div className={`card relative bg-base-100 shadow-md h-full min-w-[20rem] overflow-hidden ${className}`}>
       <div className="absolute top-2 right-2 z-20 badge badge-ghost">
         {formatDate(post.creationTime)}
       </div>
@@ -55,7 +55,7 @@ const SmallPostCard = ({ post, className }: Props) => {
           Autor:
           <Link href={`/posts/user/${post.author.id}`}>
             <a className="btn btn-sm btn-ghost self-start w-fit ml-1">
-              {post.author.email}
+              {post.author.name}
             </a>
           </Link>
         </div>

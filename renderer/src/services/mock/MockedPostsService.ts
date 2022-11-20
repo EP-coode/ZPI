@@ -7,10 +7,11 @@ import {
   PostService,
   PostsWithPagination,
 } from "../interfaces/PostService";
+import { userService } from "./MockedUserService";
 
 export const postsService: PostService = {
   getPost: async function (postId: number): Promise<Post> {
-    await sleep(500)
+    await sleep(500);
     return Promise.resolve({
       postId: postId,
       title: "Legitymacje Studenckie",
@@ -31,14 +32,7 @@ I tyle w temacie.`,
         { name: "dziekanat", totalPosts: 10 },
         { name: "legitymacje", totalPosts: 13 },
       ],
-      author: {
-        id: 13,
-        email: "jan@nowak.pl",
-        avatarUrl: "https://placeimg.com/400/400/arch",
-        role: { roleName: "ADMIN" },
-        emailConfirmed: true,
-        studentStatusConfirmed: true,
-      },
+      author: await userService.getUserDetails(1),
       totalDislikes: 10,
       totalLikes: 100,
       imageUrl: "https://placeimg.com/600/400/nature",
@@ -46,7 +40,8 @@ I tyle w temacie.`,
     });
   },
   getPosts: async function (
-    pagination: Pagination, filters?: PostFilters
+    pagination: Pagination,
+    filters?: PostFilters
   ): Promise<PostsWithPagination> {
     const posts = [];
 
@@ -57,7 +52,15 @@ I tyle w temacie.`,
       if (i == pagination.postPerPage - 1) post.imageUrl = null;
     }
 
-    const filteredPosts = posts.filter(post => filters ? filters.tagNames?.every(tagName => post.tags.some(tag => tag.name.toLowerCase() == tagName.toLowerCase())) ?? true : true);
+    const filteredPosts = posts.filter((post) =>
+      filters
+        ? filters.tagNames?.every((tagName) =>
+            post.tags.some(
+              (tag) => tag.name.toLowerCase() == tagName.toLowerCase()
+            )
+          ) ?? true
+        : true
+    );
     return {
       postCount: {
         itemsCount: filteredPosts.length + (filteredPosts.length > 0 ? 100 : 0),
