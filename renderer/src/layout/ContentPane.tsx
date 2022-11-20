@@ -8,7 +8,7 @@ type Props = {
 const ContentPane = ({ children, className }: Props) => {
   return (
     <div
-      className={`flex flex-col flex-wrap w-full bg-base-100 shadow-md rounded-md justify-center items-center mx-auto py-5 px-3 ${className ?? ""}`}
+      className={`flex flex-wrap w-full bg-base-100 shadow-md rounded-md justify-center items-center mx-auto py-5 px-3 ${className ?? ""}`}
     >
       {children}
     </div>

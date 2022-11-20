@@ -33,7 +33,7 @@ const CreatePostPage: NextPage<
   };
   return (
     <ContentWrapper>
-      <ContentPane>
+      <ContentPane className="flex-col">
         <h2 className="text-2xl font-semibold m-3">Utwórz post</h2>
         <PostEditor
           onPostSubmit={handlePostSubmit}
