@@ -9,8 +9,6 @@ import CategoryGroupSlider from "../src/components/CategoryGroupSlider";
 import { CountDown } from "../src/components/CountDown";
 import { CategoryGroup } from "../src/model/CategoryGroup";
 import { Post } from "../src/model/Post";
-import RightCollumn from "../src/layout/RightCollumn";
-import { LeftCollumn } from "../src/layout/LeftCollumn";
 import { ContentWrapper } from "../src/layout/ContentWrapper";
 import { PostOrdering } from "../src/services/interfaces/PostService";
 
