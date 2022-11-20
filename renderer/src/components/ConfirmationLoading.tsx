@@ -45,12 +45,7 @@ const ConfirmationLoading = () => {
         setConfirmationStatus(ConfirmationStatus.ERROR);
       }
     };
-
-    try {
-      sendConfirmation();
-    } catch (e: any) {
-      setConfirmationStatus(ConfirmationStatus.ERROR);
-    }
+      sendConfirmation().catch(e => setConfirmationStatus(ConfirmationStatus.ERROR));
   }, [token]);
 
   return (
