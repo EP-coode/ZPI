@@ -5,6 +5,7 @@ import {
 } from "next";
 import React from "react";
 import PostEditor from "../../src/components/PostEditor";
+import ContentPane from "../../src/layout/ContentPane";
 import { ContentWrapper } from "../../src/layout/ContentWrapper";
 import { CategoryGroup } from "../../src/model/CategoryGroup";
 import { Post } from "../../src/model/Post";
@@ -32,10 +33,13 @@ const CreatePostPage: NextPage<
   };
   return (
     <ContentWrapper>
-      <PostEditor
-        onPostSubmit={handlePostSubmit}
-        categoryGroups={categoryGroups}
-      />
+      <ContentPane>
+        <h2 className="text-2xl font-semibold m-3">Utwórz post</h2>
+        <PostEditor
+          onPostSubmit={handlePostSubmit}
+          categoryGroups={categoryGroups}
+        />
+      </ContentPane>
     </ContentWrapper>
   );
 };

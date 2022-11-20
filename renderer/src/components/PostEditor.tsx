@@ -44,9 +44,9 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
   };
 
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit} className="flex flex-col items-center max-w-3xl w-full">
       {/* TITLE INPUT */}
-      <div className="form-control">
+      <div className="form-control w-full">
         <label className="label">
           <span className="label-text">Tytół postu</span>
         </label>
@@ -54,7 +54,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
           type="text"
           name="title"
           placeholder="Podaj tytół..."
-          className={classNames("input input-bordered w-full max-w-xs", {
+          className={classNames("input input-bordered w-full", {
             "input-error": formik.errors.title,
           })}
           onChange={formik.handleChange}
@@ -68,11 +68,11 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
       </div>
 
       {/* CATEGORY SELECT */}
-      <div className="form-control w-full max-w-xs">
+      <div className="form-control w-full">
         <label className="label">
           <span className="label-text">Wybierz dział postu</span>
         </label>
-        <select className="select select-bordered w-full max-w-xs">
+        <select className="select select-bordered w-full">
           {categoryGroups.map(({ categories, name, totalPosts }) => (
             <optgroup label={`${name}`} key={name}>
               {categories.map(({ displayName }) => (
@@ -84,7 +84,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
       </div>
 
       {/* IMAGE INPUT */}
-      <div className="form-control w-full max-w-xs">
+      <div className="form-control w-full">
         <label className="label">
           <span className="label-text">Dodaj obraz do swojego postu</span>
         </label>
@@ -93,7 +93,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
           name="image"
           accept="image/*"
           className={classNames(
-            "file-input file-input-bordered w-full max-w-xs",
+            "file-input file-input-bordered w-full",
             {
               "input-error": formik.errors.image,
             }
@@ -113,7 +113,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
       </div>
 
       {/* TAGS */}
-      <div className="form-control w-full max-w-xs">
+      <div className="form-control w-full mt-5 mb-10 flex items-center">
         <TagsPicker
           noTagsSelectedMsg="Nie wybrano żadnych tagów"
           pickedLabel="Wybrane tagi:"
