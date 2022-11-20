@@ -42,11 +42,11 @@ ON DUPLICATE KEY UPDATE post_category_id=post_category_id;
 INSERT INTO db_example.post (post_id, approve_time, creation_time, image_url, markdown_content, title, total_dislikes,
                              total_likes, approver_id_fk, post_category_id_fk, creator_id_fk)
 VALUES
-    (1, current_date, current_date, '""', '# Jakiś bardzo interesujący content
+    (0, current_date, current_date, '""', '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 1', 10, 100, 1, 1, 1),
-    (2, current_date, current_date - 1, '""', '# Jakiś bardzo interesujący content
+    (-1, current_date, current_date - 1, '""', '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 5, 1)

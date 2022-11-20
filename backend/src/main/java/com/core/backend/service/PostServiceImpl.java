@@ -146,8 +146,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) {
         Post post;
-        boolean isPhotoEmpty = photo.isEmpty();
-        String path ="";
+        boolean isPhotoEmpty = photo == null || photo.isEmpty();
+        String path = "";
         postDto.setImageUrl(path);
 
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -161,7 +161,7 @@ public class PostServiceImpl implements PostService {
 
         Iterable<PostTag> postTags = postTagRepository.findAllById(postDto.getTags().stream()
                 .map(PostTag::getTagName)
-                .collect(Collectors.toList()));
+                .toList());
 
         List<PostTag> postTagList = StreamSupport.stream(postTags.spliterator(), false).toList();
         for (PostTag tag : postDto.getTags()) {
@@ -169,7 +169,8 @@ public class PostServiceImpl implements PostService {
             postTagsRepository.save(
                     new PostTags(new PostTagsId(post, tag)));
         }
-        if (photo.isEmpty())   return postDto;
+        if (isPhotoEmpty)
+            return postDto;
 
         fileService.uploadFile(photo, path);
         return postDto;
