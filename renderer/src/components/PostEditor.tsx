@@ -120,6 +120,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
           activeTags={activeTags}
           onAddTag={handleAddTag}
           onRemoveTag={handleRemoveTag}
+          enableCustomTags
         />
       </div>
 

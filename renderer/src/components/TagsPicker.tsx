@@ -1,10 +1,5 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import classNames from "classnames";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { LoadingState } from "../common/LoadingState";
 import CloseIcon from "../icons/CloseIcon";
 import PlusIcon from "../icons/PlusIcon";
@@ -14,10 +9,11 @@ import LoadingPlaceholder from "./LoadingPlaceholder";
 
 type Props = {
   pickedLabel: string;
-  noTagsSelectedMsg: string
+  noTagsSelectedMsg: string;
   onRemoveTag: (tagName: string) => void;
   onAddTag: (tagName: string) => void;
   activeTags: string[];
+  enableCustomTags?: boolean;
 };
 
 const TagsPicker = ({
@@ -25,54 +21,12 @@ const TagsPicker = ({
   activeTags,
   onAddTag,
   onRemoveTag,
-  noTagsSelectedMsg
+  noTagsSelectedMsg,
+  enableCustomTags = false,
 }: Props) => {
   const [tagSearchResult, setTagSearchResult] = useState<string[]>([]);
   const [tagSearchState, setTagSearchState] = useState(LoadingState.IDDLE);
   const [tagFilterPrefix, setTagFilterPrefix] = useState<string>("");
-
-  const tagBadges: ReactNode[] = (() => {
-    const tagBadges = activeTags.map((tagName) => (
-      <li className="badge badge-primary badge-lg gap-2 " key={tagName}>
-        <CloseIcon onClick={() => onRemoveTag(tagName)} />
-        {tagName}
-      </li>
-    ));
-    if (tagBadges.length == 0) {
-      tagBadges.push(<div key="none" className="m-auto">{noTagsSelectedMsg}</div>);
-    }
-    return tagBadges;
-  })();
-
-  const searchResultTagBadges: ReactNode[] = (() => {
-    const searchResultTagBadges = tagSearchResult
-      .filter(
-        (tag) =>
-          !activeTags.some(
-            (activeTag) => activeTag.toLowerCase() == tag.toLowerCase()
-          )
-      )
-      .map((tagName) => (
-        <li className="badge badge-secondary badge-lg gap-2" key={tagName}>
-          {tagName}
-          <PlusIcon
-            onClick={() => {
-              onAddTag(tagName);
-              setTagSearchResult(
-                tagSearchResult.filter((tag) => tag != tagName)
-              );
-            }}
-            className="cursor-pointer"
-          />
-        </li>
-      ));
-
-    if (searchResultTagBadges.length == 0) {
-      searchResultTagBadges.push(<div key="none" className="m-auto mt-3">Brak wyników</div>);
-    }
-
-    return searchResultTagBadges;
-  })();
 
   const fetchTags = async (
     tagFilterPrefix: string,
@@ -107,13 +61,27 @@ const TagsPicker = ({
     };
   }, [debouncedFetchTags, tagFilterPrefix]);
 
+  const handleAddNewTagClick = (tagName: string) => {
+    onAddTag(tagName);
+  };
+
   return (
     <div className="flex flex-col max-w-xl gap-3 w-full">
       <div>
         <h3 className="font-semibold">{pickedLabel}</h3>
-        <ul className="flex flex-wrap gap-2 mt-1">{tagBadges}</ul>
+        <ul className="flex flex-wrap gap-2 mt-1">
+          {activeTags.map((tagName) => (
+            <li className="badge badge-primary badge-lg gap-2 " key={tagName}>
+              <CloseIcon onClick={() => onRemoveTag(tagName)} />
+              {tagName}
+            </li>
+          ))}
+          {activeTags.length == 0 && (
+            <div className="m-auto">{noTagsSelectedMsg}</div>
+          )}
+        </ul>
       </div>
-      <div className="min-h-48">
+      <div className="min-h-48 flex flex-col align-middle">
         <h3 className="font-semibold">Dodaj tagi do wyszukiwania:</h3>
         <input
           placeholder="Wyszukaj tagi po nazwie"
@@ -126,7 +94,56 @@ const TagsPicker = ({
           <LoadingPlaceholder className="w-32" />
         )}
         {tagSearchState == LoadingState.LOADED && (
-          <ul className="flex flex-wrap gap-2 mt-3">{searchResultTagBadges}</ul>
+          <ul className="flex flex-wrap gap-2 mt-3">
+            {tagSearchResult
+              .filter(
+                (tag) =>
+                  !activeTags.some(
+                    (activeTag) => activeTag.toLowerCase() == tag.toLowerCase()
+                  )
+              )
+              .map((tagName) => (
+                <li
+                  className="badge badge-secondary badge-lg gap-2"
+                  key={tagName}
+                >
+                  {tagName}
+                  <PlusIcon
+                    onClick={() => {
+                      onAddTag(tagName);
+                      setTagSearchResult(
+                        tagSearchResult.filter((tag) => tag != tagName)
+                      );
+                    }}
+                    className="cursor-pointer"
+                  />
+                </li>
+              ))}
+            {tagSearchResult.length == 0 && (
+              <div className="m-auto my-3">Brak wyników</div>
+            )}
+          </ul>
+        )}
+        {enableCustomTags && (
+          <button
+            className={classNames("btn mx-auto my-3", {
+              "btn-disabled":
+                LoadingState.LOADING == tagSearchState ||
+                tagFilterPrefix.length < 3 ||
+                tagSearchResult.some(
+                  (tag) =>
+                    tag.toLowerCase() == tagFilterPrefix.toLocaleLowerCase()
+                ) ||
+                activeTags.some(
+                  (tag) =>
+                    tag.toLowerCase() == tagFilterPrefix.toLocaleLowerCase()
+                ),
+            })}
+            onClick={() => handleAddNewTagClick(tagFilterPrefix)}
+            type="button"
+          >
+            Utwórz nowy tag
+          </button>
         )}
       </div>
     </div>
