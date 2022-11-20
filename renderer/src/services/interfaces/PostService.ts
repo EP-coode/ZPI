@@ -7,11 +7,20 @@ export interface PostsWithPagination {
   postCount: PaginationData;
 }
 
+export enum PostOrdering{
+  DateAsc = "date_asc",
+  DateDsc = "date_dsc",
+  LikesAsc = "likes_dsc",
+  LikesDsc = "likes_dsc",
+}
+
 export interface PostFilters {
   tagNames: string[] | null;
-  categoryGroup: string | null;
-  category: string | null;
-  creatorId: number | null
+  categoryGroupId: string | null;
+  categoryId: string | null;
+  creatorId: number | null;
+  maxPostDaysAge: number;
+  orderBy: PostOrdering;
 }
 
 export interface PostService {

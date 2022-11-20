@@ -1,4 +1,4 @@
-package com.core.backend.dto;
+package com.core.backend.dto.post;
 
 import com.core.backend.model.PostCategory;
 import com.core.backend.model.User;
@@ -22,4 +22,5 @@ public class PostDto {
     private int totalDislikes;
     private Date approveTime;
     private Date creationTime;
+    private String markdownContent;
 }

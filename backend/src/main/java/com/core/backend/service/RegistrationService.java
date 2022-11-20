@@ -5,6 +5,7 @@ import com.core.backend.exception.NoUserException;
 import com.core.backend.exception.NoVerificationTokenException;
 import com.core.backend.exception.TokenExpiredException;
 import com.core.backend.model.User;
+import com.core.backend.model.VerificationToken;
 
 public interface RegistrationService {
 
@@ -14,7 +15,9 @@ public interface RegistrationService {
 
     void deleteUnconfirmedUser(User user);
 
-    void createVerificationToken(User user, String token);
+    void createVerificationToken(User user);
+
+    VerificationToken getVerificationToken(User user);
 
     User resetVerificationToken(String email) throws NoUserException;
 

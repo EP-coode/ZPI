@@ -1,16 +1,25 @@
 package com.core.backend.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostTag {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String tagName;
     private int totalPosts;
+    @ManyToMany(mappedBy = "postTags")
+    private Set<Post> posts;
+
+    public PostTag(String tagName) {
+        this.tagName = tagName;
+        this.totalPosts = 1;
+    }
 
     public String getTagName() {
         return tagName;
@@ -26,5 +35,13 @@ public class PostTag {
 
     public void setTotalPosts(int totalPosts) {
         this.totalPosts = totalPosts;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 }

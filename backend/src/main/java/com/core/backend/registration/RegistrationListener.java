@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import java.util.UUID;
 
 @EnableAsync
 @Component
@@ -30,8 +29,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
     private void confirmRegistration(OnRegistrationCompleteEvent event) {
         User user = event.getUser();
-        String token = UUID.randomUUID().toString();
-        service.createVerificationToken(user, token);
+        String token = service.getVerificationToken(user).getToken();
 
         String recipientAddress = user.getEmail();
         String subject = "Potwierdzenie rejestracji";

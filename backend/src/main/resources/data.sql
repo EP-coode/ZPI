@@ -29,7 +29,7 @@ VALUES
 ON DUPLICATE KEY UPDATE post_category_group_id=post_category_group_id;
 
 INSERT INTO db_example.post_category (post_category_id, display_name, total_posts,
-                                      post_category_group_post_category_group_id)
+                                      post_category_group_id_fk)
 VALUES
     (1, 'W-4N', 0, 1),
     (2, 'W-8', 0, 1),

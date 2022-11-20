@@ -16,4 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllPosts();
     @Query("Select p From Post p")
     List<Post> findAllPosts(Pageable page);
+    @Query("SELECT p FROM Post p WHERE p.category.displayName LIKE %?1%")
+    List<Post> findAllPostsByCategoryName(String name);
+    List<Post> findPostsByPostTagsTagName(String postTagName);
 }

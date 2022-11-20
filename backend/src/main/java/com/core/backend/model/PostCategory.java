@@ -9,7 +9,7 @@ public class PostCategory {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long postCategoryId;
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name="post_category_group_id_fk")
     private PostCategoryGroup postCategoryGroup;
     private String displayName;
     private int totalPosts;

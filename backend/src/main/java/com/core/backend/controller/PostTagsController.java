@@ -1,5 +1,6 @@
 package com.core.backend.controller;
 
+import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.model.Post;
 import com.core.backend.model.PostTags;
 import com.core.backend.repository.PostTagsRepository;
@@ -15,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/post-tags")
@@ -26,7 +30,6 @@ public class PostTagsController {
     @Autowired
     Utilis utils;
 
-    //not that useful
     @GetMapping()
     public ResponseEntity<Object> getAllPostTags() {
         return new ResponseEntity<>(postTagsRepository.findAll(), HttpStatus.OK);
@@ -52,17 +55,16 @@ public class PostTagsController {
         return new ResponseEntity<>(postTagResultList, HttpStatus.OK);
     }
 
-    //to-do (maybe) ?       PathVar array&multiple tags
-    @GetMapping("/tags/{postTagId}")
-    public ResponseEntity<Object> getPostsWithTag(@PathVariable String postTagId) {
+    @GetMapping("/tags/{startsWithPostTagId}")
+    public ResponseEntity<Object> getPostsWithTag(@PathVariable String startsWithPostTagId) {
         Iterable<PostTags> postTags = postTagsRepository.findAll();
-        List<Post> postResultList = new ArrayList<>();
+        Set<Post> postResultList = new HashSet<>();
         for (PostTags pts : postTags) {
-            if(pts.getPrimaryKey().getTagName().getTagName().equals(postTagId)) {
+            if(pts.getPrimaryKey().getTagName().getTagName().startsWith(startsWithPostTagId)) {
                 postResultList.add(pts.getPrimaryKey().getPostId());
             }
         }
-        return new ResponseEntity<>(postResultList, HttpStatus.OK);
+        return new ResponseEntity<>(postResultList.stream().map(PostMapper::toPostDto).collect(Collectors.toList()), HttpStatus.OK);
     }
 
 }

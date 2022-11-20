@@ -1,9 +1,13 @@
 package com.core.backend.model;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -18,6 +22,13 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "post_category_id_fk")
     private PostCategory category;
+    @ManyToMany
+    @JoinTable(
+        name = "post_post_tag",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_name")
+    )
+    Set<PostTag> postTags;
     private String title;
     private String imageUrl;
     private int totalLikes;
@@ -26,6 +37,38 @@ public class Post {
     private Date creationTime;
     @Column(length = 65535, columnDefinition = "TEXT")
     private String markdownContent;
+
+    public Post(User creator, User approver, PostCategory category, String title, String imageUrl, String markdownContent) {
+        this.creator = creator;
+        this.approver = approver;
+        this.category = category;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.markdownContent = markdownContent;
+        this.totalDislikes = 0;
+        this.totalLikes = 0;
+        this.creationTime = new Date(System.currentTimeMillis());
+        this.approveTime = new Date(System.currentTimeMillis());
+    }
+
+    public Post(PostCategory category, String title, String imageUrl, String markdownContent) {
+        this.category = category;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.markdownContent = markdownContent;
+        this.totalDislikes = 0;
+        this.totalLikes = 0;
+        this.creationTime = new Date(System.currentTimeMillis());
+        this.approveTime = new Date(System.currentTimeMillis());
+    }
+
+    public Set<PostTag> getPostTags() {
+        return postTags;
+    }
+
+    public void setPostTags(Set<PostTag> postTags) {
+        this.postTags = postTags;
+    }
 
     public long getPostId() {
         return postId;

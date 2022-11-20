@@ -1,5 +1,6 @@
 import { CreatePostDto } from "../../dto/request/CreatePostDto";
 import { Post } from "../../model/Post";
+import { sleep } from "../../utils/sleep";
 import { Pagination } from "../interfaces/Pagination";
 import {
   PostFilters,
@@ -8,7 +9,8 @@ import {
 } from "../interfaces/PostService";
 
 export const postsService: PostService = {
-  getPost: function (postId: number): Promise<Post> {
+  getPost: async function (postId: number): Promise<Post> {
+    await sleep(500)
     return Promise.resolve({
       postId: postId,
       title: "Legitymacje Studenckie",
@@ -44,7 +46,7 @@ I tyle w temacie.`,
     });
   },
   getPosts: async function (
-    pagination: Pagination
+    pagination: Pagination, filters?: PostFilters
   ): Promise<PostsWithPagination> {
     const posts = [];
 
@@ -55,11 +57,12 @@ I tyle w temacie.`,
       if (i == pagination.postPerPage - 1) post.imageUrl = null;
     }
 
+    const filteredPosts = posts.filter(post => filters ? filters.tagNames?.every(tagName => post.tags.some(tag => tag.name.toLowerCase() == tagName.toLowerCase())) ?? true : true);
     return {
       postCount: {
-        itemsCount: pagination.postPerPage * pagination.currentPage + 100,
+        itemsCount: filteredPosts.length + (filteredPosts.length > 0 ? 100 : 0),
       },
-      posts: posts,
+      posts: filteredPosts,
     };
   },
   createPost: function (post: CreatePostDto): Promise<void> {
