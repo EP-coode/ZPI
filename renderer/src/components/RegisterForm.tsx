@@ -43,7 +43,7 @@ const RegisterForm = () => {
       if (errors.length > 0) setErrors([]);
 
       const result = await fetch(
-        `http://localhost:8080/registration/register`,
+        `${AUTH_SERVICE_URL}/registration/register`,
         {
           method: "POST",
           headers: {

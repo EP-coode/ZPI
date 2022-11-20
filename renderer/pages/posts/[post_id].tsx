@@ -49,8 +49,6 @@ export const getServerSideProps: GetServerSideProps<
 const PostDetailPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ post }) => {
-  const router = useRouter();
-  const { post_id } = router.query;
 
   const crumbs = [
     { title: "Główna", href: "/" },
