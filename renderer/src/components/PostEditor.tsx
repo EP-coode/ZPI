@@ -28,7 +28,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
     },
     validationSchema: Yup.object().shape({
       title: Yup.string()
-        .min(3, "Tytół musi mieć minimum 3 znaków")
+        .min(3, "Tytuł musi mieć minimum 3 znaków")
         .required("Pole jest wymagane"),
       markdownContent: Yup.string()
         .min(10, "Treść musi miec conajmniej 10 znaków długości")
@@ -88,12 +88,12 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
       {/* TITLE INPUT */}
       <div className="form-control w-full">
         <label className="label">
-          <span className="label-text">Tytół postu</span>
+          <span className="label-text">Tytuł postu</span>
         </label>
         <input
           type="text"
           name="title"
-          placeholder="Podaj tytół..."
+          placeholder="Podaj tytuł..."
           className={classNames("input input-bordered w-full", {
             "input-error": formik.errors.title,
           })}
