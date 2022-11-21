@@ -30,11 +30,15 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
       title: Yup.string()
         .min(3, "Tytół musi mieć minimum 3 znaków")
         .required("Pole jest wymagane"),
+      markdownContent: Yup.string()
+        .min(10, "Treść musi miec conajmniej 10 znaków długości")
+        .required("Post musi mieć treść"),
     }),
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: async (data) => {
       console.log("form data ", data);
+      alert("Nie podpięte");
       formik.setSubmitting(false);
     },
   });
@@ -167,11 +171,24 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
         <label className="label">
           <span className="label-text">Wpisz treść swojego postu</span>
         </label>
-        <MemoMarkdownEditor
-          onValueChange={(v) => {
-            formik.setFieldValue("markdownContent", v);
-          }}
-        />
+        <div
+          className={classNames({
+            "border-2 border-red-600 rounded-md": formik.errors.markdownContent,
+          })}
+        >
+          <MemoMarkdownEditor
+            onValueChange={(v) => {
+              formik.setFieldValue("markdownContent", v);
+            }}
+          />
+        </div>
+        <label className="label">
+          {formik.errors.markdownContent && (
+            <span className="label-text text-error">
+              {formik.errors.markdownContent}
+            </span>
+          )}
+        </label>
       </div>
 
       {/* SUBMIT */}
