@@ -1,10 +1,12 @@
 package com.core.backend.dto.post;
 
 import com.core.backend.model.PostCategory;
+import com.core.backend.model.PostTag;
 import com.core.backend.model.User;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.Set;
 
 @ToString
 @Setter
@@ -23,4 +25,5 @@ public class PostDto {
     private Date approveTime;
     private Date creationTime;
     private String markdownContent;
+    private Set<PostTag> postTags;
 }
