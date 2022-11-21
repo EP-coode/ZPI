@@ -1,8 +1,9 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { LoadingState } from "../common/LoadingState";
 import CloseIcon from "../icons/CloseIcon";
-import PlusIcon from "../icons/PlusIcon";
 import { tagsService } from "../services";
 import { debounce } from "../utils/debounce";
 import LoadingPlaceholder from "./LoadingPlaceholder";
@@ -108,7 +109,8 @@ const TagsPicker = ({
                   key={tagName}
                 >
                   {tagName}
-                  <PlusIcon
+                  <FontAwesomeIcon
+                    icon={faPlus}
                     onClick={() => {
                       onAddTag(tagName);
                       setTagSearchResult(

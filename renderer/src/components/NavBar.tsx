@@ -1,3 +1,5 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { useContext } from "react";
 import { Theme, ThemeContext } from "../context/ColorThemeContext";
@@ -59,12 +61,16 @@ export const NavBar = (props: Props) => {
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <Link href={`/user/${loginContext.user.id}`}>
+                <Link href={`/posts/user/${loginContext.user.id}`}>
                   <a className="justify-between">Strona profilowa</a>
                 </Link>
               </li>
               <li>
-                <a className="justify-between">Opcje konta</a>
+                <Link href={`/posts/create`}>
+                  <a className="justify-between">
+                    Dodaj post <FontAwesomeIcon icon={faPlus} />
+                  </a>
+                </Link>
               </li>
               <li>
                 <a onClick={() => loginContext.logout()}>Wyloguj</a>
