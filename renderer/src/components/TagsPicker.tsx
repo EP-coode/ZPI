@@ -66,7 +66,7 @@ const TagsPicker = ({
   };
 
   return (
-    <div className="flex flex-col max-w-xl gap-3 w-full">
+    <div className="flex flex-col gap-3 w-full">
       <div>
         <h3 className="font-semibold">{pickedLabel}</h3>
         <ul className="flex flex-wrap gap-2 mt-1">

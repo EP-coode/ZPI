@@ -59,7 +59,9 @@ export const NavBar = (props: Props) => {
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a className="justify-between">Strona profilowa</a>
+                <Link href={`/user/${loginContext.user.id}`}>
+                  <a className="justify-between">Strona profilowa</a>
+                </Link>
               </li>
               <li>
                 <a className="justify-between">Opcje konta</a>

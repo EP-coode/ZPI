@@ -1,12 +1,12 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import React, { Suspense, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Post } from "../model/Post";
 import classNames from "classnames";
 import { CategoryGroup } from "../model/CategoryGroup";
 import TagsPicker from "./TagsPicker";
-import dynamic from "next/dynamic";
-import MarkdownEditor, { MemoMarkdownEditor } from "./MarkdownEditor";
+import { MemoMarkdownEditor } from "./MarkdownEditor";
+import Image from "next/image";
 
 type Props = {
   onPostSubmit: (post: Post) => void;
@@ -16,13 +16,15 @@ type Props = {
 
 const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [imagePreviewFile, setImagePreviewFile] = useState<File | null>(null);
+  const [imagePreviewFileUrl, setImagePreviewFileUrl] = useState<string>();
 
   const formik = useFormik({
     initialValues: {
-      title: "",
-      markdownContent: "",
+      title: editedPost?.title ?? "",
+      markdownContent: editedPost?.markdownContent ?? "",
       tags: [],
-      image: null,
+      image: "",
     },
     validationSchema: Yup.object().shape({
       title: Yup.string()
@@ -36,6 +38,33 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
       formik.setSubmitting(false);
     },
   });
+
+  const handlePickImage = (e: React.FormEvent<HTMLInputElement>) => {
+    const imageFile = e.currentTarget.files ? e.currentTarget.files[0] : null;
+    formik.setFieldValue("image", imageFile ?? "");
+    setImagePreviewFile(imageFile);
+  };
+
+  useEffect(() => {
+    let fileReader: FileReader | null = null;
+    let isCancel = false;
+    if (imagePreviewFile) {
+      fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        const fr = e.target;
+        if (fr?.result && !isCancel) {
+          setImagePreviewFileUrl(fr.result.toString());
+        }
+      };
+      fileReader.readAsDataURL(imagePreviewFile);
+    }
+    return () => {
+      isCancel = true;
+      if (fileReader && fileReader.readyState === 1) {
+        fileReader.abort();
+      }
+    };
+  }, [imagePreviewFile]);
 
   const handleAddTag = (tagName: string) => {
     setActiveTags([...activeTags, tagName]);
@@ -90,40 +119,6 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
         </select>
       </div>
 
-      {/* IMAGE INPUT */}
-      <div className="form-control w-full">
-        <label className="label">
-          <span className="label-text">Dodaj obraz do swojego postu</span>
-        </label>
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          className={classNames("file-input file-input-bordered w-full", {
-            "input-error": formik.errors.image,
-          })}
-          onChange={(e) => {
-            const imageFile = e.currentTarget.files
-              ? e.currentTarget.files[0]
-              : null;
-            formik.setFieldValue("image", imageFile ?? "");
-          }}
-        />
-        <label className="label">
-          {formik.errors.image && (
-            <span className="label-text text-error">{formik.errors.image}</span>
-          )}
-        </label>
-      </div>
-
-      {/* MD EDITOR */}
-      <div className="form-control w-full">
-      <label className="label">
-          <span className="label-text">Wpisz treść swojego postu</span>
-        </label>
-        <MemoMarkdownEditor />
-      </div>
-
       {/* TAGS */}
       <div className="form-control w-full mt-5 mb-10 flex items-center">
         <TagsPicker
@@ -136,10 +131,53 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
         />
       </div>
 
+      {/* IMAGE INPUT */}
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text">Dodaj obraz do swojego postu</span>
+        </label>
+        <input
+          type="file"
+          name="image"
+          accept="image/png, image/jpeg"
+          className={classNames("file-input file-input-bordered w-full", {
+            "input-error": formik.errors.image,
+          })}
+          onChange={handlePickImage}
+        />
+        <label className="label">
+          {formik.errors.image && (
+            <span className="label-text text-error">{formik.errors.image}</span>
+          )}
+        </label>
+      </div>
+      {imagePreviewFileUrl && (
+        <figure className="relative h-96 w-full flex-shrink-0 flex-grow-0 my-10">
+          <Image
+            className="object-contain"
+            src={imagePreviewFileUrl}
+            layout="fill"
+            alt="Ikona postu"
+          />
+        </figure>
+      )}
+
+      {/* MD EDITOR */}
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text">Wpisz treść swojego postu</span>
+        </label>
+        <MemoMarkdownEditor
+          onValueChange={(v) => {
+            formik.setFieldValue("markdownContent", v);
+          }}
+        />
+      </div>
+
       {/* SUBMIT */}
       <button
         className={classNames(
-          "btn btn-primary w-full max-w-xs mx-auto my-2 relative",
+          "btn btn-primary w-full max-w-xs mx-auto mb-2 mt-5 relative",
           {
             loading: formik.isSubmitting,
           }
