@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const removeImports = require('next-remove-imports')();
+
+const nextConfig = removeImports({
   reactStrictMode: true,
   swcMinify: true,
   // TO CONFIUGURE FOR PRODUCTION
@@ -10,7 +12,7 @@ const nextConfig = {
   env: {
     AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL,
     DATA_PROVIDER_URL: process.env.DATA_PROVIDER_URL,
-  },
-};
+  }
+});
 
 module.exports = nextConfig;

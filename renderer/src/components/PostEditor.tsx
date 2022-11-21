@@ -1,10 +1,12 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Post } from "../model/Post";
 import classNames from "classnames";
 import { CategoryGroup } from "../model/CategoryGroup";
 import TagsPicker from "./TagsPicker";
+import dynamic from "next/dynamic";
+import MarkdownEditor, { MemoMarkdownEditor } from "./MarkdownEditor";
 
 type Props = {
   onPostSubmit: (post: Post) => void;
@@ -40,11 +42,16 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
   };
 
   const handleRemoveTag = (tagName: string) => {
-    setActiveTags(activeTags.filter((tag) => tag.toLowerCase() != tagName.toLowerCase()));
+    setActiveTags(
+      activeTags.filter((tag) => tag.toLowerCase() != tagName.toLowerCase())
+    );
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} className="flex flex-col items-center max-w-3xl w-full">
+    <form
+      onSubmit={formik.handleSubmit}
+      className="flex flex-col items-center max-w-4xl w-full"
+    >
       {/* TITLE INPUT */}
       <div className="form-control w-full">
         <label className="label">
@@ -92,12 +99,9 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
           type="file"
           name="image"
           accept="image/*"
-          className={classNames(
-            "file-input file-input-bordered w-full",
-            {
-              "input-error": formik.errors.image,
-            }
-          )}
+          className={classNames("file-input file-input-bordered w-full", {
+            "input-error": formik.errors.image,
+          })}
           onChange={(e) => {
             const imageFile = e.currentTarget.files
               ? e.currentTarget.files[0]
@@ -110,6 +114,14 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
             <span className="label-text text-error">{formik.errors.image}</span>
           )}
         </label>
+      </div>
+
+      {/* MD EDITOR */}
+      <div className="form-control w-full">
+      <label className="label">
+          <span className="label-text">Wpisz treść swojego postu</span>
+        </label>
+        <MemoMarkdownEditor />
       </div>
 
       {/* TAGS */}
