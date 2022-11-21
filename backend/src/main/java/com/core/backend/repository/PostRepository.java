@@ -1,6 +1,7 @@
 package com.core.backend.repository;
 
 import com.core.backend.model.Post;
+import com.core.backend.model.PostTag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

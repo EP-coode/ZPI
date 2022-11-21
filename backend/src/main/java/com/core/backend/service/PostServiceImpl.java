@@ -8,7 +8,6 @@ import com.core.backend.dto.post.PostDto;
 import com.core.backend.dto.mapper.CommentMapper;
 import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.exception.*;
-import com.core.backend.id.PostTagsId;
 import com.core.backend.model.*;
 import com.core.backend.repository.*;
 import com.core.backend.utilis.Utilis;
@@ -21,9 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -45,8 +42,6 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private PostTagRepository postTagRepository;
 
-    @Autowired
-    private PostTagsRepository postTagsRepository;
 
     @Autowired
     private Utilis utilis;
@@ -83,21 +78,11 @@ public class PostServiceImpl implements PostService {
         if (catGroup != null)   posts = posts.stream().filter(p -> Objects.equals(p.getCategory().getPostCategoryGroup().getDisplayName(), catGroup)).collect(Collectors.toList());
         if (creatorId != null)  posts = posts.stream().filter(p -> p.getCreator().getUserId() == creatorId).collect(Collectors.toList());
         if (tagNames.size() > 0) {
-            List<PostTags> postTags = postTagsRepository.findAllByPostTagsIdPostIdIn(posts);
-
-            for (String tag : tagNames){
-                posts = posts.stream().filter(p -> {
-                    boolean contains = false;
-                    for (PostTags postTag : postTags) {
-                        if (postTag.getPostTagsId().getPostId().getPostId() == p.getPostId() &&
-                                postTag.getPostTagsId().getTagName().getTagName().equals(tag)) {
-                            contains = true;
-                            break;
-                        }
-                    }
-                    return contains;
-                }).collect(Collectors.toList());
+            Set<Post> postsWithTags = new HashSet<>(posts);
+            for (String tagName : tagNames) {
+                postsWithTags.retainAll(postRepository.findPostsByPostTagsTagName(tagName));
             }
+            posts = posts.stream().filter(postsWithTags::contains).collect(Collectors.toList());
         }
 
         return posts.stream().map(PostMapper::toPostDto).collect(Collectors.toList());
@@ -148,10 +133,25 @@ public class PostServiceImpl implements PostService {
         Post post;
         boolean isPhotoEmpty = photo == null || photo.isEmpty();
         String path = "";
-        postDto.setImageUrl(path);
 
+        postDto.setImageUrl(path);
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        post = PostMapper.toPost(postDto, user);
+        List<PostTag> postTagList = StreamSupport.stream(postTagRepository.findAllById(postDto.getTags()).spliterator(), false)
+                .toList();
+        Set<PostTag> postTags = new HashSet<>(postTagList);
+
+        for(String tag : postDto.getTags()) {
+            if (!postTags.contains(new PostTag(tag))) {
+                PostTag p = new PostTag(tag);
+                postTagRepository.save(p);
+                postTags.add(p);
+            }
+        }
+
+        post = PostMapper.toPost(postDto, user, postTags);
+        for (PostTag p : postTags)  {
+            post.addPostTag(p);
+        }
         post = postRepository.save(post);
         if (!isPhotoEmpty)  {
             path = String.format("post_%d", post.getPostId());
@@ -159,16 +159,6 @@ public class PostServiceImpl implements PostService {
             postRepository.save(post);
         }
 
-        Iterable<PostTag> postTags = postTagRepository.findAllById(postDto.getTags().stream()
-                .map(PostTag::getTagName)
-                .toList());
-
-        List<PostTag> postTagList = StreamSupport.stream(postTags.spliterator(), false).toList();
-        for (PostTag tag : postDto.getTags()) {
-            if (!postTagList.contains(tag)) postTagRepository.save(tag);
-            postTagsRepository.save(
-                    new PostTags(new PostTagsId(post, tag)));
-        }
         if (isPhotoEmpty)
             return postDto;
 
@@ -189,31 +179,35 @@ public class PostServiceImpl implements PostService {
                 authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) {
             throw new NoAccessException("Próba edycji nie swojego postu");
         }
-        boolean isPhotoEmpty = photo == null;
-        String path = isPhotoEmpty ? String.format("post_%d", longId) : "";
-
+        boolean isPhotoEmpty = photo == null || photo.isEmpty();
+        String path = isPhotoEmpty ? "" : String.format("post_%d", longId);
         post.setCategory(postDto.getCategory());
         post.setImageUrl(path);
         post.setMarkdownContent(postDto.getMarkdownContent());
         post.setTitle(postDto.getTitle());
-        postRepository.save(post);
 
-        Iterable<PostTag> postTags = postTagRepository.findAllById(postDto.getTags().stream()
-                .map(PostTag::getTagName)
-                .collect(Collectors.toList()));
 
-        List<PostTag> postTagList = StreamSupport.stream(postTags.spliterator(), false).toList();
-        for (PostTag tag : postDto.getTags()) {
-            if (!postTagList.contains(tag)) postTagRepository.save(tag);
-            postTagsRepository.save(
-                    new PostTags(new PostTagsId(post, tag)));
-        }
-        for (PostTag tag : postTagList) {
-            if (!postDto.getTags().contains(tag))   {
-                postTagsRepository.deleteById(new PostTagsId(post, tag));
+        List<PostTag> postTagList = StreamSupport.stream(postTagRepository.findAllById(postDto.getTags()).spliterator(), false).toList();
+
+        for (String tag : postDto.getTags()) {
+            int id = postTagList.indexOf(new PostTag(tag));
+            PostTag p = new PostTag(tag);
+            if (id != -1)   {
+                p = postTagList.get(id);
+                postTagRepository.save(p);
+            }
+            if (!post.getPostTags().contains(p))    {
+                postTagRepository.save(p);
+                post.addPostTag(p);
             }
         }
-
+        Set<PostTag> postTagSet = new HashSet<>(post.getPostTags());
+        for (PostTag postTag : postTagSet)  {
+            if (!post.getPostTags().contains(postTag))    {
+                post.deletePostTag(postTag);
+            }
+        }
+        postRepository.save(post);
 
         if (isPhotoEmpty)   return;
         fileService.uploadFile(photo, path);
@@ -231,8 +225,10 @@ public class PostServiceImpl implements PostService {
                 authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) throw new NoAccessException("Możesz usunąć tylko swój post");
         else {
             String photoToDelete = String.format("post_%s", postId);
-            List<PostTags> postTags = postTagsRepository.findByPostTagsIdPostId(post.get());
-            for (PostTags p : postTags) postTagsRepository.deleteById(p.getPostTagsId());
+            List<PostTag> postTagList = postTagRepository.findPostTagsByPostsPostId(post.get().getPostId()).stream()
+                    .toList();
+            Set<PostTag> postTags = new HashSet<>(postTagList);
+            for (PostTag p : postTags) post.get().deletePostTag(p);
             postRepository.deleteById(longId);
             fileService.deleteFile(photoToDelete);
         }
