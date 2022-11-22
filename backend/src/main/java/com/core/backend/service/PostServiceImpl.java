@@ -1,8 +1,10 @@
 package com.core.backend.service;
 
+import com.core.backend.comparator.PostComparators;
 import com.core.backend.dto.comment.CommentCreateUpdateDto;
 import com.core.backend.dto.comment.CommentDto;
 import com.core.backend.dto.filter.PostFilters;
+import com.core.backend.dto.filter.PostOrdering;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.dto.mapper.CommentMapper;
@@ -16,14 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -57,18 +58,30 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAllPosts() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(authentication.getName());
+
         return postRepository.findAllPosts().stream()
-                .map(PostMapper::toPostDto)
-                .collect(Collectors.toList());
+                .map(p -> {
+                    PostLikeOrDislike postLikeOrDislike = getPostLikeOrDislike(p, user);
+                    Boolean isLiked = postLikeOrDislike == null ? null : postLikeOrDislike.isLikes();
+                    return PostMapper.toPostDto(p, isLiked);
+                }).collect(Collectors.toList());
     }
 
     @Override
     public List<PostDto> getAllPostsPagination(Integer page, Sort.Direction sort) {
         page = page == null ? 0 : page;
         Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "postId");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(authentication.getName());
+
         return postRepository.findAllPosts(pageableRequest).stream()
-                .map(PostMapper::toPostDto)
-                .collect(Collectors.toList());
+                .map(p -> {
+                    PostLikeOrDislike postLikeOrDislike = getPostLikeOrDislike(p, user);
+                    Boolean isLiked = postLikeOrDislike == null ? null : postLikeOrDislike.isLikes();
+                    return PostMapper.toPostDto(p, isLiked);
+                }).collect(Collectors.toList());
     }
 
     @Override
@@ -78,6 +91,8 @@ public class PostServiceImpl implements PostService {
         String catGroup = postFilters.getCategoryGroup();
         Long creatorId = postFilters.getCreatorId();
         List<String> tagNames = List.of(postFilters.getTagNames());
+        Integer maxPostDaysAge= postFilters.getMaxPostDaysAge();
+        PostOrdering postOrdering = postFilters.getOrderBy();
 
         if (cat != null)  posts = postRepository.findAllPostsByCategoryName(cat);
         else posts = postRepository.findAllPosts();
@@ -90,6 +105,14 @@ public class PostServiceImpl implements PostService {
             }
             posts = posts.stream().filter(postsWithTags::contains).collect(Collectors.toList());
         }
+        if (maxPostDaysAge != null) posts = posts.stream().filter(p -> {
+            long timeDiff = Math.abs(System.currentTimeMillis() - p.getCreationTime().getTime());
+            long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
+            return daysDiff <= maxPostDaysAge;
+        }).collect(Collectors.toList());
+        if (postOrdering != null)   posts.sort(PostComparators.getComparator(postOrdering));
+
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByEmail(authentication.getName());
 
