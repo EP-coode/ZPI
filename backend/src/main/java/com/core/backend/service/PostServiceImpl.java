@@ -8,6 +8,7 @@ import com.core.backend.dto.post.PostDto;
 import com.core.backend.dto.mapper.CommentMapper;
 import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.exception.*;
+import com.core.backend.id.PostLikeOrDislikeId;
 import com.core.backend.model.*;
 import com.core.backend.repository.*;
 import com.core.backend.utilis.Utilis;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostTagRepository postTagRepository;
+
+    @Autowired
+    private PostLikeOrDislikeRepository postLikeOrDislikeRepository;
 
 
     @Autowired
@@ -84,8 +90,14 @@ public class PostServiceImpl implements PostService {
             }
             posts = posts.stream().filter(postsWithTags::contains).collect(Collectors.toList());
         }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(authentication.getName());
 
-        return posts.stream().map(PostMapper::toPostDto).collect(Collectors.toList());
+        return posts.stream().map(p -> {
+            PostLikeOrDislike postLikeOrDislike = getPostLikeOrDislike(p, user);
+            Boolean isLiked = postLikeOrDislike == null ? null : postLikeOrDislike.isLikes();
+            return PostMapper.toPostDto(p, isLiked);
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -94,7 +106,11 @@ public class PostServiceImpl implements PostService {
         longId = utilis.convertId(postId);
         Optional<Post> post = postRepository.findById(longId);
         if (post.isEmpty()) throw new NoPostException("Post nie istnieje");
-        return PostMapper.toPostDto(post.get());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(authentication.getName());
+        PostLikeOrDislike postLikeOrDislike = getPostLikeOrDislike(post.get(), user);
+        Boolean isLiked = postLikeOrDislike == null ? null : postLikeOrDislike.isLikes();
+        return PostMapper.toPostDto(post.get(), isLiked);
     }
 
     @Override
@@ -284,6 +300,13 @@ public class PostServiceImpl implements PostService {
         return fileService.downloadFile(fileName);
     }
 
+    @Override
+    public PostLikeOrDislike getPostLikeOrDislike(Post post, User user) {
+        if (user == null)   return null;
+        PostLikeOrDislikeId postLikeOrDislikeId = new PostLikeOrDislikeId(user, post);
+        Optional<PostLikeOrDislike> postLikeOrDislike = postLikeOrDislikeRepository.findById(postLikeOrDislikeId);
+        return postLikeOrDislike.isEmpty() ? null : postLikeOrDislike.get();
+    }
 
 
 }
