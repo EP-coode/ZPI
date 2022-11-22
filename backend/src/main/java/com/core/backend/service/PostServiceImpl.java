@@ -191,6 +191,8 @@ public class PostServiceImpl implements PostService {
         for (PostTag p : postTags)  {
             post.addPostTag(p);
         }
+        post.getCategory().setTotalPosts(post.getCategory().getTotalPosts() + 1);
+        post.getCategory().getPostCategoryGroup().setTotalPosts(post.getCategory().getPostCategoryGroup().getTotalPosts() + 1);
         post = postRepository.save(post);
         if (!isPhotoEmpty)  {
             path = String.format("post_%d", post.getPostId());
@@ -217,6 +219,15 @@ public class PostServiceImpl implements PostService {
                 post.getCreator().getEmail()) &&
                 authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) {
             throw new NoAccessException("Próba edycji nie swojego postu");
+        }
+        if (post.getCategory().getPostCategoryId() != postDto.getCategory().getPostCategoryId()) {
+            post.getCategory().setTotalPosts(post.getCategory().getTotalPosts() - 1);
+            postDto.getCategory().setTotalPosts(postDto.getCategory().getTotalPosts() + 1);
+            if (post.getCategory().getPostCategoryGroup().getPostCategoryGroupId() !=
+                    postDto.getCategory().getPostCategoryGroup().getPostCategoryGroupId()) {
+                post.getCategory().getPostCategoryGroup().setTotalPosts(post.getCategory().getPostCategoryGroup().getTotalPosts() - 1);
+                postDto.getCategory().getPostCategoryGroup().setTotalPosts(postDto.getCategory().getPostCategoryGroup().getTotalPosts() + 1);
+            }
         }
         boolean isPhotoEmpty = photo == null || photo.isEmpty();
         String path = isPhotoEmpty ? "" : String.format("post_%d", longId);
@@ -263,11 +274,19 @@ public class PostServiceImpl implements PostService {
                 post.get().getCreator().getEmail())) &&
                 authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) throw new NoAccessException("Możesz usunąć tylko swój post");
         else {
+            Post postToDelete = post.get();
             String photoToDelete = String.format("post_%s", postId);
-            List<PostTag> postTagList = postTagRepository.findPostTagsByPostsPostId(post.get().getPostId()).stream()
+            List<PostTag> postTagList = postTagRepository.findPostTagsByPostsPostId(postToDelete.getPostId()).stream()
                     .toList();
             Set<PostTag> postTags = new HashSet<>(postTagList);
-            for (PostTag p : postTags) post.get().deletePostTag(p);
+            for (PostTag p : postTags) postToDelete.deletePostTag(p);
+            List<PostLikeOrDislikeId> postLikeOrDislikes = postLikeOrDislikeRepository.findAllByPostId(postToDelete.getPostId())
+                    .stream()
+                    .map(PostLikeOrDislike::getPostLikeOrDislikeId)
+                    .collect(Collectors.toList());
+            postToDelete.getCategory().getPostCategoryGroup().setTotalPosts(postToDelete.getCategory().getPostCategoryGroup().getTotalPosts() - 1);
+            postToDelete.getCategory().setTotalPosts(postToDelete.getCategory().getTotalPosts() - 1);
+            postLikeOrDislikeRepository.deleteAllById(postLikeOrDislikes);
             postRepository.deleteById(longId);
             fileService.deleteFile(photoToDelete);
         }
