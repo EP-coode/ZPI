@@ -13,10 +13,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostCreateUpdateDto {
-    private PostCategory category;
+    private String categoryName;
     private String title;
-    private String imageUrl;
     private String markdownContent;
-    private Set<String> tags;
+    private Set<String> tagNames;
 }
 

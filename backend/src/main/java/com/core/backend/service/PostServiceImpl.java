@@ -47,6 +47,9 @@ public class PostServiceImpl implements PostService {
     private PostTagRepository postTagRepository;
 
     @Autowired
+    private PostCategoryRepository postCategoryRepository;
+
+    @Autowired
     private PostLikeOrDislikeRepository postLikeOrDislikeRepository;
 
 
@@ -91,13 +94,15 @@ public class PostServiceImpl implements PostService {
         String catGroup = postFilters.getCategoryGroup();
         Long creatorId = postFilters.getCreatorId();
         List<String> tagNames = List.of(postFilters.getTagNames());
-        Integer maxPostDaysAge= postFilters.getMaxPostDaysAge();
+        Integer maxPostDaysAge = postFilters.getMaxPostDaysAge();
         PostOrdering postOrdering = postFilters.getOrderBy();
 
-        if (cat != null)  posts = postRepository.findAllPostsByCategoryName(cat);
+        if (cat != null) posts = postRepository.findAllPostsByCategoryName(cat);
         else posts = postRepository.findAllPosts();
-        if (catGroup != null)   posts = posts.stream().filter(p -> Objects.equals(p.getCategory().getPostCategoryGroup().getDisplayName(), catGroup)).collect(Collectors.toList());
-        if (creatorId != null)  posts = posts.stream().filter(p -> p.getCreator().getUserId() == creatorId).collect(Collectors.toList());
+        if (catGroup != null)
+            posts = posts.stream().filter(p -> Objects.equals(p.getCategory().getPostCategoryGroup().getDisplayName(), catGroup)).collect(Collectors.toList());
+        if (creatorId != null)
+            posts = posts.stream().filter(p -> p.getCreator().getUserId() == creatorId).collect(Collectors.toList());
         if (tagNames.size() > 0) {
             Set<Post> postsWithTags = new HashSet<>(posts);
             for (String tagName : tagNames) {
@@ -110,7 +115,7 @@ public class PostServiceImpl implements PostService {
             long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
             return daysDiff <= maxPostDaysAge;
         }).collect(Collectors.toList());
-        if (postOrdering != null)   posts.sort(PostComparators.getComparator(postOrdering));
+        if (postOrdering != null) posts.sort(PostComparators.getComparator(postOrdering));
 
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -168,47 +173,48 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) {
+    public PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws NoPostCategoryException {
         Post post;
         boolean isPhotoEmpty = photo == null || photo.isEmpty();
-        String path = "";
+        String photoPath = "";
 
-        postDto.setImageUrl(path);
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        List<PostTag> postTagList = StreamSupport.stream(postTagRepository.findAllById(postDto.getTags()).spliterator(), false)
+        List<PostTag> postTagList = StreamSupport.stream(postTagRepository.findAllById(postDto.getTagNames()).spliterator(), false)
                 .toList();
         Set<PostTag> postTags = new HashSet<>(postTagList);
 
-        for(String tag : postDto.getTags()) {
+        for (String tag : postDto.getTagNames()) {
             if (!postTags.contains(new PostTag(tag))) {
                 PostTag p = new PostTag(tag);
                 postTagRepository.save(p);
                 postTags.add(p);
             }
         }
+        PostCategory postCategory = postCategoryRepository.findByDisplayName(postDto.getCategoryName());
+        if (postCategory == null) throw new NoPostCategoryException("Podana kategoria postu nie istnieje");
+        postCategory.setTotalPosts(postCategory.getTotalPosts() + 1);
+        postCategory.getPostCategoryGroup().setTotalPosts(postCategory.getPostCategoryGroup().getTotalPosts() + 1);
 
-        post = PostMapper.toPost(postDto, user, postTags);
-        for (PostTag p : postTags)  {
+        post = PostMapper.toPost(postDto, user, postCategory, postTags);
+        for (PostTag p : postTags) {
             post.addPostTag(p);
         }
-        post.getCategory().setTotalPosts(post.getCategory().getTotalPosts() + 1);
-        post.getCategory().getPostCategoryGroup().setTotalPosts(post.getCategory().getPostCategoryGroup().getTotalPosts() + 1);
         post = postRepository.save(post);
-        if (!isPhotoEmpty)  {
-            path = String.format("post_%d", post.getPostId());
-            post.setImageUrl(path);
+
+        if (!isPhotoEmpty) {
+            photoPath = String.format("post_%d", post.getPostId());
+            post.setImageUrl(photoPath);
             postRepository.save(post);
         }
 
-        if (isPhotoEmpty)
-            return postDto;
+        if (isPhotoEmpty) return postDto;
 
-        fileService.uploadFile(photo, path);
+        fileService.uploadFile(photo, photoPath);
         return postDto;
     }
 
     @Override
-    public void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException {
+    public void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException, NoPostCategoryException {
         long longId;
         longId = utilis.convertId(postId);
         Optional<Post> postOpt = postRepository.findById(longId);
@@ -220,46 +226,49 @@ public class PostServiceImpl implements PostService {
                 authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) {
             throw new NoAccessException("Próba edycji nie swojego postu");
         }
-        if (post.getCategory().getPostCategoryId() != postDto.getCategory().getPostCategoryId()) {
-            post.getCategory().setTotalPosts(post.getCategory().getTotalPosts() - 1);
-            postDto.getCategory().setTotalPosts(postDto.getCategory().getTotalPosts() + 1);
-            if (post.getCategory().getPostCategoryGroup().getPostCategoryGroupId() !=
-                    postDto.getCategory().getPostCategoryGroup().getPostCategoryGroupId()) {
-                post.getCategory().getPostCategoryGroup().setTotalPosts(post.getCategory().getPostCategoryGroup().getTotalPosts() - 1);
-                postDto.getCategory().getPostCategoryGroup().setTotalPosts(postDto.getCategory().getPostCategoryGroup().getTotalPosts() + 1);
+        PostCategory newPostCategory = postCategoryRepository.findByDisplayName(postDto.getCategoryName());
+        if (newPostCategory == null) throw new NoPostCategoryException("Podana kategoria postu nie istnieje");
+        if (post.getCategory().getPostCategoryId() != newPostCategory.getPostCategoryId()) {
+            PostCategory oldPostCategory = post.getCategory();
+            oldPostCategory.setTotalPosts(oldPostCategory.getTotalPosts() - 1);
+            newPostCategory.setTotalPosts(newPostCategory.getTotalPosts() + 1);
+            if (oldPostCategory.getPostCategoryGroup().getPostCategoryGroupId() !=
+                    newPostCategory.getPostCategoryGroup().getPostCategoryGroupId()) {
+                oldPostCategory.getPostCategoryGroup().setTotalPosts(oldPostCategory.getPostCategoryGroup().getTotalPosts() - 1);
+                newPostCategory.getPostCategoryGroup().setTotalPosts(newPostCategory.getPostCategoryGroup().getTotalPosts() + 1);
             }
         }
         boolean isPhotoEmpty = photo == null || photo.isEmpty();
         String path = isPhotoEmpty ? "" : String.format("post_%d", longId);
-        post.setCategory(postDto.getCategory());
+        post.setCategory(newPostCategory);
         post.setImageUrl(path);
         post.setMarkdownContent(postDto.getMarkdownContent());
         post.setTitle(postDto.getTitle());
 
 
-        List<PostTag> postTagList = StreamSupport.stream(postTagRepository.findAllById(postDto.getTags()).spliterator(), false).toList();
+        List<PostTag> newPostTags = StreamSupport.stream(postTagRepository.findAllById(postDto.getTagNames()).spliterator(), false).toList();
 
-        for (String tag : postDto.getTags()) {
-            int id = postTagList.indexOf(new PostTag(tag));
+        for (String tag : postDto.getTagNames()) {
+            int id = newPostTags.indexOf(new PostTag(tag));
             PostTag p = new PostTag(tag);
-            if (id != -1)   {
-                p = postTagList.get(id);
+            if (id != -1) {
+                p = newPostTags.get(id);
                 postTagRepository.save(p);
             }
-            if (!post.getPostTags().contains(p))    {
+            if (!post.getPostTags().contains(p)) {
                 postTagRepository.save(p);
                 post.addPostTag(p);
             }
         }
-        Set<PostTag> postTagSet = new HashSet<>(post.getPostTags());
-        for (PostTag postTag : postTagSet)  {
-            if (!post.getPostTags().contains(postTag))    {
+        Set<PostTag> oldPostTags = new HashSet<>(post.getPostTags());
+        for (PostTag postTag : oldPostTags) {
+            if (!newPostTags.contains(postTag)) {
                 post.deletePostTag(postTag);
             }
         }
         postRepository.save(post);
 
-        if (isPhotoEmpty)   return;
+        if (isPhotoEmpty) return;
         fileService.uploadFile(photo, path);
     }
 
@@ -272,7 +281,8 @@ public class PostServiceImpl implements PostService {
         if (post.isEmpty()) {}
         else if ((!Objects.equals(authentication.getName(),
                 post.get().getCreator().getEmail())) &&
-                authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) throw new NoAccessException("Możesz usunąć tylko swój post");
+                authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER")))
+            throw new NoAccessException("Możesz usunąć tylko swój post");
         else {
             Post postToDelete = post.get();
             String photoToDelete = String.format("post_%s", postId);
@@ -314,7 +324,8 @@ public class PostServiceImpl implements PostService {
         if (comment.isEmpty()) throw new NoCommentException("Komentarz nie istnieje");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!comment.get().getCreator().getEmail().equals(authentication.getName()) &&
-                authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER")))   throw new NoAccessException("Możesz zaktualizować tylko swój komentarz");
+                authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER")))
+            throw new NoAccessException("Możesz zaktualizować tylko swój komentarz");
         comment.get().setContent(commentUpdateDto.getContent());
         commentRepository.save(comment.get());
     }
@@ -325,10 +336,10 @@ public class PostServiceImpl implements PostService {
         longId = utilis.convertId(commentId);
         Optional<Comment> comment = commentRepository.findById(longId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (comment.isEmpty()) { // FIXME CO TU SIĘ DZIEJE?, jeżeli comment NIE JEST pusty to sprawdź czy można usunąć,
-
-        } else if ((!Objects.equals(authentication.getName(),
-                comment.get().getCreator().getEmail())) && authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) throw new NoAccessException("Możesz usunąć tylko swój komentarz");
+        if (comment.isEmpty()) {}
+        else if ((!Objects.equals(authentication.getName(),
+                comment.get().getCreator().getEmail())) && authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER")))
+            throw new NoAccessException("Możesz usunąć tylko swój komentarz");
         else commentRepository.deleteById(longId);
     }
 
@@ -344,7 +355,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostLikeOrDislike getPostLikeOrDislike(Post post, User user) {
-        if (user == null)   return null;
+        if (user == null) return null;
         PostLikeOrDislikeId postLikeOrDislikeId = new PostLikeOrDislikeId(user, post);
         Optional<PostLikeOrDislike> postLikeOrDislike = postLikeOrDislikeRepository.findById(postLikeOrDislikeId);
         return postLikeOrDislike.isEmpty() ? null : postLikeOrDislike.get();

@@ -28,9 +28,9 @@ public interface PostService {
 
     List<CommentDto> getCommentsPagination(String postId, Integer page, Sort.Direction sort) throws WrongIdException, NoIdException, NoPostException;
 
-    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException;
+    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostCategoryException;
 
-    void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException;
+    void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException, NoPostCategoryException;
 
     void deletePost(String postId) throws NoAccessException, WrongIdException, NoIdException;
 

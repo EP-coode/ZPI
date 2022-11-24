@@ -3,6 +3,7 @@ package com.core.backend.dto.mapper;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.model.Post;
+import com.core.backend.model.PostCategory;
 import com.core.backend.model.PostTag;
 import com.core.backend.model.User;
 
@@ -28,9 +29,9 @@ public class PostMapper {
 //                postDto.getImageUrl(), postDto.getMarkdownContent());
 //    }
 
-    public static Post toPost(PostCreateUpdateDto postCreateDto, User creator, Set<PostTag> postTags) {
-        return new Post(creator, creator, postCreateDto.getCategory(), postCreateDto.getTitle(),
-                postCreateDto.getImageUrl(), postCreateDto.getMarkdownContent(), postTags);
+    public static Post toPost(PostCreateUpdateDto postCreateDto, User creator, PostCategory postCategory, Set<PostTag> postTags) {
+        return new Post(creator, creator, postCategory, postCreateDto.getTitle(),
+                null, postCreateDto.getMarkdownContent(), postTags);
     }
 
 }
