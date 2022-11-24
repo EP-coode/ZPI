@@ -25,7 +25,7 @@ export const CountDown = ({ toDate }: Props) => {
       );
       daysSecondHundredRef.current?.style.setProperty(
         "--value",
-        (days / 100 % 100).toFixed()
+        (Math.floor(days / 100)).toFixed()
       );
       hoursRef.current?.style.setProperty("--value", hours.toFixed());
       minutesRef.current?.style.setProperty("--value", minutes.toFixed());
