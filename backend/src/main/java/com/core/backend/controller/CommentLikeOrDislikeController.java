@@ -40,11 +40,11 @@ public class CommentLikeOrDislikeController {
         try {
             result = service.createCommentLikeOrDislike(commentId, email, likes);
             if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED)
-                successMessage = "Dislajk został zmieniony na like";
+                successMessage = "Ocena komentarza została zmieniona";
             else if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED)
-                successMessage = "Lajk został usunięty";
+                successMessage = "Ocena komentarza została usunięta";
             else
-                successMessage = "Komentarz został zalajkowany";
+                successMessage = "Komentarz został oceniony";
         } catch (WrongIdException e) {
             return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         } catch (NoIdException e) {

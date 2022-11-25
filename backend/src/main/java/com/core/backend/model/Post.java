@@ -12,7 +12,7 @@ import java.util.Set;
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long postId;
     @ManyToOne
     @JoinColumn(name = "creator_id_fk")
@@ -184,5 +184,23 @@ public class Post {
         this.postTags.remove(postTag);
         postTag.setTotalPosts(postTag.getTotalPosts() - 1);
         postTag.getPosts().remove(this);
+    }
+
+    public void addLikeOrDislike(boolean likes){
+        if(likes) this.totalLikes += 1; else this.totalDislikes += 1;
+    }
+
+    public void deleteLikeOrDislike(boolean likes){
+        if(likes) this.totalLikes -= 1; else this.totalDislikes -= 1;
+    }
+
+    public void changeLikeOrDislike(boolean likes){
+        if(likes){
+            this.totalLikes += 1;
+            this.totalDislikes -= 1;
+        }else{
+            this.totalLikes -= 1;
+            this.totalDislikes += 1;
+        }
     }
 }

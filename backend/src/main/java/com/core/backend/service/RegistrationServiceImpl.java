@@ -1,6 +1,6 @@
 package com.core.backend.service;
 
-import com.core.backend.dto.RegisterUser;
+import com.core.backend.dto.user.RegisterUser;
 import com.core.backend.exception.NoUserException;
 import com.core.backend.exception.NoVerificationTokenException;
 import com.core.backend.exception.TokenExpiredException;

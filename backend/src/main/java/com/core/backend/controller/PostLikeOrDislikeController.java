@@ -40,11 +40,11 @@ public class PostLikeOrDislikeController {
         try {
             result = service.createPostLikeOrDislike(postId, email, likes);
             if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED)
-                successMessage = "Dislajk został zmieniony na like";
+                successMessage = "Ocena postu została zmieniona";
             else if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED)
-                successMessage = "Lajk został usunięty";
+                successMessage = "Ocena postu została usunięta";
             else
-                successMessage = "Post został zalajkowany";
+                successMessage = "Post został oceniony";
         } catch (WrongIdException e) {
             return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         } catch (NoIdException e) {

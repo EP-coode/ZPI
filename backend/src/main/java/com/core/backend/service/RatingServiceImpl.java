@@ -47,11 +47,16 @@ public class RatingServiceImpl implements RatingService {
             // anulowanie oceny
             if(postLikeOrDislike.get().isLikes() == likes){
                 postLikeOrDislikeRepository.delete(postLikeOrDislike.get());
+                post.get().deleteLikeOrDislike(likes);
+                postRepository.save(post.get());
                 return LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED;
             }
             // zmiana oceny
             else{
                 postLikeOrDislike.get().setLikes(likes);
+                postLikeOrDislikeRepository.save(postLikeOrDislike.get());
+                post.get().changeLikeOrDislike(likes);
+                postRepository.save(post.get());
                 return LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED;
             }
         }
@@ -60,6 +65,8 @@ public class RatingServiceImpl implements RatingService {
             PostLikeOrDislike newPostLikeOrDislike = new PostLikeOrDislike();
             newPostLikeOrDislike.setPostLikeOrDislikeId(postLikeOrDislikeId);
             newPostLikeOrDislike.setLikes(likes);
+            post.get().addLikeOrDislike(likes);
+            postRepository.save(post.get());
             postLikeOrDislikeRepository.save(newPostLikeOrDislike);
             return LikeOrDislikeResult.LIKE_OR_DISLIKE_CREATED;
         }
@@ -77,11 +84,16 @@ public class RatingServiceImpl implements RatingService {
             // anulowanie oceny
             if(commentLikeOrDislike.get().isLikes() == likes){
                 commentLikeOrDislikeRepository.delete(commentLikeOrDislike.get());
+                comment.get().deleteLikeOrDislike(likes);
+                commentRepository.save(comment.get());
                 return LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED;
             }
             // zmiana oceny
             else{
                 commentLikeOrDislike.get().setLikes(likes);
+                commentLikeOrDislikeRepository.save(commentLikeOrDislike.get());
+                comment.get().changeLikeOrDislike(likes);
+                commentRepository.save(comment.get());
                 return LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED;
             }
         }
@@ -90,6 +102,8 @@ public class RatingServiceImpl implements RatingService {
             CommentLikeOrDislike newCommentLikeOrDislike = new CommentLikeOrDislike();
             newCommentLikeOrDislike.setCommentLikeOrDislikeId(commentLikeOrDislikeId);
             newCommentLikeOrDislike.setLikes(likes);
+            comment.get().addLikeOrDislike(likes);
+            commentRepository.save(comment.get());
             commentLikeOrDislikeRepository.save(newCommentLikeOrDislike);
             return LikeOrDislikeResult.LIKE_OR_DISLIKE_CREATED;
         }
