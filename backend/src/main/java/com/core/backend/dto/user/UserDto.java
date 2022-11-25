@@ -8,8 +8,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
+    private long id;
     private String name;
+    private Boolean emailConfirmed;
     private String avatarUrl;
-    private String roleName;
-    private String studentStatus;
+    private String role;
+    private Boolean studentStatusConfirmed;
 }

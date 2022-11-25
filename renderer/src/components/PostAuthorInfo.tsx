@@ -15,7 +15,7 @@ const UserInfoCard = ({ user }: Props) => {
   const userPageHref = `/posts/user/${user.id}`;
 
   return (
-    <ContentPane>
+    <ContentPane className="flex-row">
       {user.avatarUrl ? (
         <div className="avatar my-5 mx-2 w-fit h-fit">
           <div className="relative w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">

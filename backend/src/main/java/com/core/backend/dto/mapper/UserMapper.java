@@ -8,8 +8,10 @@ public class UserMapper {
         UserDto userDto = new UserDto();
         userDto.setName(user.getName());
         userDto.setAvatarUrl(user.getAvatarUrl());
-        userDto.setStudentStatus(user.isStudentStatusConfirmed() ? "TAK" : "NIE");
-        userDto.setRoleName(user.getRole().getRoleName().split("_")[1]);
+        userDto.setStudentStatusConfirmed(user.isStudentStatusConfirmed());
+        userDto.setRole(user.getRole().getRoleName().split("_")[1]);
+        userDto.setEmailConfirmed(user.isEmailConfirmed());
+        userDto.setId(user.getUserId());
         return userDto;
     }
 }

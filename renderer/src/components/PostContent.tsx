@@ -3,6 +3,7 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { LikesCounter } from "./LikesCounter";
 import ContentPane from "../layout/ContentPane";
+import ramarkGfm from "remark-gfm";
 
 type Props = {
   postId: number;
@@ -40,8 +41,10 @@ export const PostDetails = ({
           )}
         </figure>
       )}
-      <article className="p-7 prose">
-        <ReactMarkdown>{contentMarkdown}</ReactMarkdown>
+      <article className="p-7 prose max-w-full">
+        <ReactMarkdown remarkPlugins={[ramarkGfm]}>
+          {contentMarkdown}
+        </ReactMarkdown>
       </article>
     </ContentPane>
   );
