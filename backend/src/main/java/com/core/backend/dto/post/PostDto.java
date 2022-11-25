@@ -25,5 +25,21 @@ public class PostDto {
     private Date approveTime;
     private Date creationTime;
     private String markdownContent;
+    private Boolean isLiked;
     private Set<PostTag> postTags;
+
+    public PostDto(long postId, User creator, long approverId, PostCategory category, String title, String imageUrl, int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent, Set<PostTag> postTags) {
+        this.postId = postId;
+        this.creator = creator;
+        this.approverId = approverId;
+        this.category = category;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.totalLikes = totalLikes;
+        this.totalDislikes = totalDislikes;
+        this.approveTime = approveTime;
+        this.creationTime = creationTime;
+        this.markdownContent = markdownContent;
+        this.postTags = postTags;
+    }
 }

@@ -7,6 +7,9 @@ import com.core.backend.dto.filter.PostFilters;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.*;
+import com.core.backend.model.Post;
+import com.core.backend.model.PostLikeOrDislike;
+import com.core.backend.model.User;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +28,9 @@ public interface PostService {
 
     List<CommentDto> getCommentsPagination(String postId, Integer page, Sort.Direction sort) throws WrongIdException, NoIdException, NoPostException;
 
-    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException;
+    PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostCategoryException;
 
-    void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException;
+    void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo) throws NoAccessException, NoPostException, WrongIdException, NoIdException, NoPostCategoryException;
 
     void deletePost(String postId) throws NoAccessException, WrongIdException, NoIdException;
 
@@ -38,4 +41,6 @@ public interface PostService {
     void deleteComment(String commentId) throws NoAccessException, WrongIdException, NoIdException;
 
     byte[] getPhotoByPostId(String postId) throws NoIdException, NoPostException, WrongIdException;
+
+    PostLikeOrDislike getPostLikeOrDislike(Post post, User user);
 }

@@ -10,4 +10,6 @@ public class PostFilters {
     private String categoryGroup;
     private String category;
     private Long creatorId;
+    private Integer maxPostDaysAge;
+    private PostOrdering orderBy;
 }
