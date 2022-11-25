@@ -1,5 +1,6 @@
 package com.core.backend.dto.post;
 
+import com.core.backend.dto.UserDto;
 import com.core.backend.model.PostCategory;
 import com.core.backend.model.PostTag;
 import com.core.backend.model.User;
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class PostDto {
     private long postId;
-    private User creator;
+    private UserDto creator;
     private long approverId;
     private PostCategory category;
     private String title;
@@ -28,7 +29,7 @@ public class PostDto {
     private Boolean isLiked;
     private Set<PostTag> postTags;
 
-    public PostDto(long postId, User creator, long approverId, PostCategory category, String title, String imageUrl, int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent, Set<PostTag> postTags) {
+    public PostDto(long postId, UserDto creator, long approverId, PostCategory category, String title, String imageUrl, int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent, Set<PostTag> postTags) {
         this.postId = postId;
         this.creator = creator;
         this.approverId = approverId;

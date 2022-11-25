@@ -13,13 +13,13 @@ import java.util.Set;
 public class PostMapper {
 
     public static PostDto toPostDto(Post post, Boolean isLiked) {
-        return new PostDto(post.getPostId(), post.getCreator(), post.getApprover().getUserId(), post.getCategory(),
+        return new PostDto(post.getPostId(), UserMapper.toUserDto(post.getCreator()), post.getApprover().getUserId(), post.getCategory(),
                     post.getTitle(), post.getImageUrl(), post.getTotalLikes(), post.getTotalDislikes(),
                     post.getApproveTime(), post.getCreationTime(), post.getMarkdownContent(), isLiked, post.getPostTags());
     }
 
     public static PostDto toPostDto(Post post) {
-        return new PostDto(post.getPostId(), post.getCreator(), post.getApprover().getUserId(), post.getCategory(),
+        return new PostDto(post.getPostId(), UserMapper.toUserDto(post.getCreator()), post.getApprover().getUserId(), post.getCategory(),
                 post.getTitle(), post.getImageUrl(), post.getTotalLikes(), post.getTotalDislikes(),
                 post.getApproveTime(), post.getCreationTime(), post.getMarkdownContent(),post.getPostTags());
     }
