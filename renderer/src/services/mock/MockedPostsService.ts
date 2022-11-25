@@ -17,8 +17,44 @@ export const postsService: PostService = {
       title: "Legitymacje Studenckie",
       markdownContent: `# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-## pod tytół
-I tyle w temacie.`,
+## pod tytuł
+I tyle w temacie.
+| Feature    | Support                |
+| ---------- | ---------------------- | 
+| CommonMark | 100%                   |
+| GFM        | 100% w/ \`remark-gfm\` |
+
+~~strikethrough~~
+
+* [ ] task list
+* [x] checked item
+
+https://example.com
+
+## Components
+
+You can pass components to change things:
+
+\`\`\`js
+import React from 'react'
+import ReactDOM from 'react-dom'
+import ReactMarkdown from 'react-markdown'
+import MyFancyRule from './components/my-fancy-rule.js'
+
+ReactDOM.render(
+  <ReactMarkdown
+    components={{
+      // Use h2s instead of h1s
+      h1: 'h2',
+      // Use a component instead of hrs
+      hr: ({node, ...props}) => <MyFancyRule {...props} />
+    }}
+  >
+    # Your markdown here
+  </ReactMarkdown>,
+  document.querySelector('#content')
+)
+      \`\`\``,
       category: {
         displayName: "W8",
         totalPosts: 103,
