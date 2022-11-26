@@ -1,6 +1,6 @@
 package com.core.backend.dto.comment;
 
-import com.core.backend.dto.UserDto;
+import com.core.backend.dto.user.UserDto;
 import lombok.*;
 
 import java.util.Date;
