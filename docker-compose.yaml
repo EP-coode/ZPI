@@ -4,16 +4,16 @@ services:
   frontend:
     depends_on:
       - backend
-    image: node:18
+    build:
+      dockerfile: ./Dockerfile
+      context: ./renderer
     ports:
       - "3000:3000"
-    working_dir: /app
     volumes:
-      - ./renderer:/app
+      - renderer-node-modules:/usr/src/app/node_modules
     environment:
-      - AUTH_SERVICE_URL=http://localhost:8080
-      - DATA_PROVIDER_URL=http://localhost:8080
-    command: sh -c "npm install && npm run dev"
+      - AUTH_SERVICE_URL=http://host.docker.internal:8080
+      - DATA_PROVIDER_URL=http://host.docker.internal:8080
 
   mysql:
     container_name: "mysql_database"
@@ -72,3 +72,4 @@ services:
       - spring.sql.init.mode=always
 volumes:
   mysql-data:
+  renderer-node-modules:

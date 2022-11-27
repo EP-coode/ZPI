@@ -2,25 +2,19 @@ package com.core.backend.model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class PostCategory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long postCategoryId;
+    private String displayName;
+    @JsonIgnoreProperties("postCategories")
     @ManyToOne
     @JoinColumn(name="post_category_group_id_fk")
     private PostCategoryGroup postCategoryGroup;
-    private String displayName;
     private int totalPosts;
-
-    public long getPostCategoryId() {
-        return postCategoryId;
-    }
-
-    public void setPostCategoryId(long postCategoryId) {
-        this.postCategoryId = postCategoryId;
-    }
 
     public PostCategoryGroup getPostCategoryGroup() {
         return postCategoryGroup;

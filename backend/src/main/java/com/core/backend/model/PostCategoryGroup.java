@@ -1,26 +1,24 @@
 package com.core.backend.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class PostCategoryGroup {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long postCategoryGroupId;
     private String displayName;
     private int totalPosts;
-
-    public long getPostCategoryGroupId() {
-        return postCategoryGroupId;
-    }
-
-    public void setPostCategoryGroupId(long postCategoryGroupId) {
-        this.postCategoryGroupId = postCategoryGroupId;
-    }
+    @JsonIgnoreProperties("postCategoryGroup")
+    @OneToMany(mappedBy="postCategoryGroup")
+    private List<PostCategory> postCategories = new ArrayList<>();
 
     public String getDisplayName() {
         return displayName;
@@ -37,4 +35,10 @@ public class PostCategoryGroup {
     public void setTotalPosts(int totalPosts) {
         this.totalPosts = totalPosts;
     }
+
+    public List<PostCategory> getPostCategories() {
+        return postCategories;
+    }
+
+    
 }

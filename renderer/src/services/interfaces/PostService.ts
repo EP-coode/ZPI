@@ -4,14 +4,14 @@ import { Pagination, PaginationData } from "./Pagination";
 
 export interface PostsWithPagination {
   posts: Post[];
-  postCount: PaginationData;
+  totalPosts: number;
 }
 
 export enum PostOrdering{
-  DateAsc = "date_asc",
-  DateDsc = "date_dsc",
-  LikesAsc = "likes_dsc",
-  LikesDsc = "likes_dsc",
+  DateAsc = "DATE_ASC",
+  DateDsc = "DATE_DSC",
+  LikesAsc = "LIKES_ASC",
+  LikesDsc = "LIKES_DSC",
 }
 
 export interface PostFilters {
@@ -25,7 +25,7 @@ export interface PostFilters {
 
 export interface PostService {
   getPost(postId: number): Promise<Post>;
-  getPosts(pagination: Pagination, filters?: PostFilters): Promise<PostsWithPagination>;
+  getPosts(pagination: Pagination, filters: PostFilters): Promise<PostsWithPagination>;
   createPost(post: CreatePostDto): Promise<void>;
   deletePost(postId: string): Promise<void>;
 }

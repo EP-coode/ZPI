@@ -58,15 +58,15 @@ ReactDOM.render(
       category: {
         displayName: "W8",
         totalPosts: 103,
-        catyegoryGroup: {
-          name: "Wydziały",
+        postCategoryGroup: {
+          displayName: "Wydziały",
           totalPosts: 320,
         },
       },
       creationTime: new Date().toISOString(),
-      tags: [
-        { name: "dziekanat", totalPosts: 10 },
-        { name: "legitymacje", totalPosts: 13 },
+      postTags: [
+        { tagName: "dziekanat", totalPosts: 10 },
+        { tagName: "legitymacje", totalPosts: 13 },
       ],
       author: await userService.getUserDetails(1),
       totalDislikes: 10,
@@ -91,16 +91,14 @@ ReactDOM.render(
     const filteredPosts = posts.filter((post) =>
       filters
         ? filters.tagNames?.every((tagName) =>
-            post.tags.some(
-              (tag) => tag.name.toLowerCase() == tagName.toLowerCase()
+            post.postTags.some(
+              (tag) => tag.tagName.toLowerCase() == tagName.toLowerCase()
             )
           ) ?? true
         : true
     );
     return {
-      postCount: {
-        itemsCount: filteredPosts.length + (filteredPosts.length > 0 ? 100 : 0),
-      },
+      totalPosts: filteredPosts.length + (filteredPosts.length > 0 ? 100 : 0),
       posts: filteredPosts,
     };
   },

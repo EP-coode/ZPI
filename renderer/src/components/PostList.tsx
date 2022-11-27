@@ -41,7 +41,7 @@ const PostList = ({
 
       if (!isCanceled) {
         setPosts(returnedPosts.posts);
-        setTotalPosts(returnedPosts.postCount.itemsCount);
+        setTotalPosts(returnedPosts.totalPosts);
         setPostLoadingState(LoadingState.LOADED);
       }
     };
