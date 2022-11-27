@@ -12,7 +12,7 @@ import java.util.Set;
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long postId;
     @ManyToOne
     @JoinColumn(name = "creator_id_fk")
