@@ -24,20 +24,27 @@ ON DUPLICATE KEY UPDATE user_id=user_id;
 
 INSERT INTO db_example.post_category_group (display_name, total_posts)
 VALUES
-    ('Wydziały', 0),
-    ('Prowadzący', 0)
+    ('Wydziały', 1),
+    ('Prowadzący', 2)
 ON DUPLICATE KEY UPDATE display_name=display_name;
 
 INSERT INTO db_example.post_category (display_name, total_posts,
                                       post_category_group_id_fk)
 VALUES
-    ('W-4N', 0, 'Wydziały'),
+    ('W-4N', 1, 'Wydziały'),
     ('W-8', 0, 'Wydziały'),
     ('W-11', 0, 'Wydziały'),
     ('Matematycy', 0, 'Prowadzący'),
-    ('Fizycy', 0, 'Prowadzący'),
+    ('Fizycy', 2, 'Prowadzący'),
     ('Chemicy', 0, 'Prowadzący')
 ON DUPLICATE KEY UPDATE display_name=display_name;
+
+--@BLOCK
+INSERT INTO db_example.post_tag (tag_name, total_posts) VALUES
+    ('Jedzenie', 2),
+    ('Jeremiasz', 1),
+    ('Jarmark', 2)
+ON DUPLICATE KEY UPDATE tag_name=tag_name;
 
 INSERT INTO db_example.post (post_id, approve_time, creation_time, image_url, markdown_content, title, total_dislikes,
                              total_likes, approver_id_fk, post_category_id_fk, creator_id_fk)
@@ -46,13 +53,21 @@ VALUES
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 1', 10, 100, 1, 'W-4N', 1),
-    (-1, current_date, current_date - 1, null, '# Jakiś bardzo interesujący content
+    (1, current_date, current_date - 1, null, '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 ,
-    (-1, current_date, current_date - 1, "https://placeimg.com/600/400/nature", '# Jakiś bardzo interesujący content
+    (2, current_date, current_date - 2, "https://placeimg.com/600/400/nature", '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
+ON DUPLICATE KEY UPDATE post_id=post_id;
+
+INSERT INTO db_example.post_post_tag (post_id, tag_name) VALUES
+    (0,'Jedzenie'),
+    (1,'Jeremiasz'),
+    (2,'Jarmark'),
+    (2,'Jedzenie'),
+    (1,'Jarmark')
 ON DUPLICATE KEY UPDATE post_id=post_id;
