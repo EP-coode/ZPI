@@ -7,7 +7,7 @@ const nextConfig = removeImports({
   // TO CONFIUGURE FOR PRODUCTION
   // NOW ONLY MOCK DOMAINS
   images: {
-    domains: ["placeimg.com"],
+    domains: ["studentcommunityimages.blob.core.windows.net"],
   },
   env: {
     AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL,

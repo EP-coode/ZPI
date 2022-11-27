@@ -6,15 +6,19 @@ import com.core.backend.model.Post;
 import com.core.backend.model.PostCategory;
 import com.core.backend.model.PostTag;
 import com.core.backend.model.User;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Set;
 
 public class PostMapper {
 
+    private static final String imageUriPrefix = "https://studentcommunityimages.blob.core.windows.net/images/";
+
     public static PostDto toPostDto(Post post, Boolean isLiked) {
         return new PostDto(post.getPostId(), UserMapper.toUserDto(post.getCreator()), post.getApprover().getUserId(),
                 post.getCategory(),
-                post.getTitle(), post.getImageUrl(), post.getTotalLikes(), post.getTotalDislikes(),
+                post.getTitle(), post.getImageUrl() != null ? imageUriPrefix + post.getImageUrl() : null,
+                post.getTotalLikes(), post.getTotalDislikes(),
                 post.getApproveTime(), post.getCreationTime(), post.getMarkdownContent(), isLiked, post.getPostTags(),
                 UserMapper.toUserDto(post.getCreator()));
     }
