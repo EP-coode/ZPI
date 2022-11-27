@@ -1,31 +1,19 @@
 version: "2.4"
 
-networks:
-  network1:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.28.0.0/16
-          gateway: 172.28.0.1
-
 services:
   frontend:
     depends_on:
       - backend
-    image: node:18
+    build:
+      dockerfile: ./Dockerfile
+      context: ./renderer
     ports:
       - "3000:3000"
-    networks:
-      - network1
-    working_dir: /app
     volumes:
-      - ./renderer:/app
-      - /app/node_modules
-      - /app/.pnpm_store
+      - renderer-node-modules:/usr/src/app/node_modules
     environment:
-      - AUTH_SERVICE_URL=http://172.28.0.1:8080
-      - DATA_PROVIDER_URL=http://172.28.0.1:8080
-    command: sh -c "npm i -g pnpm && pnpm install && pnpm run dev"
+      - AUTH_SERVICE_URL=http://host.docker.internal:8080
+      - DATA_PROVIDER_URL=http://host.docker.internal:8080
 
   mysql:
     container_name: "mysql_database"
@@ -38,8 +26,6 @@ services:
     ports:
       - "3306:3306"
       - "33060:33060"
-    networks:
-      - network1
 
   # Uwaga! W przypadku błedu kontenera backendu
   # należy poczekać aż kontener mysql zacznie działać,
@@ -67,8 +53,6 @@ services:
       dockerfile: ./backend/Dockerfile
     ports:
       - "8080:8080"
-    networks:
-      - network1
     environment:
       - spring.jpa.hibernate.ddl-auto=update
       - spring.datasource.url=jdbc:mysql://mysql_database:3306/db_example
@@ -88,3 +72,4 @@ services:
       - spring.sql.init.mode=always
 volumes:
   mysql-data:
+  renderer-node-modules:
