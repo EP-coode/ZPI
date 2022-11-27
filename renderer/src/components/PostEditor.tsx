@@ -113,9 +113,9 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
           <span className="label-text">Wybierz dział postu</span>
         </label>
         <select className="select select-bordered w-full">
-          {categoryGroups.map(({ categories, name, totalPosts }) => (
-            <optgroup label={`${name}`} key={name}>
-              {categories.map(({ displayName }) => (
+          {categoryGroups.map(({ postCategories, displayName, totalPosts }) => (
+            <optgroup label={`${displayName}`} key={displayName}>
+              {postCategories.map(({ displayName }) => (
                 <option key={displayName}>{displayName}</option>
               ))}
             </optgroup>
