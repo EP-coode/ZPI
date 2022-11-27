@@ -3,7 +3,6 @@ package com.core.backend.dto.post;
 import com.core.backend.dto.UserDto;
 import com.core.backend.model.PostCategory;
 import com.core.backend.model.PostTag;
-import com.core.backend.model.User;
 import lombok.*;
 
 import java.sql.Date;
@@ -28,8 +27,11 @@ public class PostDto {
     private String markdownContent;
     private Boolean isLiked;
     private Set<PostTag> postTags;
+    private UserDto author;
 
-    public PostDto(long postId, UserDto creator, long approverId, PostCategory category, String title, String imageUrl, int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent, Set<PostTag> postTags) {
+    public PostDto(long postId, UserDto creator, long approverId, PostCategory category, String title, String imageUrl,
+            int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent,
+            Set<PostTag> postTags, UserDto author) {
         this.postId = postId;
         this.creator = creator;
         this.approverId = approverId;
@@ -42,5 +44,6 @@ public class PostDto {
         this.creationTime = creationTime;
         this.markdownContent = markdownContent;
         this.postTags = postTags;
+        this.author = author;
     }
 }

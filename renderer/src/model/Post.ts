@@ -13,5 +13,5 @@ export interface Post{
     creationTime: string
     category: Category
     author: User,
-    tags: Tag[],
+    postTags: Tag[],
 }

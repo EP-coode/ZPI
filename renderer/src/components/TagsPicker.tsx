@@ -35,7 +35,7 @@ const TagsPicker = ({
   ) => {
     const f = async () => {
       const tags = await tagsService.getTagsByPrefix(tagFilterPrefix, 15);
-      const newTagsResult = tags.tags.map((tag) => tag.name);
+      const newTagsResult = tags.tags.map((tag) => tag.tagName);
 
       if (!isCanceled) {
         setTagSearchResult(newTagsResult);

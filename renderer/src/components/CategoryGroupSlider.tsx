@@ -14,15 +14,15 @@ const CategoryGroupSlider = ({ categoryGroupPosts, categoryGroup }: Props) => {
   return (
     <div>
       <div className="px-3 xl:px-0">
-        <h2 className="font-bold text-2xl mb-3">{categoryGroup.name}</h2>
+        <h2 className="font-bold text-2xl mb-3">{categoryGroup.displayName}</h2>
         <div className="flex flex-row flex-wrap mb-3 gap-3 items-center">
           <h3>Kategorie:</h3>
-          {categoryGroup.categories?.map((category) => (
+          {categoryGroup.postCategories?.map((category) => (
             <CategoryLink
               key={category.displayName}
               categoryName={category.displayName}
               categoryGroupItemsCount={category.totalPosts}
-              categoryGroupName={categoryGroup.name}
+              categoryGroupName={categoryGroup.displayName}
               anchorClassNames="btn-outline"
             />
           ))}

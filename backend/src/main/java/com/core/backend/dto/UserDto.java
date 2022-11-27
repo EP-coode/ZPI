@@ -1,5 +1,7 @@
 package com.core.backend.dto;
 
+import com.core.backend.model.User;
+
 import lombok.*;
 
 @ToString

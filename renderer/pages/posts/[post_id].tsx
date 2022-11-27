@@ -53,12 +53,12 @@ const PostDetailPage: NextPage<
   const crumbs = [
     { title: "Główna", href: "/" },
     {
-      title: post.category.catyegoryGroup.name,
-      href: `/posts/category/${post.category.catyegoryGroup.name}`,
+      title: post.category.postCategoryGroup.displayName,
+      href: `/posts/category/${post.category.postCategoryGroup.displayName}`,
     },
     {
       title: post.category.displayName,
-      href: `/posts/category/${post.category.catyegoryGroup.name}/${post.category.displayName}`,
+      href: `/posts/category/${post.category.postCategoryGroup.displayName}/${post.category.displayName}`,
     },
   ];
 
