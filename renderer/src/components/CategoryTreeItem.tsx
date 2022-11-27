@@ -8,7 +8,7 @@ type Props = {
 };
 
 export const CategoryTreeItem = ({
-  categoryGroup: { name, categories, totalPosts },
+  categoryGroup: { displayName, postCategories, totalPosts },
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,19 +28,19 @@ export const CategoryTreeItem = ({
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <CategoryLink
-          key={name}
+          key={displayName}
           categoryGroupItemsCount={totalPosts}
-          categoryGroupName={name}
+          categoryGroupName={displayName}
           anchorClassNames="btn-md btn-ghost"
         />
       </div>
       <div className="collapse-content flex gap-2 flex-wrap">
-        {categories?.map((category) => (
+        {postCategories?.map((category) => (
           <CategoryLink
             key={category.displayName}
             categoryName={category.displayName}
             categoryGroupItemsCount={category.totalPosts}
-            categoryGroupName={name}
+            categoryGroupName={displayName}
             anchorClassNames="btn-outline"
           />
         ))}

@@ -28,7 +28,7 @@ const CategoryTree = () => {
         {categoryGroups.map((categoryGroup) => (
           <CategoryTreeItem
             categoryGroup={categoryGroup}
-            key={categoryGroup.name}
+            key={categoryGroup.displayName}
           />
         ))}
       </div>
