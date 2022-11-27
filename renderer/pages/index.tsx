@@ -32,14 +32,14 @@ export const getServerSideProps: GetServerSideProps<
   await Promise.all(
     categoryGroups.map(async (categoryGroup) => {
       const posts = await postsService.getPosts(pagination, {
-        categoryGroupId: categoryGroup.name,
+        categoryGroupId: categoryGroup.displayName,
         categoryId: null,
         creatorId: null,
         tagNames: null,
         maxPostDaysAge: 30,
         orderBy: PostOrdering.LikesDsc
       });
-      categoryGroupsPosts[categoryGroup.name] = posts.posts;
+      categoryGroupsPosts[categoryGroup.displayName] = posts.posts;
     })
   );
 
@@ -66,8 +66,8 @@ const Home: NextPage<
         {categoryGroups.map((categoryGroup) => (
           <CategoryGroupSlider
             categoryGroup={categoryGroup}
-            categoryGroupPosts={categoryGroupsPosts[categoryGroup.name]}
-            key={categoryGroup.name}
+            categoryGroupPosts={categoryGroupsPosts[categoryGroup.displayName]}
+            key={categoryGroup.displayName}
           />
         ))}
       </div>

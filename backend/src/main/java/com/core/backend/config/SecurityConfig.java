@@ -46,7 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**",
-                        "/blob/**").permitAll()
+                        "/blob/**",
+                        "/postCategoryGroups",
+                        "/post-tag").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authorizationFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }

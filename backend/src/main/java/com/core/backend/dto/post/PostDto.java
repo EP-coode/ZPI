@@ -27,8 +27,11 @@ public class PostDto {
     private String markdownContent;
     private Boolean isLiked;
     private Set<PostTag> postTags;
+    private UserDto author;
 
-    public PostDto(long postId, UserDto creator, long approverId, PostCategory category, String title, String imageUrl, int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent, Set<PostTag> postTags) {
+    public PostDto(long postId, UserDto creator, long approverId, PostCategory category, String title, String imageUrl,
+            int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent,
+            Set<PostTag> postTags, UserDto author) {
         this.postId = postId;
         this.creator = creator;
         this.approverId = approverId;
@@ -41,5 +44,6 @@ public class PostDto {
         this.creationTime = creationTime;
         this.markdownContent = markdownContent;
         this.postTags = postTags;
+        this.author = author;
     }
 }

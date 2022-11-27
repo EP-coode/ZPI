@@ -1,7 +1,7 @@
 import { Category } from "./Category";
 
 export interface CategoryGroup{
-    name: string,
-    categories?: Partial<Category>[],
+    displayName: string,
+    postCategories?: Partial<Category>[],
     totalPosts: number,
 }
