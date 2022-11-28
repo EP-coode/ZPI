@@ -71,3 +71,11 @@ INSERT INTO db_example.post_post_tag (post_id, tag_name) VALUES
     (2,'Jedzenie'),
     (1,'Jarmark')
 ON DUPLICATE KEY UPDATE post_id=post_id;
+
+INSERT INTO db_example.comment (comment_id, total_likes, total_dislikes, content, creation_time, post_id, creator_id_fk)
+VALUES
+    (1, 10, 5, 'masno ni', current_date, 1, 1),
+    (2, 0, 20, 'nie masno ni', current_date, 1, 2),
+    (3, 25, 50, 'tak', current_date, 2, 1),
+    (4, 100, 17, 'nie', current_date, 2, 2)
+ON DUPLICATE KEY UPDATE comment_id=comment_id;

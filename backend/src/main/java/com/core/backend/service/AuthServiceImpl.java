@@ -1,7 +1,7 @@
 package com.core.backend.service;
 
 import com.core.backend.dto.AuthTokens;
-import com.core.backend.dto.LoginUser;
+import com.core.backend.dto.user.LoginUser;
 import com.core.backend.exception.TokenExpiredException;
 import com.core.backend.exception.UserDisabledException;
 import com.core.backend.model.User;

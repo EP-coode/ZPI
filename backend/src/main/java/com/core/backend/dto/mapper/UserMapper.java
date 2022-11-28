@@ -1,6 +1,6 @@
 package com.core.backend.dto.mapper;
 
-import com.core.backend.dto.UserDto;
+import com.core.backend.dto.user.UserDto;
 import com.core.backend.model.User;
 
 public class UserMapper {

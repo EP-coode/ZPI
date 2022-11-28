@@ -1,4 +1,4 @@
-package com.core.backend.dto;
+package com.core.backend.dto.user;
 
 import com.core.backend.model.User;
 

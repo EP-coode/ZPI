@@ -1,15 +1,10 @@
 package com.core.backend.controller;
 
-import com.core.backend.dto.UserDto;
+import com.core.backend.dto.user.UserDto;
 import com.core.backend.dto.mapper.UserMapper;
 import com.core.backend.exception.NoUserException;
-import com.core.backend.model.FollowedUser;
-import com.core.backend.model.User;
-import com.core.backend.repository.UserRepository;
-import com.core.backend.repository.FollowedUserRepository;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.service.UserService;
-import com.core.backend.utilis.Utilis;
 import com.core.backend.exception.WrongIdException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

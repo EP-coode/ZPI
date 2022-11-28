@@ -1,6 +1,6 @@
 package com.core.backend.dto.post;
 
-import com.core.backend.dto.UserDto;
+import com.core.backend.dto.user.UserDto;
 import com.core.backend.model.PostCategory;
 import com.core.backend.model.PostTag;
 import lombok.*;
