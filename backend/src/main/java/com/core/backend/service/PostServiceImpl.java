@@ -90,10 +90,14 @@ public class PostServiceImpl implements PostService {
         List<Post> posts;
         Date startDate = null, endDate = null;
         Sort sort = PostSorting.getSortingByPostOrdering(postFilters.getOrderBy());
-        List<String> tagNames = List.of(postFilters.getTagNames());
-        if (postFilters.getMaxPostDaysAge() != null) {
+        String[] postFiltersTagNames = postFilters.getTagNames();
+        List<String> tagNames = List.of(postFiltersTagNames == null ? new String[0] : postFiltersTagNames);
+        if (postFilters.getMaxPostDaysAge() != null && postFilters.getMaxPostDaysAge() >= 0) {
             endDate = new Date(System.currentTimeMillis());
-            startDate = new Date(endDate.getTime() - postFilters.getMaxPostDaysAge() * 60000 * 60 * 24);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(endDate);
+            cal.add(Calendar.DATE, -postFilters.getMaxPostDaysAge());
+            startDate = cal.getTime();
         }
 
         posts = postRepository.findPostsFiltered(postFilters.getCategoryGroupId()

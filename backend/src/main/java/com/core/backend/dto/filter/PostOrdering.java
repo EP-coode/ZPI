@@ -4,5 +4,6 @@ public enum PostOrdering {
     DATE_ASC,
     DATE_DSC,
     LIKES_ASC,
-    LIKES_DSC
+    LIKES_DSC,
+    RANDOM
 }
