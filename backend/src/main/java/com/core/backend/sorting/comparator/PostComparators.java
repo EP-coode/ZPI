@@ -1,4 +1,4 @@
-package com.core.backend.comparator;
+package com.core.backend.sorting.comparator;
 
 import com.core.backend.dto.filter.PostOrdering;
 import com.core.backend.model.Post;

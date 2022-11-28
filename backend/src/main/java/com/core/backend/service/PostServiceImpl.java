@@ -1,10 +1,8 @@
 package com.core.backend.service;
 
-import com.core.backend.comparator.PostComparators;
 import com.core.backend.dto.comment.CommentCreateUpdateDto;
 import com.core.backend.dto.comment.CommentDto;
 import com.core.backend.dto.filter.PostFilters;
-import com.core.backend.dto.filter.PostOrdering;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.dto.post.PostWithPaginationDto;
@@ -14,6 +12,7 @@ import com.core.backend.exception.*;
 import com.core.backend.id.PostLikeOrDislikeId;
 import com.core.backend.model.*;
 import com.core.backend.repository.*;
+import com.core.backend.sorting.PostSorting;
 import com.core.backend.utilis.Utilis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -90,38 +88,28 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostWithPaginationDto getPostsFiltered(PostFilters postFilters, int page, int postPerPage) {
         List<Post> posts;
-        String cat = postFilters.getCategoryId();
-        String catGroup = postFilters.getCategoryGroupId();
-        Long creatorId = postFilters.getCreatorId();
-        Integer maxPostDaysAge = postFilters.getMaxPostDaysAge();
-        PostOrdering postOrdering = postFilters.getOrderBy();
-        String[] tagNames = postFilters.getTagNames();
-
-        if (cat != null)
-            posts = postRepository.findAllPostsByCategoryName(cat);
-        else
-            posts = postRepository.findAllPosts();
-        if (catGroup != null)
-            posts = posts.stream()
-                    .filter(p -> Objects.equals(p.getCategory().getPostCategoryGroup().getDisplayName(), catGroup))
-                    .collect(Collectors.toList());
-        if (creatorId != null)
-            posts = posts.stream().filter(p -> p.getCreator().getUserId() == creatorId).collect(Collectors.toList());
-        if (tagNames != null && tagNames.length > 0) {
-            Set<Post> postsWithTags = new HashSet<>(posts);
-            for (String tagName : tagNames) {
-                postsWithTags.retainAll(postRepository.findPostsByPostTagsTagName(tagName));
-            }
-            posts = posts.stream().filter(postsWithTags::contains).collect(Collectors.toList());
+        Date startDate = null, endDate = null;
+        Sort sort = PostSorting.getSortingByPostOrdering(postFilters.getOrderBy());
+        List<String> tagNames = List.of(postFilters.getTagNames());
+        if (postFilters.getMaxPostDaysAge() != null) {
+            endDate = new Date(System.currentTimeMillis());
+            startDate = new Date(endDate.getTime() - postFilters.getMaxPostDaysAge() * 60000 * 60 * 24);
         }
-        if (maxPostDaysAge != null)
-            posts = posts.stream().filter(p -> {
-                long timeDiff = Math.abs(System.currentTimeMillis() - p.getCreationTime().getTime());
-                long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
-                return daysDiff <= maxPostDaysAge;
-            }).collect(Collectors.toList());
-        if (postOrdering != null)
-            posts.sort(PostComparators.getComparator(postOrdering));
+
+        posts = postRepository.findPostsFiltered(postFilters.getCategoryGroupId()
+                , postFilters.getCategoryId(), postFilters.getCreatorId(), startDate, endDate, sort);
+
+
+        posts = posts.stream().filter(p -> {
+            boolean containsAllTags = true;
+            for(String tagName : tagNames) {
+                if (!p.getPostTags().contains(new PostTag(tagName))) {
+                    containsAllTags = false;
+                    break;
+                }
+            }
+            return containsAllTags;
+        }).collect(Collectors.toList());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByEmail(authentication.getName());
@@ -134,8 +122,6 @@ public class PostServiceImpl implements PostService {
             return PostMapper.toPostDto(p, isLiked);
         });
 
-        // nie przeglądałem dalej klodu, ale podejżewam, że może to być niewydajne i to
-        // bardzo
         List<PostDto> collectedPosts = filteredPostsStream
                 .collect(Collectors.toList());
 
@@ -203,6 +189,9 @@ public class PostServiceImpl implements PostService {
         boolean isPhotoEmpty = photo == null || photo.isEmpty();
         String photoPath = "";
 
+        postDto.setTagNames(postDto.getTagNames().stream()
+                .map(p -> p.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet()));
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         List<PostTag> postTagList = StreamSupport
                 .stream(postTagRepository.findAllById(postDto.getTagNames()).spliterator(), false)
@@ -256,15 +245,18 @@ public class PostServiceImpl implements PostService {
                 authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) {
             throw new NoAccessException("Próba edycji nie swojego postu");
         }
+        postDto.setTagNames(postDto.getTagNames().stream()
+                .map(p -> p.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet()));
         PostCategory newPostCategory = postCategoryRepository.findByDisplayName(postDto.getCategoryName());
         if (newPostCategory == null)
             throw new NoPostCategoryException("Podana kategoria postu nie istnieje");
-        if (post.getCategory().getDisplayName() != newPostCategory.getDisplayName()) {
+        if (!Objects.equals(post.getCategory().getDisplayName(), newPostCategory.getDisplayName())) {
             PostCategory oldPostCategory = post.getCategory();
             oldPostCategory.setTotalPosts(oldPostCategory.getTotalPosts() - 1);
             newPostCategory.setTotalPosts(newPostCategory.getTotalPosts() + 1);
-            if (oldPostCategory.getPostCategoryGroup().getDisplayName() != newPostCategory
-                    .getPostCategoryGroup().getDisplayName()) {
+            if (!Objects.equals(oldPostCategory.getPostCategoryGroup().getDisplayName(), newPostCategory
+                    .getPostCategoryGroup().getDisplayName())) {
                 oldPostCategory.getPostCategoryGroup()
                         .setTotalPosts(oldPostCategory.getPostCategoryGroup().getTotalPosts() - 1);
                 newPostCategory.getPostCategoryGroup()
