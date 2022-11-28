@@ -1,54 +1,89 @@
 import classNames from "classnames";
-import React from "react";
+import React, { useEffect, useState }from "react";
 import ArrowSvg from "../icons/ArrowSvg";
+import { LikeOrDislike } from "../services/interfaces/LikeService";
+import { fetchWithJWT } from "../utils/fetchWithJWT";
+import { Post } from "../model/Post";
 
 type Props = {
-  isLiked?: boolean;
+  postId: number;
+  isLiked: boolean | null;
   totalLikes: number;
-  onLike?: () => {};
-  onDisLike?: () => {};
+  onLike?: (x: any) => Promise<LikeOrDislike>;
+  onDisLike?: (x: any) => Promise<LikeOrDislike>;
 };
 
 export const LikesCounter = ({
+  postId,
   totalLikes,
   onLike,
   onDisLike,
   isLiked,
 }: Props) => {
-  const isDisliked = typeof isLiked  == "boolean" && !isLiked;
-  isLiked = isLiked ?? false;
+
+  const [disliked, setDisliked] = useState<boolean>(typeof isLiked  == "boolean" && !isLiked);
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likesCount, setLikesCount] = useState<number>(totalLikes);
+
+  useEffect(() =>{
+    const setIsLiked = async () => {
+      const post = await fetchWithJWT<Post>(`posts/${postId}`, {method: "GET"});
+      setDisliked(typeof post.isLiked  == "boolean" && !post.isLiked);
+      setLiked(post.isLiked ?? false);
+    }
+    setIsLiked().catch(e => console.log("użytkownik nie zalogowany"));
+  }, []);
+
   return (
     <div className="flex flex-wrap bg-base-300 rounded-xl w-fit h-10 text-xl items-center overflow-hidden">
       <button
-        onClick={() => {
-          onDisLike && onDisLike();
+        onClick={async () => {
+          try{
+            const response = onDisLike && onDisLike(postId);
+            if(response != undefined){
+              setLikesCount((await response).totalLikes)
+              setDisliked(typeof (await response).isLiked  == "boolean" && !(await response).isLiked);
+              setLiked((await response).isLiked ?? false);
+            }
+          }catch(e: any){
+            window.alert("Musisz się zalogować aby oceniać posty!");
+          }
         }}
         className={classNames(
           `flex h-full text-red-700 bg-base-300 border-none rounded-r-none p-2 `,
-          { "transition-transform hover:translate-y-1 ease-in": !isDisliked }
+          { "transition-transform hover:translate-y-1 ease-in": !disliked }
         )}
       >
         <ArrowSvg
           className={classNames("rotate-180",{
-            "fill-transparent": !isDisliked,
+            "fill-transparent": !disliked,
           })}
         />
       </button>
       <div className="flex grow mx-2">
-        <div className="w-full text-center select-none">{totalLikes}</div>
+        <div className="w-full text-center select-none">{likesCount}</div>
       </div>
       <button
-        onClick={() => {
-          onLike && onLike();
+        onClick={async () => {
+          try{
+            const response = onLike && onLike(postId);
+            if(response != undefined){
+              setLikesCount((await response).totalLikes)
+              setDisliked(typeof (await response).isLiked  == "boolean" && !(await response).isLiked);
+              setLiked((await response).isLiked ?? false)
+            }
+        }catch(e: any){
+          window.alert("Musisz się zalogować aby oceniać posty!");
+        }
         }}
         className={classNames(
           `flex h-full text-green-700 bg-base-300 border-none rounded-r-none p-2 `,
-          { "transition-transform hover:-translate-y-1 ease-in": !isLiked }
+          { "transition-transform hover:-translate-y-1 ease-in": !liked }
         )}
       >
         <ArrowSvg
           className={classNames({
-            "fill-transparent": !isLiked,
+            "fill-transparent": !liked,
           })}
         />
       </button>

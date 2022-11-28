@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { Post } from "../model/Post";
 import { formatDate } from "../utils/dateFormating";
 import { LikesCounter } from "./LikesCounter";
+import {likeService} from "../services/api/LikeService"
 
 type Props = {
   post: Post;
@@ -30,7 +31,10 @@ const SmallPostCard = ({ post, className }: Props) => {
             onLoad={() => setImageLoaded(true)}
           />
           <div className="absolute -bottom-4 right-4 z-20">
-            <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
+            <LikesCounter postId={post.postId} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
+              onDisLike={likeService.DislikePost} 
+              onLike={likeService.LikePost}
+            />
           </div>
           {!imageLoaded && (
             <div className="bg-gray-300 animate-pulse w-full h-full z-10"></div>
@@ -47,7 +51,10 @@ const SmallPostCard = ({ post, className }: Props) => {
       >
         {!!post.imageUrl || (
           <div className="self-end">
-            <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
+            <LikesCounter postId={post.postId} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
+              onDisLike={likeService.DislikePost} 
+              onLike={likeService.LikePost}
+            />
           </div>
         )}
         <h2 className="card-title">{post.title}</h2>

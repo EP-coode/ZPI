@@ -1,5 +1,6 @@
 package com.core.backend.service;
 
+import com.core.backend.dto.likeOrDislike.LikeOrDislikeResponse;
 import com.core.backend.exception.NoCommentException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.exception.NoPostException;
@@ -36,7 +37,7 @@ public class RatingServiceImpl implements RatingService {
     private Utilis utilis;
 
     @Override
-    public LikeOrDislikeResult createPostLikeOrDislike(String postId, String email, boolean likes) throws NoIdException, NoPostException, WrongIdException {
+    public LikeOrDislikeResponse createPostLikeOrDislike(String postId, String email, boolean likes) throws NoIdException, NoPostException, WrongIdException {
         User user = userRepository.findByEmail(email);
         long longId = utilis.convertId(postId);
         Optional<Post> post = postRepository.findById(longId);
@@ -49,7 +50,10 @@ public class RatingServiceImpl implements RatingService {
                 postLikeOrDislikeRepository.delete(postLikeOrDislike.get());
                 post.get().deleteLikeOrDislike(likes);
                 postRepository.save(post.get());
-                return LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED;
+                return new LikeOrDislikeResponse(
+                        post.get().getTotalLikes() - post.get().getTotalDislikes(),
+                        "Ocena postu została usunięta",
+                        null);
             }
             // zmiana oceny
             else{
@@ -57,7 +61,10 @@ public class RatingServiceImpl implements RatingService {
                 postLikeOrDislikeRepository.save(postLikeOrDislike.get());
                 post.get().changeLikeOrDislike(likes);
                 postRepository.save(post.get());
-                return LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED;
+                return new LikeOrDislikeResponse(
+                        post.get().getTotalLikes() - post.get().getTotalDislikes(),
+                        "Ocena postu została zmieniona",
+                        likes);
             }
         }
         // utworzenie nowej oceny
@@ -68,7 +75,10 @@ public class RatingServiceImpl implements RatingService {
             post.get().addLikeOrDislike(likes);
             postRepository.save(post.get());
             postLikeOrDislikeRepository.save(newPostLikeOrDislike);
-            return LikeOrDislikeResult.LIKE_OR_DISLIKE_CREATED;
+            return new LikeOrDislikeResponse(
+                    post.get().getTotalLikes() - post.get().getTotalDislikes(),
+                    "Post został oceniony",
+                    likes);
         }
     }
 

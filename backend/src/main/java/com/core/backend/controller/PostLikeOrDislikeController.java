@@ -1,5 +1,6 @@
 package com.core.backend.controller;
 
+import com.core.backend.dto.likeOrDislike.LikeOrDislikeResponse;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.WrongIdException;
@@ -35,16 +36,9 @@ public class PostLikeOrDislikeController {
 
     private ResponseEntity<Object> likeOrDislikeResponse(String postId, boolean likes) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        RatingService.LikeOrDislikeResult  result;
-        String successMessage;
+        LikeOrDislikeResponse result;
         try {
             result = service.createPostLikeOrDislike(postId, email, likes);
-            if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED)
-                successMessage = "Ocena postu została zmieniona";
-            else if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED)
-                successMessage = "Ocena postu została usunięta";
-            else
-                successMessage = "Post został oceniony";
         } catch (WrongIdException e) {
             return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         } catch (NoIdException e) {
@@ -52,7 +46,7 @@ public class PostLikeOrDislikeController {
         }catch(NoPostException e){
             return new ResponseEntity<>("Podany post nie istnieje", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(successMessage, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 //    @GetMapping("/postId={postId}&userId={userId}")

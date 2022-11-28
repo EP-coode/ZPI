@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps<
         categoryGroupId: categoryGroup.displayName,
         categoryId: null,
         creatorId: null,
-        tagNames: null,
+        tagNames: [],
         maxPostDaysAge: 30,
         orderBy: PostOrdering.LikesDsc
       });
