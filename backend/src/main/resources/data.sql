@@ -53,12 +53,12 @@ VALUES
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 1', 10, 100, 1, 'W-4N', 1),
-    (1, current_date, current_date - 1, null, '# Jakiś bardzo interesujący content
+    (-1, current_date, current_date - 1, null, '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 ,
-    (2, current_date, current_date - 2, "post_1337_png", '# Jakiś bardzo interesujący content
+    (-2, current_date, current_date - 2, "post_1337_png", '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
@@ -66,16 +66,16 @@ ON DUPLICATE KEY UPDATE post_id=post_id;
 
 INSERT INTO db_example.post_post_tag (post_id, tag_name) VALUES
     (0,'jedzenie'),
-    (1,'jeremiasz'),
-    (2,'jarmark'),
-    (2,'jedzenie'),
-    (1,'jarmark')
+    (-1,'jeremiasz'),
+    (-2,'jarmark'),
+    (-2,'jedzenie'),
+    (-1,'jarmark')
 ON DUPLICATE KEY UPDATE post_id=post_id;
 
 INSERT INTO db_example.comment (comment_id, total_likes, total_dislikes, content, creation_time, post_id, creator_id_fk)
 VALUES
-    (1, 10, 5, 'masno ni', current_date, 1, 1),
-    (2, 0, 20, 'nie masno ni', current_date, 1, 2),
-    (3, 25, 50, 'tak', current_date, 2, 1),
-    (4, 100, 17, 'nie', current_date, 2, 2)
+    (1, 10, 5, 'masno ni', current_date, -1, 1),
+    (2, 0, 20, 'nie masno ni', current_date, -1, 2),
+    (3, 25, 50, 'tak', current_date, -2, 1),
+    (4, 100, 17, 'nie', current_date, -2, 2)
 ON DUPLICATE KEY UPDATE comment_id=comment_id;

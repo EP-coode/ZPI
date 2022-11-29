@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@Transactional
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -186,33 +188,41 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post addPost(PostCreateUpdateDto postDto)
+    public PostDto addPost(PostCreateUpdateDto postDto)
             throws NoPostCategoryException {
         Post post;
         boolean isPhotoEmpty = postDto.getPhoto() == null || postDto.getPhoto().isEmpty();
+        boolean areTagNamesEmpty = postDto.getTagNames() == null || postDto.getTagNames().size() == 0;
         String photoPath = "";
+        List<PostTag> postTagList;
+        Set<PostTag> postTags;
 
-        postDto.setTagNames(postDto.getTagNames().stream()
-                .map(p -> p.toLowerCase(Locale.ROOT))
-                .collect(Collectors.toSet()));
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        List<PostTag> postTagList = StreamSupport
-                .stream(postTagRepository.findAllById(postDto.getTagNames()).spliterator(), false)
-                .toList();
-        Set<PostTag> postTags = new HashSet<>(postTagList);
-
-        for (String tag : postDto.getTagNames()) {
-            if (!postTags.contains(new PostTag(tag))) {
-                PostTag p = new PostTag(tag);
-                postTagRepository.save(p);
-                postTags.add(p);
-            }
-        }
         PostCategory postCategory = postCategoryRepository.findByDisplayName(postDto.getCategoryName());
+
         if (postCategory == null)
             throw new NoPostCategoryException("Podana kategoria postu nie istnieje");
         postCategory.setTotalPosts(postCategory.getTotalPosts() + 1);
         postCategory.getPostCategoryGroup().setTotalPosts(postCategory.getPostCategoryGroup().getTotalPosts() + 1);
+
+        if (!areTagNamesEmpty) {
+            postDto.setTagNames(postDto.getTagNames().stream()
+                    .map(p -> p.toLowerCase(Locale.ROOT))
+                    .collect(Collectors.toSet()));
+            postTagList = StreamSupport
+                    .stream(postTagRepository.findAllById(postDto.getTagNames()).spliterator(), false)
+                    .toList();
+            postTags = new HashSet<>(postTagList);
+
+            for (String tag : postDto.getTagNames()) {
+                PostTag p = new PostTag(tag);
+                if (!postTags.contains(p)) {
+                    postTagRepository.save(p);
+                    postTags.add(p);
+                }
+            }
+        } else postTags = new HashSet<>();
+
 
         post = PostMapper.toPost(postDto, user, postCategory, postTags);
         for (PostTag p : postTags) {
@@ -227,10 +237,10 @@ public class PostServiceImpl implements PostService {
         }
 
         if (isPhotoEmpty)
-            return post;
+            return PostMapper.toPostDto(post);
 
         fileService.uploadFile(postDto.getPhoto(), photoPath);
-        return post;
+        return PostMapper.toPostDto(post);
     }
 
     @Override

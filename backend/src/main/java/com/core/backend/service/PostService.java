@@ -29,7 +29,7 @@ public interface PostService {
         List<CommentDto> getCommentsPagination(String postId, Integer page, Sort.Direction sort)
                         throws WrongIdException, NoIdException, NoPostException;
 
-        Post addPost(PostCreateUpdateDto postDto)
+        PostDto addPost(PostCreateUpdateDto postDto)
                         throws NoAccessException, NoPostCategoryException;
 
         void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo)

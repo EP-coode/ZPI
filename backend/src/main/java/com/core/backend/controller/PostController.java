@@ -61,8 +61,8 @@ public class PostController {
     @RequestMapping(path = "/create", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<Object> addPost(@ModelAttribute PostCreateUpdateDto post) {
         try {
-            Post createdPost = postService.addPost(post);
-            return new ResponseEntity<>(PostMapper.toPostDto(createdPost), HttpStatus.CREATED);
+            PostDto createdPost = postService.addPost(post);
+            return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
