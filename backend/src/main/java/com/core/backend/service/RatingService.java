@@ -1,5 +1,6 @@
 package com.core.backend.service;
 
+import com.core.backend.dto.likeOrDislike.LikeOrDislikeResponse;
 import com.core.backend.exception.NoCommentException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.exception.NoPostException;
@@ -11,6 +12,6 @@ public interface RatingService {
         LIKE_OR_DISLIKE_CHANGED,
         LIKE_OR_DISLIKE_CREATED
     }
-    LikeOrDislikeResult createPostLikeOrDislike(String postId, String email, boolean likes) throws NoIdException, NoPostException, WrongIdException;
+    LikeOrDislikeResponse createPostLikeOrDislike(String postId, String email, boolean likes) throws NoIdException, NoPostException, WrongIdException;
     LikeOrDislikeResult createCommentLikeOrDislike(String commentId, String email, boolean likes) throws NoIdException, NoCommentException, WrongIdException;
 }

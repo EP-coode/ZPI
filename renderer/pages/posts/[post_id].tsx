@@ -72,6 +72,8 @@ const PostDetailPage: NextPage<
             benerImageUrl={post.imageUrl}
             title={post.title}
             postId={post.postId}
+            totalLikes={post.totalLikes - post.totalDislikes}
+            isLiked={post.isLiked}
           />
         </LeftCollumn>
         <RightCollumn>
