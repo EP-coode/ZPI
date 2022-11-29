@@ -28,7 +28,7 @@ export const LikesCounter = ({
   const modalContext = useContext(ModalContext);
   const router = useRouter();
 
-  const likeOrDislikeButton = async (like: boolean) => {
+  const likeOrDislikeButton = async (like: boolean) => {    
     if (!isLoggedIn()) {
       modalContext.setupModal(
         "Musisz być zalogowany, aby dokonywać ocany",
@@ -55,6 +55,8 @@ export const LikesCounter = ({
   };
 
   useEffect(() => {
+    if(!isLoggedIn()) return;
+
     const setIsLiked = async () => {
       const post = await fetchWithJWT<Post>(`posts/${postId}`, {
         method: "GET",

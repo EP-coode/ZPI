@@ -69,7 +69,12 @@ export const ModalContextProvider = ({ children }: React.PropsWithChildren) => {
         setupModal: handleSetupModal,
       }}
     >
-      <input type="checkbox" className="modal-toggle" checked={showModal} />
+      <input
+        type="checkbox"
+        className="modal-toggle hidden"
+        checked={showModal}
+        onChange={(e) => setShowModal(e.target.checked)}
+      />
       <div className="modal">
         <div className="modal-box relative">
           {modalProperties.canClose && (
