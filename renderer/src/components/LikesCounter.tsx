@@ -18,12 +18,24 @@ export const LikesCounter = ({
   totalLikes,
   onLike,
   onDisLike,
-  isLiked,
 }: Props) => {
 
-  const [disliked, setDisliked] = useState<boolean>(typeof isLiked  == "boolean" && !isLiked);
+  const [disliked, setDisliked] = useState<boolean>(false);
   const [liked, setLiked] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(totalLikes);
+
+  const likeOrDislikeButton = async (onLikeOrDislike: any) => {
+    try{
+      const response = onLikeOrDislike && onLikeOrDislike(postId);
+      if(response != undefined){
+        setLikesCount((await response).totalLikes)
+        setDisliked(typeof (await response).isLiked  == "boolean" && !(await response).isLiked);
+        setLiked((await response).isLiked ?? false);
+      }
+    }catch(e: any){
+      window.alert("Musisz się zalogować aby oceniać posty!");
+    }
+  };
 
   useEffect(() =>{
     const setIsLiked = async () => {
@@ -37,18 +49,7 @@ export const LikesCounter = ({
   return (
     <div className="flex flex-wrap bg-base-300 rounded-xl w-fit h-10 text-xl items-center overflow-hidden">
       <button
-        onClick={async () => {
-          try{
-            const response = onDisLike && onDisLike(postId);
-            if(response != undefined){
-              setLikesCount((await response).totalLikes)
-              setDisliked(typeof (await response).isLiked  == "boolean" && !(await response).isLiked);
-              setLiked((await response).isLiked ?? false);
-            }
-          }catch(e: any){
-            window.alert("Musisz się zalogować aby oceniać posty!");
-          }
-        }}
+        onClick={() => { likeOrDislikeButton(onDisLike)}}
         className={classNames(
           `flex h-full text-red-700 bg-base-300 border-none rounded-r-none p-2 `,
           { "transition-transform hover:translate-y-1 ease-in": !disliked }
@@ -64,18 +65,7 @@ export const LikesCounter = ({
         <div className="w-full text-center select-none">{likesCount}</div>
       </div>
       <button
-        onClick={async () => {
-          try{
-            const response = onLike && onLike(postId);
-            if(response != undefined){
-              setLikesCount((await response).totalLikes)
-              setDisliked(typeof (await response).isLiked  == "boolean" && !(await response).isLiked);
-              setLiked((await response).isLiked ?? false)
-            }
-        }catch(e: any){
-          window.alert("Musisz się zalogować aby oceniać posty!");
-        }
-        }}
+        onClick={() => {likeOrDislikeButton(onLike)}}
         className={classNames(
           `flex h-full text-green-700 bg-base-300 border-none rounded-r-none p-2 `,
           { "transition-transform hover:-translate-y-1 ease-in": !liked }
