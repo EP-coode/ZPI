@@ -1,6 +1,7 @@
 import { DATA_PROVIDER_URL } from ".";
 import { CreatePostDto } from "../../dto/request/CreatePostDto";
 import { Post } from "../../model/Post";
+import { fetchWithJWT } from "../../utils/fetchWithJWT";
 import { Pagination } from "../interfaces/Pagination";
 import {
   PostFilters,
@@ -52,8 +53,21 @@ export const postsService: PostService = {
       throw new Error("Coś poszło nie tak");
     }
   },
-  createPost: function (post: CreatePostDto): Promise<void> {
-    throw new Error("Function not implemented.");
+  createPost: async function (post: CreatePostDto): Promise<Post> {
+    const formData = new FormData();
+
+    formData.append("title", post.title);
+    formData.append("categoryName", post.categoryName);
+    formData.append("markdownContent", post.markdownContent);
+    if (post.photo) formData.append("photo", post.photo);
+    post.tagNames.forEach((tagName) => {
+      formData.append(`tagNames`, tagName);
+    });
+
+    return await fetchWithJWT<Post>("posts/create", {
+      method: "POST",
+      body: formData,
+    });
   },
   deletePost: function (postId: string): Promise<void> {
     throw new Error("Function not implemented.");

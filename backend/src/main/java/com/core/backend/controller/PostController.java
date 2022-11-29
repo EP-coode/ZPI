@@ -1,12 +1,15 @@
 package com.core.backend.controller;
 
 import com.core.backend.dto.filter.PostFilters;
+import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.service.PostService;
 import com.core.backend.exception.WrongIdException;
+import com.core.backend.model.Post;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,16 +58,14 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
-    @PostMapping("create")
-    public ResponseEntity<Object> addPost(@RequestBody PostCreateUpdateDto postCreateDto,
-            @RequestBody(required = false) MultipartFile photo) {
+    @RequestMapping(path = "/create", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Object> addPost(@ModelAttribute PostCreateUpdateDto post) {
         try {
-            postCreateDto = postService.addPost(postCreateDto, photo);
+            Post createdPost = postService.addPost(post);
+            return new ResponseEntity<>(PostMapper.toPostDto(createdPost), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(postCreateDto, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")

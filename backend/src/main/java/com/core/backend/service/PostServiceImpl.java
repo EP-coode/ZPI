@@ -100,13 +100,12 @@ public class PostServiceImpl implements PostService {
             startDate = cal.getTime();
         }
 
-        posts = postRepository.findPostsFiltered(postFilters.getCategoryGroupId()
-                , postFilters.getCategoryId(), postFilters.getCreatorId(), startDate, endDate, sort);
-
+        posts = postRepository.findPostsFiltered(postFilters.getCategoryGroupId(), postFilters.getCategoryId(),
+                postFilters.getCreatorId(), startDate, endDate, sort);
 
         posts = posts.stream().filter(p -> {
             boolean containsAllTags = true;
-            for(String tagName : tagNames) {
+            for (String tagName : tagNames) {
                 if (!p.getPostTags().contains(new PostTag(tagName))) {
                     containsAllTags = false;
                     break;
@@ -187,10 +186,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostCreateUpdateDto addPost(PostCreateUpdateDto postDto, MultipartFile photo)
+    public Post addPost(PostCreateUpdateDto postDto)
             throws NoPostCategoryException {
         Post post;
-        boolean isPhotoEmpty = photo == null || photo.isEmpty();
+        boolean isPhotoEmpty = postDto.getPhoto() == null || postDto.getPhoto().isEmpty();
         String photoPath = "";
 
         postDto.setTagNames(postDto.getTagNames().stream()
@@ -224,14 +223,14 @@ public class PostServiceImpl implements PostService {
         if (!isPhotoEmpty) {
             photoPath = String.format("post_%d", post.getPostId());
             post.setImageUrl(photoPath);
-            postRepository.save(post);
+            post = postRepository.save(post);
         }
 
         if (isPhotoEmpty)
-            return postDto;
+            return post;
 
-        fileService.uploadFile(photo, photoPath);
-        return postDto;
+        fileService.uploadFile(postDto.getPhoto(), photoPath);
+        return post;
     }
 
     @Override

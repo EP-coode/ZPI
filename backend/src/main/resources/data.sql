@@ -41,9 +41,9 @@ ON DUPLICATE KEY UPDATE display_name=display_name;
 
 --@BLOCK
 INSERT INTO db_example.post_tag (tag_name, total_posts) VALUES
-    ('Jedzenie', 2),
-    ('Jeremiasz', 1),
-    ('Jarmark', 2)
+    ('jedzenie', 2),
+    ('jeremiasz', 1),
+    ('jarmark', 2)
 ON DUPLICATE KEY UPDATE tag_name=tag_name;
 
 INSERT INTO db_example.post (post_id, approve_time, creation_time, image_url, markdown_content, title, total_dislikes,
@@ -65,11 +65,11 @@ I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 ON DUPLICATE KEY UPDATE post_id=post_id;
 
 INSERT INTO db_example.post_post_tag (post_id, tag_name) VALUES
-    (0,'Jedzenie'),
-    (1,'Jeremiasz'),
-    (2,'Jarmark'),
-    (2,'Jedzenie'),
-    (1,'Jarmark')
+    (0,'jedzenie'),
+    (1,'jeremiasz'),
+    (2,'jarmark'),
+    (2,'jedzenie'),
+    (1,'jarmark')
 ON DUPLICATE KEY UPDATE post_id=post_id;
 
 INSERT INTO db_example.comment (comment_id, total_likes, total_dislikes, content, creation_time, post_id, creator_id_fk)

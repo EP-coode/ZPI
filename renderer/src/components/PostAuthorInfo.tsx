@@ -37,11 +37,11 @@ const UserInfoCard = ({ user }: Props) => {
           <span className="font-semibold">Potiwierdzony student:</span>
           <h2
             className={classNames("inline-block ml-2", {
-              "text-green-700": user.emailConfirmed,
-              "text-red-700": !user.emailConfirmed,
+              "text-green-700": user.studentStatusConfirmed,
+              "text-red-700": !user.studentStatusConfirmed,
             })}
           >
-            {user.emailConfirmed ? "TAK" : "NIE"}
+            {user.studentStatusConfirmed ? "TAK" : "NIE"}
           </h2>
         </div>
         <div>

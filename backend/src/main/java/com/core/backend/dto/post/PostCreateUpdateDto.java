@@ -7,6 +7,8 @@ import lombok.*;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @ToString
 @Setter
 @Getter
@@ -17,5 +19,6 @@ public class PostCreateUpdateDto {
     private String title;
     private String markdownContent;
     private Set<String> tagNames;
+    private MultipartFile photo;
 }
 
