@@ -6,7 +6,7 @@ import com.core.backend.exception.TokenExpiredException;
 import com.core.backend.registration.OnRegistrationCompleteEvent;
 import com.core.backend.service.RegistrationService;
 import com.core.backend.model.User;
-import com.core.backend.dto.RegisterUser;
+import com.core.backend.dto.user.RegisterUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;

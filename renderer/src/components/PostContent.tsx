@@ -3,18 +3,25 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { LikesCounter } from "./LikesCounter";
 import ContentPane from "../layout/ContentPane";
+import ramarkGfm from "remark-gfm";
+import {likeService} from "../services/api/LikeService"
 
 type Props = {
   postId: number;
   contentMarkdown: string;
   benerImageUrl: string | null;
   title: string;
+  totalLikes: number;
+  isLiked: boolean | null;
 };
 
 export const PostDetails = ({
+  postId,
   contentMarkdown,
   title,
   benerImageUrl,
+  totalLikes,
+  isLiked
 }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -23,7 +30,10 @@ export const PostDetails = ({
       <div className="flex flex-row items-center justify-center gap-7">
         <h1 className="text-3xl sm:text-5xl font-semibold grow">{title}</h1>
         <div className="shrink-0">
-          <LikesCounter totalLikes={75} />
+          <LikesCounter postId={postId} totalLikes={totalLikes} isLiked={isLiked}
+            onDisLike={likeService.DislikePost} 
+            onLike={likeService.LikePost} 
+          />
         </div>
       </div>
       {benerImageUrl && (
@@ -40,8 +50,10 @@ export const PostDetails = ({
           )}
         </figure>
       )}
-      <article className="p-7 prose">
-        <ReactMarkdown>{contentMarkdown}</ReactMarkdown>
+      <article className="p-7 prose max-w-full">
+        <ReactMarkdown remarkPlugins={[ramarkGfm]}>
+          {contentMarkdown}
+        </ReactMarkdown>
       </article>
     </ContentPane>
   );

@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { Post } from "../model/Post";
 import { formatDate } from "../utils/dateFormating";
 import { LikesCounter } from "./LikesCounter";
+import {likeService} from "../services/api/LikeService"
 
 type Props = {
   post: Post;
@@ -16,7 +17,7 @@ const SmallPostCard = ({ post, className }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className={`card relative bg-base-100 shadow-md h-full min-w-[20rem] ${className}`}>
+    <div className={`card relative bg-base-100 shadow-md h-full min-w-[20rem] overflow-hidden ${className}`}>
       <div className="absolute top-2 right-2 z-20 badge badge-ghost">
         {formatDate(post.creationTime)}
       </div>
@@ -30,7 +31,10 @@ const SmallPostCard = ({ post, className }: Props) => {
             onLoad={() => setImageLoaded(true)}
           />
           <div className="absolute -bottom-4 right-4 z-20">
-            <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
+            <LikesCounter postId={post.postId} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
+              onDisLike={likeService.DislikePost} 
+              onLike={likeService.LikePost}
+            />
           </div>
           {!imageLoaded && (
             <div className="bg-gray-300 animate-pulse w-full h-full z-10"></div>
@@ -47,7 +51,10 @@ const SmallPostCard = ({ post, className }: Props) => {
       >
         {!!post.imageUrl || (
           <div className="self-end">
-            <LikesCounter totalLikes={post.totalLikes - post.totalDislikes} />
+            <LikesCounter postId={post.postId} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
+              onDisLike={likeService.DislikePost} 
+              onLike={likeService.LikePost}
+            />
           </div>
         )}
         <h2 className="card-title">{post.title}</h2>
@@ -55,7 +62,7 @@ const SmallPostCard = ({ post, className }: Props) => {
           Autor:
           <Link href={`/posts/user/${post.author.id}`}>
             <a className="btn btn-sm btn-ghost self-start w-fit ml-1">
-              {post.author.email}
+              {post.author.name}
             </a>
           </Link>
         </div>

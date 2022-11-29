@@ -99,7 +99,7 @@ export async function getUserData(): Promise<User | undefined> {
 
   const userReq = await fetch(`${AUTH_SERVICE_URL}/users/${user_id}`);
 
-  if(!userReq.ok) throw new Error("Nie można pobrać danych użytkownika")
+  if (!userReq.ok) throw new Error("Nie można pobrać danych użytkownika");
 
   return await userReq.json();
 }

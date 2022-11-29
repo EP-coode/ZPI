@@ -3,7 +3,7 @@ package com.core.backend.controller;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.core.backend.dto.AuthTokens;
 import com.core.backend.exception.UserDisabledException;
-import com.core.backend.dto.LoginUser;
+import com.core.backend.dto.user.LoginUser;
 import com.core.backend.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;

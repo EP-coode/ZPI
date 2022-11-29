@@ -1,7 +1,6 @@
 package com.core.backend.controller;
 
-import com.core.backend.dto.UserDto;
-import com.core.backend.dto.mapper.PostMapper;
+import com.core.backend.dto.user.UserDto;
 import com.core.backend.dto.mapper.UserDetailsMapper;
 import com.core.backend.dto.mapper.UserMapper;
 import com.core.backend.exception.NoRoleException;

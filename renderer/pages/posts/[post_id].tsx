@@ -49,18 +49,16 @@ export const getServerSideProps: GetServerSideProps<
 const PostDetailPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ post }) => {
-  const router = useRouter();
-  const { post_id } = router.query;
 
   const crumbs = [
     { title: "Główna", href: "/" },
     {
-      title: post.category.catyegoryGroup.name,
-      href: `/posts/category/${post.category.catyegoryGroup.name}`,
+      title: post.category.postCategoryGroup.displayName,
+      href: `/posts/category/${post.category.postCategoryGroup.displayName}`,
     },
     {
       title: post.category.displayName,
-      href: `/posts/category/${post.category.catyegoryGroup.name}/${post.category.displayName}`,
+      href: `/posts/category/${post.category.postCategoryGroup.displayName}/${post.category.displayName}`,
     },
   ];
 
@@ -74,6 +72,8 @@ const PostDetailPage: NextPage<
             benerImageUrl={post.imageUrl}
             title={post.title}
             postId={post.postId}
+            totalLikes={post.totalLikes - post.totalDislikes}
+            isLiked={post.isLiked}
           />
         </LeftCollumn>
         <RightCollumn>

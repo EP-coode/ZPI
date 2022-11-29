@@ -9,7 +9,7 @@ import com.core.backend.model.User;
 public class CommentMapper {
     public static CommentDto toCommentDto(Comment comment) {
         return new CommentDto(comment.getCommentId(), comment.getPost().getPostId(),
-                comment.getCreator(), comment.getTotalLikes(), comment.getTotalDislikes(),
+                UserMapper.toUserDto(comment.getCreator()), comment.getTotalLikes(), comment.getTotalDislikes(),
                 comment.getContent(), comment.getCreationTime());
     }
     public static Comment toComment(CommentCreateUpdateDto comment, User creator, Post post) {
