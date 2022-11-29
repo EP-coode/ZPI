@@ -4,7 +4,7 @@ import { fetchWithJWT } from "../../utils/fetchWithJWT";
 
 export const likeService: LikeService = {
 
-    LikePost: function (postId: string): Promise<LikeOrDislike> {
+    LikePost: function (postId: number): Promise<LikeOrDislike> {
         try{
             const result = fetchWithJWT<LikeOrDislike>(`postRating/like/${postId}`, {method: "GET",});
             return result;
@@ -14,7 +14,7 @@ export const likeService: LikeService = {
         }
     },
 
-    DislikePost: function (postId: string): Promise<LikeOrDislike> {
+    DislikePost: function (postId: number): Promise<LikeOrDislike> {
         try{
             const result = fetchWithJWT<LikeOrDislike>(`postRating/dislike/${postId}`, {method: "GET",})
             return result;

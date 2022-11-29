@@ -5,6 +5,6 @@ export interface LikeOrDislike {
 }
 
 export interface LikeService {
-    LikePost(postId: string): Promise<LikeOrDislike>;
-    DislikePost(postId: string): Promise<LikeOrDislike>;
+    LikePost(postId: number): Promise<LikeOrDislike>;
+    DislikePost(postId: number): Promise<LikeOrDislike>;
   }

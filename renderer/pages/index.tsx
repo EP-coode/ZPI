@@ -11,6 +11,10 @@ import { CategoryGroup } from "../src/model/CategoryGroup";
 import { Post } from "../src/model/Post";
 import { ContentWrapper } from "../src/layout/ContentWrapper";
 import { PostOrdering } from "../src/services/interfaces/PostService";
+import {
+  ModalContext,
+  ModalContextProvider,
+} from "../src/context/ModalContext";
 
 const PAGE_SIZE = 3;
 
@@ -37,7 +41,7 @@ export const getServerSideProps: GetServerSideProps<
         creatorId: null,
         tagNames: [],
         maxPostDaysAge: 30,
-        orderBy: PostOrdering.LikesDsc
+        orderBy: PostOrdering.LikesDsc,
       });
       categoryGroupsPosts[categoryGroup.displayName] = posts.posts;
     })

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Link from "next/link";
 
 import classNames from "classnames";
@@ -6,13 +6,16 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import ErrorSvg from "../icons/ErrorSvg";
+import { ModalContext } from "../context/ModalContext";
+import { useRouter } from "next/router";
 
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL ?? "http://localhost:8080";
 
 const RegisterForm = () => {
   const [errors, setErrors] = useState<string[]>([]);
-  const [showSuccesModal, setShowSuccesModal] = useState(false);
+  const modalContext = useContext(ModalContext);
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -42,25 +45,38 @@ const RegisterForm = () => {
     onSubmit: async ({ email, password, name }) => {
       if (errors.length > 0) setErrors([]);
 
-      const result = await fetch(
-        `${AUTH_SERVICE_URL}/registration/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-            name,
-          }),
-        }
-      );
+      const result = await fetch(`${AUTH_SERVICE_URL}/registration/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          name,
+        }),
+      });
 
       if (!result.ok) {
         setErrors([await result.text()]);
       } else {
-        setShowSuccesModal(true);
+        modalContext.setupModal(
+          `Aby zacząć korzystać ze swojego konta musisz jescze potwierdzić swój
+        adres emali kikając na wysłany przez nas link.`,
+          true,
+          [
+            {
+              label: "ekran logowania",
+              onClick: () => router.push("/login"),
+            },
+            {
+              label: "strona główna",
+              onClick: () => router.push("/"),
+              classNames: "btn-primary",
+            },
+          ]
+        );
+        modalContext.show();
         formik.resetForm();
         setErrors([]);
       }
@@ -80,7 +96,6 @@ const RegisterForm = () => {
       className="h-full max-w-xl min-w-[20rem] w-full bg-base-100 p-8 flex flex-col gap-5 rounded-md"
     >
       <h1 className="text-2xl mb-7">Zarejestruj się w StudentSociety</h1>
-
       <div className="form-control w-full">
         <label className="label">
           <span className="label-text">Podaj email</span>
@@ -195,44 +210,6 @@ const RegisterForm = () => {
         />
         Zarejestuj
       </button>
-
-      <input
-        type="checkbox"
-        id="my-modal-3"
-        className="modal-toggle"
-        onChange={(e) => setShowSuccesModal(e.target.checked)}
-        checked={showSuccesModal}
-      />
-      <div className="modal">
-        <div className="modal-box relative">
-          <label
-            htmlFor="my-modal-3"
-            className="btn btn-sm btn-circle absolute right-2 top-2"
-          >
-            ✕
-          </label>
-          <h3 className="text-lg font-bold">
-            Pomyślnie zarejestrowano w portalu.
-          </h3>
-          <p className="py-4">
-            Aby zacząć korzystać ze swojego konta musisz jescze potwierdzić swój
-            adres emali kikając na wysłany przez nas link.
-          </p>
-          <div className="modal-action">
-            <Link href={"/login"}>
-              <a href="#" className="btn">
-                ekran logowania
-              </a>
-            </Link>
-            <Link href={"/"}>
-              <a href="#" className="btn btn-primary">
-                strona główna
-              </a>
-            </Link>
-          </div>
-        </div>
-      </div>
-
       <div className="form-control ml-auto mr-0">
         <Link href={"/login"}>
           <a className="link">Masz konto? Kliknij tu aby zalogować.</a>
