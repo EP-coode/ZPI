@@ -31,7 +31,8 @@ export const LikesCounter = ({
   const likeOrDislikeButton = async (like: boolean) => {    
     if (!isLoggedIn()) {
       modalContext.setupModal(
-        "Musisz być zalogowany, aby dokonywać ocany",
+        null,
+        "Musisz być zalogowany, aby dokonywać oceny",
         true,
         [{ label: "Zaloguj", onClick: () => router.push("/login") }]
       );
