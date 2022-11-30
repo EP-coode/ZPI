@@ -12,10 +12,10 @@ UPDATE role_name = role_name,
     can_create_post=can_create_post,
     can_read_post=can_read_post,
     post_per_day_limit=post_per_day_limit;
---update roles
+-- update roles
 
---hasło: 123456
---on duplicate skip
+-- hasło: 123456
+-- on duplicate skip
 INSERT INTO db_example.user (user_id, avatar_url, email, name, email_confirmation_token, email_confirmed, password_hash,
                              refresh_token, student_status_confirmed, role_fk)
 VALUES (1, null, 'studentcommunityzpi@gmail.com', 'admin123', null, true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_ADMIN'),
@@ -39,11 +39,11 @@ VALUES
     ('Chemicy', 0, 'Prowadzący')
 ON DUPLICATE KEY UPDATE display_name=display_name;
 
---@BLOCK
+-- @BLOCK
 INSERT INTO db_example.post_tag (tag_name, total_posts) VALUES
-    ('Jedzenie', 2),
-    ('Jeremiasz', 1),
-    ('Jarmark', 2)
+    ('jedzenie', 2),
+    ('jeremiasz', 1),
+    ('jarmark', 2)
 ON DUPLICATE KEY UPDATE tag_name=tag_name;
 
 INSERT INTO db_example.post (post_id, approve_time, creation_time, image_url, markdown_content, title, total_dislikes,
@@ -53,29 +53,29 @@ VALUES
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 1', 10, 100, 1, 'W-4N', 1),
-    (1, current_date, current_date - 1, null, '# Jakiś bardzo interesujący content
+    (-1, current_date, current_date - 1, null, '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 ,
-    (2, current_date, current_date - 2, "post_1337_png", '# Jakiś bardzo interesujący content
+    (-2, current_date, current_date - 2, 'post_1337_png', '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 ON DUPLICATE KEY UPDATE post_id=post_id;
 
 INSERT INTO db_example.post_post_tag (post_id, tag_name) VALUES
-    (0,'Jedzenie'),
-    (1,'Jeremiasz'),
-    (2,'Jarmark'),
-    (2,'Jedzenie'),
-    (1,'Jarmark')
+    (0,'jedzenie'),
+    (-1,'jeremiasz'),
+    (-2,'jarmark'),
+    (-2,'jedzenie'),
+    (-1,'jarmark')
 ON DUPLICATE KEY UPDATE post_id=post_id;
 
 INSERT INTO db_example.comment (comment_id, total_likes, total_dislikes, content, creation_time, post_id, creator_id_fk)
 VALUES
-    (1, 10, 5, 'masno ni', current_date, 1, 1),
-    (2, 0, 20, 'nie masno ni', current_date, 1, 2),
-    (3, 25, 50, 'tak', current_date, 2, 1),
-    (4, 100, 17, 'nie', current_date, 2, 2)
+    (1, 10, 5, 'masno ni', current_date, -1, 1),
+    (2, 0, 20, 'nie masno ni', current_date, -1, 2),
+    (3, 25, 50, 'tak', current_date, -2, 1),
+    (4, 100, 17, 'nie', current_date, -2, 2)
 ON DUPLICATE KEY UPDATE comment_id=comment_id;
