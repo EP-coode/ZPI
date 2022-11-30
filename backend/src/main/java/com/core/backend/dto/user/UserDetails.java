@@ -1,4 +1,4 @@
-package com.core.backend.dto;
+package com.core.backend.dto.user;
 
 import lombok.*;
 
@@ -7,9 +7,10 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class UserDetails {
     private String name;
+    private String email;
     private String avatarUrl;
     private String roleName;
-    private String studentStatus;
+    private boolean studentStatusConfirmed;
 }

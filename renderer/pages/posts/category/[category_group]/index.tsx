@@ -3,23 +3,22 @@ import {
   InferGetServerSidePropsType,
   NextPage,
 } from "next";
-import { useRouter } from "next/router";
 import React, { useContext } from "react";
-import { BreadCrumbs } from "../../../../src/components/BreadCrumbs";
+import { BreadCrumbs, Crumb } from "../../../../src/components/BreadCrumbs";
 import CategoryTree from "../../../../src/components/CategoryTree";
 import PostFilterBox from "../../../../src/components/PostFilterBox";
 import PostList from "../../../../src/components/PostList";
-import { PostFilterContext, PostFilterContextProvider } from "../../../../src/context/PostFilterContext";
+import {
+  PostFilterContext,
+} from "../../../../src/context/PostFilterContext";
 import { CollumnWrapper } from "../../../../src/layout/CollumnWrapper";
 import { ContentWrapper } from "../../../../src/layout/ContentWrapper";
 import { LeftCollumn } from "../../../../src/layout/LeftCollumn";
 import RightCollumn from "../../../../src/layout/RightCollumn";
 import { PostOrdering } from "../../../../src/services/interfaces/PostService";
 
-type Crumbs = { title: string; href: string };
-
 type PageProps = {
-  crumbs: Crumbs[];
+  crumbs: Crumb[];
   category_group: string;
 };
 
@@ -31,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   // only to match types
   if (typeof category_group != "string") category_group = "";
 
-  const crumbs: Crumbs[] = [{ title: "Główna", href: "/" }];
+  const crumbs: Crumb[] = [{ title: "Główna", href: "/" }];
 
   if (typeof category_group == "string" && category_group.length > 0) {
     crumbs.push({

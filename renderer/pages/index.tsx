@@ -9,10 +9,12 @@ import CategoryGroupSlider from "../src/components/CategoryGroupSlider";
 import { CountDown } from "../src/components/CountDown";
 import { CategoryGroup } from "../src/model/CategoryGroup";
 import { Post } from "../src/model/Post";
-import RightCollumn from "../src/layout/RightCollumn";
-import { LeftCollumn } from "../src/layout/LeftCollumn";
 import { ContentWrapper } from "../src/layout/ContentWrapper";
 import { PostOrdering } from "../src/services/interfaces/PostService";
+import {
+  ModalContext,
+  ModalContextProvider,
+} from "../src/context/ModalContext";
 
 const PAGE_SIZE = 3;
 
@@ -34,14 +36,14 @@ export const getServerSideProps: GetServerSideProps<
   await Promise.all(
     categoryGroups.map(async (categoryGroup) => {
       const posts = await postsService.getPosts(pagination, {
-        categoryGroupId: categoryGroup.name,
+        categoryGroupId: categoryGroup.displayName,
         categoryId: null,
         creatorId: null,
-        tagNames: null,
+        tagNames: [],
         maxPostDaysAge: 30,
-        orderBy: PostOrdering.LikesDsc
+        orderBy: PostOrdering.LikesDsc,
       });
-      categoryGroupsPosts[categoryGroup.name] = posts.posts;
+      categoryGroupsPosts[categoryGroup.displayName] = posts.posts;
     })
   );
 
@@ -68,8 +70,8 @@ const Home: NextPage<
         {categoryGroups.map((categoryGroup) => (
           <CategoryGroupSlider
             categoryGroup={categoryGroup}
-            categoryGroupPosts={categoryGroupsPosts[categoryGroup.name]}
-            key={categoryGroup.name}
+            categoryGroupPosts={categoryGroupsPosts[categoryGroup.displayName]}
+            key={categoryGroup.displayName}
           />
         ))}
       </div>

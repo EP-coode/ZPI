@@ -1,6 +1,6 @@
 package com.core.backend.dto.comment;
 
-import com.core.backend.model.User;
+import com.core.backend.dto.user.UserDto;
 import lombok.*;
 
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.Date;
 public class CommentDto {
     private long commentId;
     private long postId;
-    private User creator;
+    private UserDto creator;
     private int totalLikes;
     private int totalDislikes;
     private String content;

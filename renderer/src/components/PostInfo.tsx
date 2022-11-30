@@ -19,13 +19,13 @@ const PostInfo = ({ post }: Props) => {
         </div>
         <div className="w-full">
           <h3 className="font-semibold inline">Tagi: </h3>
-          {post.tags.map((tag) => (
+          {post.postTags.map((tag) => (
             <Link
-              href={`category/${post.category.catyegoryGroup?.name}/${post.category.displayName}?tags=${tag.name}`}
-              key={tag.name}
+              href={`category/${post.category.postCategoryGroup?.displayName}/${post.category.displayName}?tags=${tag.tagName}`}
+              key={tag.tagName}
             >
               <a className="btn btn-sm btn-outline m-1">
-                {tag.name}
+                {tag.tagName}
                 <span className="badge ml-2">{tag.totalPosts}</span>
               </a>
             </Link>

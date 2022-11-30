@@ -4,9 +4,9 @@ export const categoryGroupService: CategoryGroupService = {
   getCategoryGroups() {
     return Promise.resolve([
       {
-        name: "Wydziały",
+        displayName: "Wydziały",
         totalPosts: 102,
-        categories: [
+        postCategories: [
           {
             displayName: "W-4n",
             totalPosts: 22,
@@ -30,9 +30,9 @@ export const categoryGroupService: CategoryGroupService = {
         ],
       },
       {
-        name: "Prowadzący",
+        displayName: "Prowadzący",
         totalPosts: 66,
-        categories: [
+        postCategories: [
           {
             displayName: "Matematycy",
             totalPosts: 32,

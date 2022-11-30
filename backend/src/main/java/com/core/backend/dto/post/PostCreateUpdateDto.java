@@ -5,6 +5,7 @@ import com.core.backend.model.PostTag;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @ToString
 @Setter
@@ -12,10 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostCreateUpdateDto {
-    private PostCategory category;
+    private String categoryName;
     private String title;
-    private String imageUrl;
     private String markdownContent;
-    private List<PostTag> tags;
+    private Set<String> tagNames;
 }
 

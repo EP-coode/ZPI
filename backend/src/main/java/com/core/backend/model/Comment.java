@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long commentId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -88,5 +88,23 @@ public class Comment {
 
     public void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
+    }
+
+    public void addLikeOrDislike(boolean likes){
+        if(likes) this.totalLikes += 1; else this.totalDislikes += 1;
+    }
+
+    public void deleteLikeOrDislike(boolean likes){
+        if(likes) this.totalLikes -= 1; else this.totalDislikes -= 1;
+    }
+
+    public void changeLikeOrDislike(boolean likes){
+        if(likes){
+            this.totalLikes += 1;
+            this.totalDislikes -= 1;
+        }else{
+            this.totalLikes -= 1;
+            this.totalDislikes += 1;
+        }
     }
 }
