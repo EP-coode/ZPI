@@ -39,7 +39,7 @@ const CommentBox = ({comment, onDelete}: Props) => {
             </div>
 
             <div className="flex flex-row basis-0 p-5 items-center justify-left gap-7">
-                <LikesCounter postId={comment.postId} commentId={comment.commentId} totalLikes={comment.totalLikes - comment.totalDislikes} isLiked={false}
+                <LikesCounter resourceId={comment.commentId} totalLikes={comment.totalLikes - comment.totalDislikes} isLiked={false}
                     onDisLike={likeService.DislikeComment} 
                     onLike={likeService.LikeComment} 
                     setIsLiked={likeService.IsCommentLiked} 

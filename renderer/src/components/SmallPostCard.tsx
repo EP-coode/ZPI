@@ -31,7 +31,7 @@ const SmallPostCard = ({ post, className }: Props) => {
             onLoad={() => setImageLoaded(true)}
           />
           <div className="absolute -bottom-4 right-4 z-20">
-            <LikesCounter postId={post.postId} commentId={null} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
+            <LikesCounter resourceId={post.postId} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
               onDisLike={likeService.DislikePost} 
               onLike={likeService.LikePost}
               setIsLiked={likeService.IsPostLiked} 
@@ -52,7 +52,7 @@ const SmallPostCard = ({ post, className }: Props) => {
       >
         {!!post.imageUrl || (
           <div className="self-end">
-            <LikesCounter postId={post.postId} commentId={null} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
+            <LikesCounter resourceId={post.postId} totalLikes={post.totalLikes - post.totalDislikes} isLiked={post.isLiked} 
               onDisLike={likeService.DislikePost} 
               onLike={likeService.LikePost}
               setIsLiked={likeService.IsPostLiked} 

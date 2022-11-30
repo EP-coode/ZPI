@@ -10,18 +10,16 @@ import { useRouter } from "next/router";
 import PostDetailPage from "../../pages/posts/[post_id]";
 
 type Props = {
-  postId: number;
-  commentId: number | null;
+  resourceId: number;
   isLiked: boolean | null;
   totalLikes: number;
   onLike?: (x: number) => Promise<LikeOrDislike>;
   onDisLike?: (x: number) => Promise<LikeOrDislike>;
-  setIsLiked: (postId: number, commentId: number | null) => Promise<boolean | null>; 
+  setIsLiked: (x: number) => Promise<boolean | null>; 
 };
 
 export const LikesCounter = ({
-  postId,
-  commentId,
+  resourceId,
   totalLikes,
   onLike,
   onDisLike,
@@ -45,8 +43,7 @@ export const LikesCounter = ({
     }
 
     try {
-      const id = commentId != null ? commentId : postId;
-      const response = like ? onLike?.(id) : onDisLike?.(id);
+      const response = like ? onLike?.(resourceId) : onDisLike?.(resourceId);
       if (response == undefined) {
         throw new Error("Coś poszło nie tak");
       }
@@ -64,12 +61,12 @@ export const LikesCounter = ({
     if(!isLoggedIn()) return;
 
     const updateIsLiked = async () => {
-      const isLiked = await setIsLiked(postId, commentId);
+      const isLiked = await setIsLiked(resourceId);
       setDisliked(typeof isLiked == "boolean" && !isLiked);
       setLiked(isLiked ?? false);
     };
     updateIsLiked().catch((e) => console.log("użytkownik nie zalogowany"));
-  }, [postId]);
+  }, [resourceId]);
 
   return (
     <div className="flex flex-wrap bg-base-300 rounded-xl w-fit h-10 text-xl items-center overflow-hidden">

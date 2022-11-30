@@ -14,6 +14,10 @@ const CommentForm = ({onSubmit}: Props) => {
             setError("Twój komentarz jest za długi");
             return;
         }
+        if(message.length == 0){
+          setError("Komentarz nie może być pusty");
+          return;
+        }
         setMessage("");
         onSubmit(message);
     };

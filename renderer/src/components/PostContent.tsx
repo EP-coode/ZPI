@@ -32,7 +32,7 @@ export const PostDetails = ({
       <div className="flex flex-row items-center justify-center gap-7">
         <h1 className="text-3xl sm:text-5xl font-semibold grow">{title}</h1>
         <div className="shrink-0">
-          <LikesCounter postId={postId} commentId={null} totalLikes={totalLikes} isLiked={isLiked}
+          <LikesCounter resourceId={postId} totalLikes={totalLikes} isLiked={isLiked}
             onDisLike={likeService.DislikePost} 
             onLike={likeService.LikePost}
             setIsLiked={likeService.IsPostLiked} 

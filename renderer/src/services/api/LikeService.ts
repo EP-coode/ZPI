@@ -27,7 +27,7 @@ export const likeService: LikeService = {
         }
     },
 
-    IsPostLiked: async function (postId: number, commentId: number | null): Promise<boolean | null> {
+    IsPostLiked: async function (postId: number): Promise<boolean | null> {
         try{
             const post = await fetchWithJWT<Post>(`posts/${postId}`, {method: "GET",});
             return post.isLiked;
@@ -57,9 +57,9 @@ export const likeService: LikeService = {
         }
     },
 
-    IsCommentLiked: async function (postId: number, commentId: number | null): Promise<boolean | null> {
+    IsCommentLiked: async function (commentId: number): Promise<boolean | null> {
         try{
-            const comment = await fetchWithJWT<Comment>(`posts/${postId}/comments/${commentId}`, {method: "GET",})
+            const comment = await fetchWithJWT<Comment>(`posts/${0}/comments/${commentId}`, {method: "GET",})
             return comment.isLiked;
         }catch(e: any){
             console.log(e);
