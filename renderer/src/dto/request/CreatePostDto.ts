@@ -3,4 +3,5 @@ export interface CreatePostDto {
   markdownContent: string;
   categoryName: string;
   tagNames: string[];
+  photo: File | null;
 }

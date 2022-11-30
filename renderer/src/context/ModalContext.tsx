@@ -9,6 +9,7 @@ interface ActionBtnProps {
 export interface IModalContext {
   show: (show?: boolean) => void;
   setupModal: (
+    title: string | null,
     massage: string,
     canClose: boolean,
     actions: ActionBtnProps[]
@@ -24,12 +25,13 @@ const defaultModalContext: IModalContext = {
 
 interface ModalState {
   message: string;
-  title?: string;
+  title: string | null;
   canClose?: boolean;
   actions?: ActionBtnProps[];
 }
 
 const DEFAULT_MODAL_STATE: ModalState = {
+  title: null,
   message: "",
   canClose: true,
 };
@@ -45,11 +47,13 @@ export const ModalContextProvider = ({ children }: React.PropsWithChildren) => {
   };
 
   const handleSetupModal = (
+    title: string | null,
     massage: string,
     canClose: boolean,
     actions: ActionBtnProps[]
   ) => {
     setModalProperites({
+      title: title,
       actions: actions,
       canClose: canClose,
       message: massage,
