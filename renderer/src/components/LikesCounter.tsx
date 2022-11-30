@@ -7,20 +7,25 @@ import { Post } from "../model/Post";
 import { isLoggedIn } from "../utils/auth";
 import { ModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
+import PostDetailPage from "../../pages/posts/[post_id]";
 
 type Props = {
   postId: number;
+  commentId: number | null;
   isLiked: boolean | null;
   totalLikes: number;
   onLike?: (x: number) => Promise<LikeOrDislike>;
   onDisLike?: (x: number) => Promise<LikeOrDislike>;
+  setIsLiked: (postId: number, commentId: number | null) => Promise<boolean | null>; 
 };
 
 export const LikesCounter = ({
   postId,
+  commentId,
   totalLikes,
   onLike,
   onDisLike,
+  setIsLiked
 }: Props) => {
   const [disliked, setDisliked] = useState<boolean>(false);
   const [liked, setLiked] = useState<boolean>(false);
@@ -40,7 +45,8 @@ export const LikesCounter = ({
     }
 
     try {
-      const response = like ? onLike?.(postId) : onDisLike?.(postId);
+      const id = commentId != null ? commentId : postId;
+      const response = like ? onLike?.(id) : onDisLike?.(id);
       if (response == undefined) {
         throw new Error("Coś poszło nie tak");
       }
@@ -57,14 +63,12 @@ export const LikesCounter = ({
   useEffect(() => {
     if(!isLoggedIn()) return;
 
-    const setIsLiked = async () => {
-      const post = await fetchWithJWT<Post>(`posts/${postId}`, {
-        method: "GET",
-      });
-      setDisliked(typeof post.isLiked == "boolean" && !post.isLiked);
-      setLiked(post.isLiked ?? false);
+    const updateIsLiked = async () => {
+      const isLiked = await setIsLiked(postId, commentId);
+      setDisliked(typeof isLiked == "boolean" && !isLiked);
+      setLiked(isLiked ?? false);
     };
-    setIsLiked().catch((e) => console.log("użytkownik nie zalogowany"));
+    updateIsLiked().catch((e) => console.log("użytkownik nie zalogowany"));
   }, [postId]);
 
   return (

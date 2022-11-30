@@ -1,5 +1,6 @@
 package com.core.backend.controller;
 
+import com.core.backend.dto.likeOrDislike.LikeOrDislikeResponse;
 import com.core.backend.exception.NoCommentException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.exception.WrongIdException;
@@ -35,16 +36,9 @@ public class CommentLikeOrDislikeController {
 
     private ResponseEntity<Object> likeOrDislikeResponse(String commentId, boolean likes) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        RatingService.LikeOrDislikeResult  result;
-        String successMessage;
+        LikeOrDislikeResponse result;
         try {
             result = service.createCommentLikeOrDislike(commentId, email, likes);
-            if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED)
-                successMessage = "Ocena komentarza została zmieniona";
-            else if (result == RatingService.LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED)
-                successMessage = "Ocena komentarza została usunięta";
-            else
-                successMessage = "Komentarz został oceniony";
         } catch (WrongIdException e) {
             return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         } catch (NoIdException e) {
@@ -52,6 +46,6 @@ public class CommentLikeOrDislikeController {
         }catch(NoCommentException e){
             return new ResponseEntity<>("Podany komentarz nie istnieje", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(successMessage, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

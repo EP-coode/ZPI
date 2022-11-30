@@ -1,6 +1,9 @@
 import { DATA_PROVIDER_URL } from ".";
 import { LikeOrDislike, LikeService } from "../interfaces/LikeService";
 import { fetchWithJWT } from "../../utils/fetchWithJWT";
+import { Post } from "../../model/Post";
+import { Comment } from "../../model/Comment";
+import { commentService } from "./CommentService";
 
 export const likeService: LikeService = {
 
@@ -18,6 +21,46 @@ export const likeService: LikeService = {
         try{
             const result = fetchWithJWT<LikeOrDislike>(`postRating/dislike/${postId}`, {method: "GET",})
             return result;
+        }catch(e: any){
+            console.log(e);
+             throw new Error("Coś poszło nie tak");
+        }
+    },
+
+    IsPostLiked: async function (postId: number, commentId: number | null): Promise<boolean | null> {
+        try{
+            const post = await fetchWithJWT<Post>(`posts/${postId}`, {method: "GET",});
+            return post.isLiked;
+        }catch(e: any){
+            console.log(e);
+             throw new Error("Coś poszło nie tak");
+        }
+    },
+
+    LikeComment: function (commentId: number): Promise<LikeOrDislike> {
+        try{
+            const result = fetchWithJWT<LikeOrDislike>(`commentRating/like/${commentId}`, {method: "GET",});
+            return result;
+        }catch(e: any){
+            console.log(e);
+            throw new Error("Coś poszło nie tak");
+        }
+    },
+
+    DislikeComment: function (commentId: number): Promise<LikeOrDislike> {
+        try{
+            const result = fetchWithJWT<LikeOrDislike>(`commentRating/dislike/${commentId}`, {method: "GET",})
+            return result;
+        }catch(e: any){
+            console.log(e);
+             throw new Error("Coś poszło nie tak");
+        }
+    },
+
+    IsCommentLiked: async function (postId: number, commentId: number | null): Promise<boolean | null> {
+        try{
+            const comment = await fetchWithJWT<Comment>(`posts/${postId}/comments/${commentId}`, {method: "GET",})
+            return comment.isLiked;
         }catch(e: any){
             console.log(e);
              throw new Error("Coś poszło nie tak");
