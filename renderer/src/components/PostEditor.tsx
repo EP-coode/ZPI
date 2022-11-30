@@ -1,30 +1,35 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Post } from "../model/Post";
 import classNames from "classnames";
 import { CategoryGroup } from "../model/CategoryGroup";
 import TagsPicker from "./TagsPicker";
 import { MemoMarkdownEditor } from "./MarkdownEditor";
 import Image from "next/image";
+import { CreatePostDto } from "../dto/request/CreatePostDto";
+import { ModalContext } from "../context/ModalContext";
+import { useRouter } from "next/router";
 
 type Props = {
-  onPostSubmit: (post: Post) => void;
+  onPostSubmit: (post: CreatePostDto) => Promise<Post>;
   editedPost?: Post;
   categoryGroups: Required<CategoryGroup>[];
 };
 
 const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
-  const [activeTags, setActiveTags] = useState<string[]>([]);
   const [imagePreviewFile, setImagePreviewFile] = useState<File | null>(null);
   const [imagePreviewFileUrl, setImagePreviewFileUrl] = useState<string>();
+  const modalContext = useContext(ModalContext);
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
+      activeTags: [],
       title: editedPost?.title ?? "",
       markdownContent: editedPost?.markdownContent ?? "",
-      tags: [],
       image: "",
+      categoryName: categoryGroups[0].postCategories[0].displayName ?? "",
     },
     validationSchema: Yup.object().shape({
       title: Yup.string()
@@ -36,12 +41,41 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
     }),
     validateOnChange: false,
     validateOnBlur: false,
-    onSubmit: async (data) => {
-      console.log("form data ", data);
-      alert("Nie podpięte");
-      formik.setSubmitting(false);
+    onSubmit: async ({ title, markdownContent, categoryName, activeTags }) => {
+      try {
+        const { postId } = await onPostSubmit({
+          title,
+          markdownContent,
+          tagNames: activeTags,
+          photo: imagePreviewFile,
+          categoryName,
+        });
+        formik.setSubmitting(false);
+        handleResetFrom();
+        modalContext.setupModal(null, "Pomyślnie utworzono post", true, [
+          {
+            label: "Powrót do głównej",
+            onClick: () => router.push(`/`),
+          },
+          {
+            label: "Zobacz post",
+            onClick: () => router.push(`/posts/${postId}`),
+            classNames: "btn-primary"
+          },
+        ]);
+        modalContext.show();
+      } catch (e: any) {
+        modalContext.setupModal(null, "Coś poszło nie tak", true, []);
+        modalContext.show();
+      }
     },
   });
+
+  const handleResetFrom = () => {
+    formik.resetForm();
+    setImagePreviewFileUrl(undefined);
+    setImagePreviewFile(null);
+  };
 
   const handlePickImage = (e: React.FormEvent<HTMLInputElement>) => {
     const imageFile = e.currentTarget.files ? e.currentTarget.files[0] : null;
@@ -71,12 +105,15 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
   }, [imagePreviewFile]);
 
   const handleAddTag = (tagName: string) => {
-    setActiveTags([...activeTags, tagName]);
+    formik.setFieldValue("activeTags", [...formik.values.activeTags, tagName]);
   };
 
   const handleRemoveTag = (tagName: string) => {
-    setActiveTags(
-      activeTags.filter((tag) => tag.toLowerCase() != tagName.toLowerCase())
+    formik.setFieldValue(
+      "activeTags",
+      formik.values.activeTags.filter(
+        (tag) => (tag as string).toLowerCase() != tagName.toLowerCase()
+      )
     );
   };
 
@@ -112,7 +149,11 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
         <label className="label">
           <span className="label-text">Wybierz dział postu</span>
         </label>
-        <select className="select select-bordered w-full">
+        <select
+          className="select select-bordered w-full"
+          onChange={formik.handleChange}
+          value={formik.values.categoryName}
+        >
           {categoryGroups.map(({ postCategories, displayName, totalPosts }) => (
             <optgroup label={`${displayName}`} key={displayName}>
               {postCategories.map(({ displayName }) => (
@@ -128,7 +169,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
         <TagsPicker
           noTagsSelectedMsg="Nie wybrano żadnych tagów"
           pickedLabel="Wybrane tagi:"
-          activeTags={activeTags}
+          activeTags={formik.values.activeTags}
           onAddTag={handleAddTag}
           onRemoveTag={handleRemoveTag}
           enableCustomTags

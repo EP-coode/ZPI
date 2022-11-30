@@ -61,6 +61,7 @@ const RegisterForm = () => {
         setErrors([await result.text()]);
       } else {
         modalContext.setupModal(
+          "Pomyślnie utworzono konto",
           `Aby zacząć korzystać ze swojego konta musisz jescze potwierdzić swój
         adres emali kikając na wysłany przez nas link.`,
           true,

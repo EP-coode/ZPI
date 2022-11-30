@@ -26,6 +26,6 @@ export interface PostFilters {
 export interface PostService {
   getPost(postId: number): Promise<Post>;
   getPosts(pagination: Pagination, filters: PostFilters): Promise<PostsWithPagination>;
-  createPost(post: CreatePostDto): Promise<void>;
+  createPost(post: CreatePostDto): Promise<Post>;
   deletePost(postId: string): Promise<void>;
 }
