@@ -16,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Controller
@@ -75,7 +74,6 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PostMapping()
     public ResponseEntity<Object> addComment(@PathVariable String postId, @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
         CommentDto comment;
@@ -92,7 +90,6 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PutMapping("/{commentId}")
     public ResponseEntity<Object> updateComment(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId,
                                                 @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
@@ -109,7 +106,6 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Object> deleteComment(@PathVariable String commentId) {
         try {

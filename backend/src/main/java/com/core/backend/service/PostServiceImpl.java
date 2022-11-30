@@ -17,12 +17,14 @@ import com.core.backend.repository.*;
 import com.core.backend.sorting.PostSorting;
 import com.core.backend.utilis.Utilis;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@Transactional
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -198,13 +201,12 @@ public class PostServiceImpl implements PostService {
         Post post = postOptional.get();
         page = page == null ? 0 : page;
         Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "commentId");
-        List<Comment> comments = commentRepository.findAllCommentsByPostId(post.getPostId(), pageableRequest);
+        Page<Comment> comments = commentRepository.findAllCommentsByPostId(post.getPostId(), pageableRequest);
 
         List<CommentDto> collectedComments = comments.stream()
                 .map(c -> CommentMapper.toCommentDto(c, null))
                 .toList();
-        int totalCommentsCount = commentRepository.getCommentsCountByPostId(longId);
-        return new CommentWithPaginationDto(collectedComments, totalCommentsCount);
+        return new CommentWithPaginationDto(collectedComments, comments.getTotalElements());
     }
 
     @Override
@@ -401,8 +403,10 @@ public class PostServiceImpl implements PostService {
                 comment.get().getCreator().getEmail()))
                 && authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER")))
             throw new NoAccessException("Możesz usunąć tylko swój komentarz");
-        else
+        else{
+            commentLikeOrDislikeRepository.deleteAllByCommentId(longId);
             commentRepository.deleteById(longId);
+        }
     }
 
     @Override

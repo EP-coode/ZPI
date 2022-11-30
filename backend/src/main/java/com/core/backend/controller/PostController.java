@@ -16,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
-
 @Controller
 @RequestMapping(path = "/posts")
 public class PostController {
@@ -55,7 +53,6 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PostMapping("create")
     public ResponseEntity<Object> addPost(@RequestBody PostCreateUpdateDto postCreateDto,
             @RequestBody(required = false) MultipartFile photo) {
@@ -68,7 +65,6 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PutMapping("/{postId}")
     public ResponseEntity<Object> updatePost(@PathVariable String postId, @RequestBody PostCreateUpdateDto postDto,
             @RequestBody(required = false) MultipartFile photo) {
@@ -81,7 +77,6 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @DeleteMapping("/{postId}")
     public ResponseEntity<Object> deletePost(@PathVariable String postId) {
         try {
