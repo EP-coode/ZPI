@@ -34,7 +34,7 @@ const UserInfoCard = ({ user }: Props) => {
           <h2 className="inline-block ml-2">{user.name}</h2>
         </div>
         <div>
-          <span className="font-semibold">Potiwierdzony student:</span>
+          <span className="font-semibold">Potwierdzony student:</span>
           <h2
             className={classNames("inline-block ml-2", {
               "text-green-700": user.studentStatusConfirmed,
