@@ -1,7 +1,7 @@
 package com.core.backend;
 
-import com.core.backend.dto.LoginUser;
-import com.core.backend.dto.RegisterUser;
+import com.core.backend.dto.user.LoginUser;
+import com.core.backend.dto.user.RegisterUser;
 import com.core.backend.model.User;
 import com.core.backend.model.VerificationToken;
 import com.core.backend.repository.UserRepository;
