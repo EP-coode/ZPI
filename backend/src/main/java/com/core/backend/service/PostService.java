@@ -39,7 +39,7 @@ public interface PostService {
 
         void deletePost(String postId) throws NoAccessException, WrongIdException, NoIdException;
 
-        CommentCreateUpdateDto addComment(String postId, CommentCreateUpdateDto commentCreateUpdateDto)
+        CommentDto addComment(String postId, CommentCreateUpdateDto commentCreateUpdateDto)
                         throws NoPostException, WrongIdException, NoIdException;
 
         void updateComment(String postId, String commentId, CommentCreateUpdateDto commentCreateUpdateDto)
