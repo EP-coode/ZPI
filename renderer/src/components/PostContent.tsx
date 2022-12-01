@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
-import { LikesCounter } from "../LikesCounter";
-import ContentPane from "../../layout/ContentPane";
+import { LikesCounter } from "./LikesCounter";
+import ContentPane from "../layout/ContentPane";
 import ramarkGfm from "remark-gfm";
-import {likeService} from "../../services/api/LikeService"
-import CommentList from "./CommentList";
+import {likeService} from "../services/api/LikeService"
+import CommentList from "./comments/CommentSection";
 
 type Props = {
   postId: number;
@@ -28,7 +28,7 @@ export const PostDetails = ({
 
   return (
     <div>
-    <ContentPane>
+    <ContentPane className="p-5">
       <div className="flex flex-row items-center justify-center gap-7 w-full">
         <h1 className="text-3xl sm:text-5xl font-semibold grow">{title}</h1>
         <div className="shrink-0">
