@@ -102,7 +102,7 @@ ReactDOM.render(
       posts: filteredPosts,
     };
   },
-  createPost: function (post: CreatePostDto): Promise<void> {
+  createPost: function (post: CreatePostDto): Promise<Post> {
     throw new Error("Function not implemented.");
   },
   deletePost: function (postId: string): Promise<void> {

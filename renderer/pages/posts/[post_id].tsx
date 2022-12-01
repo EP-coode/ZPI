@@ -4,7 +4,7 @@ import {
   NextPage,
 } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { PostDetails } from "../../src/components/PostContent";
 import PostInfo from "../../src/components/PostInfo";
 import UserInfoCard from "../../src/components/PostAuthorInfo";
@@ -15,8 +15,15 @@ import { postsService } from "../../src/services";
 import { BreadCrumbs } from "../../src/components/BreadCrumbs";
 import { ContentWrapper } from "../../src/layout/ContentWrapper";
 import { CollumnWrapper } from "../../src/layout/CollumnWrapper";
-import CommentList from "../../src/components/comments/CommentSection";
-import { isLoggedIn } from "../../src/utils/auth";
+import dynamic from "next/dynamic";
+import LoadingPlaceholder from "../../src/components/LoadingPlaceholder";
+
+const DynamicCommentSection = dynamic(
+  () => import("../../src/components/comments/CommentSection"),
+  {
+    suspense: true,
+  }
+);
 
 interface PostDetailPageProps {
   post: Post;
@@ -76,10 +83,9 @@ const PostDetailPage: NextPage<
             totalLikes={post.totalLikes - post.totalDislikes}
             isLiked={post.isLiked}
           />
-          <CommentList
-            postId={post.postId}
-            commentsPerPage={10}
-          />
+          <Suspense fallback={<LoadingPlaceholder/>}>
+            <DynamicCommentSection postId={post.postId} commentsPerPage={10} />
+          </Suspense>
         </LeftCollumn>
         <RightCollumn>
           <UserInfoCard user={post.author} />
