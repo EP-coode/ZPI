@@ -15,8 +15,8 @@ const CommentForm = ({ onSubmit }: Props) => {
     validationSchema: Yup.object().shape({
       commentContent: Yup.string()
         .required("Pole jest wymagane")
-        .min(3, "Komentaż musi składać się z conejmniej 3 znaków")
-        .max(250, "Komentaż możemieć max 250 zanków"),
+        .min(3, "Komentarz musi składać się z conejmniej 3 znaków")
+        .max(250, "Komentarz możemieć max 250 zanków"),
     }),
     validateOnChange: false,
     validateOnBlur: false,
