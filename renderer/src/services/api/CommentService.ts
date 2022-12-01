@@ -42,10 +42,10 @@ export const commentService: CommentService = {
         }
     },
 
-    deleteComment: async function(postId: number, commentId: number): Promise<void>{
+    deleteComment: async function(postId: number, commentId: number): Promise<any>{
         try{
-            fetchWithJWT<any>(`posts/${postId}/comments/${commentId}`, {method: "DELETE",});
-            return;
+            const result = fetchWithJWT<any>(`posts/${postId}/comments/${commentId}`, {method: "DELETE",});
+            return result;
         }catch(e: any){
             console.log(e);
             throw new Error("Coś poszło nie tak");

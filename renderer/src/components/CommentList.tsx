@@ -24,6 +24,42 @@ const CommentList = ({postId, postPerPage}: Props) =>{
     const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
 
     const updateComments = async () =>{
+      const returnedComments = await commentService.getComments(
+        postId,
+        { currentPage, postPerPage },
+      CommentOrdering.DateDsc);
+      setComments(returnedComments.comments);
+      setTotalComments(returnedComments.totalComments);
+    };
+
+    const deleteComment = async (commentId: number) =>{
+      setComments(comments.filter(comment => comment.commentId != commentId))
+      setTotalComments(totalComments - 1)
+      const result = await commentService.deleteComment(postId, commentId);
+      console.log(result);
+      if(currentPage != 0 && comments.length == 1){
+        setCurrentPage(currentPage-1);
+      }
+      else{
+        await updateComments();
+      }
+    };
+
+    const createComment = async (content: string) =>{
+      const comment = await commentService.createComment(postId, {content});
+      if(currentPage != 0){
+        setCurrentPage(0);
+      }
+      else{
+        comments.unshift(comment);
+        setTotalComments(totalComments + 1);
+        if(totalComments >= postPerPage){
+          comments.pop();
+        }
+      }
+    };
+
+    useEffect(() => {
       let isCanceled = false;
       setCommentLoadingState(LoadingState.LOADING);
   
@@ -37,8 +73,6 @@ const CommentList = ({postId, postPerPage}: Props) =>{
           setComments(returnedComments.comments)
           setTotalComments(returnedComments.totalComments);
           setCommentLoadingState(LoadingState.LOADED);
-          console.log(comments);
-          console.log(totalComments);
         }
       };
       
@@ -47,36 +81,6 @@ const CommentList = ({postId, postPerPage}: Props) =>{
       return () => {
         isCanceled = true;
       };
-    };
-
-    const deleteComment = async (commentId: number) =>{
-      setComments(comments.filter(comment => comment.commentId != commentId))
-      setTotalComments(totalComments - 1)
-      await commentService.deleteComment(postId, commentId);
-      if(currentPage != 0){
-        setCurrentPage(0);
-      }
-      else if(totalComments > postPerPage){
-        await updateComments();
-      }
-    };
-
-    const createComment = async (content: string) =>{
-      const comment = await commentService.createComment(postId, {content});
-      if(currentPage != 0){
-        setCurrentPage(0);
-      }
-      else if(totalComments >= postPerPage){
-        await updateComments();
-      }
-      else{
-        comments.unshift(comment);
-        setTotalComments(totalComments + 1);
-      }
-    };
-
-    useEffect(() => {
-      updateComments();
     }, [currentPage]);
 
     useEffect(() => {

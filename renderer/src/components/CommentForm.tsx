@@ -19,7 +19,7 @@ const CommentForm = ({onSubmit}: Props) => {
           return;
         }
         setMessage("");
-        onSubmit(message);
+        await onSubmit(message);
     };
 
     return(
@@ -34,7 +34,7 @@ const CommentForm = ({onSubmit}: Props) => {
             rows={4}
             className="form-control shadow-md w-full max-h-[100rem] resize-none overflow-auto p-5 pt-5"
           />
-          <button className="mt-2 float-right btn shadow-md" type="button" onClick={_ => handleSubmit()}>
+          <button className="mt-2 float-right btn shadow-md" type="button" onClick={async () => await handleSubmit()}>
             Opublikuj
           </button>
         </div>

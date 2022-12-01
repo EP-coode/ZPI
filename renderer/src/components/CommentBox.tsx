@@ -8,7 +8,7 @@ import { isLoggedIn, getUserId } from "../utils/auth";
 
 type Props = {
     comment: Comment;
-    onDelete: (x: number) => {};
+    onDelete: (x: number)  => {};
 };
 
 const CommentBox = ({comment, onDelete}: Props) => {
@@ -45,7 +45,7 @@ const CommentBox = ({comment, onDelete}: Props) => {
                     setIsLiked={likeService.IsCommentLiked} 
                 />
                 {showDeleteButton ? (
-                    <button className="btn bg-red-500 shadow-md" type="button" onClick={() => onDelete(comment.commentId)}>
+                    <button className="btn bg-red-500 shadow-md" type="button" onClick={async () => await onDelete(comment.commentId)}>
                         USUŃ
                      </button>
                 ): (
