@@ -12,10 +12,10 @@ UPDATE role_name = role_name,
     can_create_post=can_create_post,
     can_read_post=can_read_post,
     post_per_day_limit=post_per_day_limit;
--- update roles
+--update roles
 
--- hasło: 123456
--- on duplicate skip
+--hasło: 123456
+--on duplicate skip
 INSERT INTO db_example.user (user_id, avatar_url, email, name, email_confirmation_token, email_confirmed, password_hash,
                              refresh_token, student_status_confirmed, role_fk)
 VALUES (1, null, 'studentcommunityzpi@gmail.com', 'admin123', null, true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_ADMIN'),
@@ -39,7 +39,7 @@ VALUES
     ('Chemicy', 0, 'Prowadzący')
 ON DUPLICATE KEY UPDATE display_name=display_name;
 
--- @BLOCK
+--@BLOCK
 INSERT INTO db_example.post_tag (tag_name, total_posts) VALUES
     ('jedzenie', 2),
     ('jeremiasz', 1),
@@ -53,12 +53,12 @@ VALUES
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 1', 10, 100, 1, 'W-4N', 1),
-    (-1, current_date, current_date - 1, null, '# Jakiś bardzo interesujący content
+    (-1, current_date, current_date, null, '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 ,
-    (-2, current_date, current_date - 2, 'post_1337_png', '# Jakiś bardzo interesujący content
+    (-2, current_date, current_date, "post_1337_png", '# Jakiś bardzo interesujący content
 **Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 ## pod tytuł
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)

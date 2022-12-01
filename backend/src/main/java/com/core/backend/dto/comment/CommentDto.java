@@ -18,4 +18,5 @@ public class CommentDto {
     private int totalDislikes;
     private String content;
     private Date creationTime;
+    private Boolean isLiked;
 }

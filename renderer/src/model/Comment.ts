@@ -1,9 +1,12 @@
 import { User } from "./User";
 
 export interface Comment {
-  content: string;
+  commentId: number;
+  postId: number;
+  creator: User;
   totalLikes: number;
   totalDislikes: number;
+  content: string;
   creationTime: string;
-  creator: User;
+  isLiked: boolean | null;
 }

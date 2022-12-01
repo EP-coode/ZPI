@@ -83,7 +83,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public LikeOrDislikeResult createCommentLikeOrDislike(String commentId, String email, boolean likes) throws NoIdException, NoCommentException, WrongIdException {
+    public LikeOrDislikeResponse createCommentLikeOrDislike(String commentId, String email, boolean likes) throws NoIdException, NoCommentException, WrongIdException {
         User user = userRepository.findByEmail(email);
         long longId = utilis.convertId(commentId);
         Optional<Comment> comment = commentRepository.findById(longId);
@@ -96,7 +96,10 @@ public class RatingServiceImpl implements RatingService {
                 commentLikeOrDislikeRepository.delete(commentLikeOrDislike.get());
                 comment.get().deleteLikeOrDislike(likes);
                 commentRepository.save(comment.get());
-                return LikeOrDislikeResult.LIKE_OR_DISLIKE_DELETED;
+                return new LikeOrDislikeResponse(
+                        comment.get().getTotalLikes() - comment.get().getTotalDislikes(),
+                        "Ocena komentarza została usunięta",
+                        null);
             }
             // zmiana oceny
             else{
@@ -104,7 +107,10 @@ public class RatingServiceImpl implements RatingService {
                 commentLikeOrDislikeRepository.save(commentLikeOrDislike.get());
                 comment.get().changeLikeOrDislike(likes);
                 commentRepository.save(comment.get());
-                return LikeOrDislikeResult.LIKE_OR_DISLIKE_CHANGED;
+                return new LikeOrDislikeResponse(
+                        comment.get().getTotalLikes() - comment.get().getTotalDislikes(),
+                        "Ocena komentarza została zmieniona",
+                        likes);
             }
         }
         // utworzenie nowej oceny
@@ -115,7 +121,10 @@ public class RatingServiceImpl implements RatingService {
             comment.get().addLikeOrDislike(likes);
             commentRepository.save(comment.get());
             commentLikeOrDislikeRepository.save(newCommentLikeOrDislike);
-            return LikeOrDislikeResult.LIKE_OR_DISLIKE_CREATED;
+            return new LikeOrDislikeResponse(
+                    comment.get().getTotalLikes() - comment.get().getTotalDislikes(),
+                    "Komentarz został oceniony",
+                    likes);
         }
     }
 }

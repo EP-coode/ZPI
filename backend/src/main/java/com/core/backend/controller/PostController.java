@@ -1,12 +1,15 @@
 package com.core.backend.controller;
 
 import com.core.backend.dto.filter.PostFilters;
+import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.service.PostService;
 import com.core.backend.exception.WrongIdException;
+import com.core.backend.model.Post;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,8 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.transaction.Transactional;
 
 @Controller
 @RequestMapping(path = "/posts")
@@ -55,20 +56,17 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
-    @PostMapping("create")
-    public ResponseEntity<Object> addPost(@RequestBody PostCreateUpdateDto postCreateDto,
-            @RequestBody(required = false) MultipartFile photo) {
+    @RequestMapping(path = "/create", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Object> addPost(@ModelAttribute PostCreateUpdateDto post) {
         try {
-            postCreateDto = postService.addPost(postCreateDto, photo);
+            PostDto createdPost = postService.addPost(post);
+            return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(postCreateDto, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PutMapping("/{postId}")
     public ResponseEntity<Object> updatePost(@PathVariable String postId, @RequestBody PostCreateUpdateDto postDto,
             @RequestBody(required = false) MultipartFile photo) {
@@ -81,7 +79,6 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @DeleteMapping("/{postId}")
     public ResponseEntity<Object> deletePost(@PathVariable String postId) {
         try {
