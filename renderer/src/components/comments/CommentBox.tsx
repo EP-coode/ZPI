@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Comment } from "../model/Comment";
+import { Comment } from "../../model/Comment";
 import Link from "next/link";
-import { formatDate } from "../utils/dateFormating";
-import { LikesCounter } from "./LikesCounter";
-import {likeService} from "../services/api/LikeService";
-import { isLoggedIn, getUserId } from "../utils/auth";
+import { formatDate } from "../../utils/dateFormating";
+import { LikesCounter } from "../LikesCounter";
+import {likeService} from "../../services/api/LikeService";
+import { isLoggedIn, getUserId } from "../../utils/auth";
 
 type Props = {
     comment: Comment;
@@ -18,7 +18,7 @@ const CommentBox = ({comment, onDelete}: Props) => {
         if(isLoggedIn() && getUserId() == comment.creator.id){
             setShowDeleteButton(true);
         }       
-    },[]);
+    },[comment.creator.id]);
 
     return(
         <div className="card relative bg-base-100 shadow-md min-h-fit min-w-[20rem] overflow-auto">

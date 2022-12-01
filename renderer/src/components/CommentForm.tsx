@@ -1,46 +1,68 @@
+import classNames from "classnames";
+import { useFormik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
+import * as Yup from "yup";
 import { Comment } from "../model/Comment";
 
 type Props = {
-    onSubmit: (x: string) => {};
+  onSubmit: (x: string) => Promise<void>;
 };
 
-const CommentForm = ({onSubmit}: Props) => {
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
+const CommentForm = ({ onSubmit }: Props) => {
+  const formik = useFormik({
+    initialValues: {
+      commentContent: "",
+    },
+    validationSchema: Yup.object().shape({
+      commentContent: Yup.string()
+        .required("Pole jest wymagane")
+        .min(3, "Komentaż musi składać się z conejmniej 3 znaków")
+        .max(250, "Komentaż możemieć max 250 zanków"),
+    }),
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: async ({ commentContent }) => {
+      await onSubmit(commentContent);
+      formik.setSubmitting(false);
+    },
+  });
 
-    const handleSubmit = async () => {
-        if(message.length > 250){
-            setError("Twój komentarz jest za długi");
-            return;
-        }
-        if(message.length == 0){
-          setError("Komentarz nie może być pusty");
-          return;
-        }
-        setMessage("");
-        onSubmit(message);
-    };
+  return (
+    <form
+      onSubmit={formik.handleSubmit}
+      onChange={formik.handleChange}
+      className="w-full"
+    >
+      <div className="form-control">
+        <textarea
+          id="commentContent"
+          autoFocus={false}
+          placeholder={"Napisz komentarz..."}
+          className={classNames("textarea textarea-bordered h-32", {
+            "textarea-error": formik.errors.commentContent,
+          })}
+        />
+        <label className="label">
+          <span className="label-text-alt  text-error">{formik.errors.commentContent}</span>
+          <span className="label-text-alt">{formik.values.commentContent.length} / 250 zanków</span>
+        </label>
+      </div>
 
-    return(
-        <form>
-        <div className="comment-form-row">
-          <textarea
-            autoFocus={false}
-            placeholder={"Napisz komentarz..."}
-            value={message}
-            onChange={e => {setMessage(e.target.value); setError("")}}
-            id="textAreaExample"
-            rows={4}
-            className="form-control shadow-md w-full max-h-[100rem] resize-none overflow-auto p-5 pt-5"
-          />
-          <button className="mt-2 float-right btn shadow-md" type="button" onClick={_ => handleSubmit()}>
-            Opublikuj
-          </button>
-        </div>
-        <div className="text-red-500 font-semibold">{error}</div>
-      </form>
-    );
-
+      <button
+        className={classNames("btn ml-auto mr-0 my-2 block relative", {
+          loading: formik.isSubmitting,
+        })}
+      >
+        <input
+          className={classNames("w-full h-full cursor-pointer absolute", {
+            "pointer-events-none": formik.isSubmitting,
+          })}
+          type="submit"
+          value=""
+        />
+        Dodaj komentarz
+      </button>
+    </form>
+  );
 };
 export default CommentForm;

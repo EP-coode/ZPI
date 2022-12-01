@@ -5,7 +5,7 @@ import {
 } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import { PostDetails } from "../../src/components/PostContent";
+import { PostDetails } from "../../src/components/comments/PostContent";
 import PostInfo from "../../src/components/PostInfo";
 import UserInfoCard from "../../src/components/PostAuthorInfo";
 import { LeftCollumn } from "../../src/layout/LeftCollumn";
@@ -15,6 +15,7 @@ import { postsService } from "../../src/services";
 import { BreadCrumbs } from "../../src/components/BreadCrumbs";
 import { ContentWrapper } from "../../src/layout/ContentWrapper";
 import { CollumnWrapper } from "../../src/layout/CollumnWrapper";
+import CommentList from "../../src/components/comments/CommentList";
 
 interface PostDetailPageProps {
   post: Post;
@@ -75,6 +76,7 @@ const PostDetailPage: NextPage<
             totalLikes={post.totalLikes - post.totalDislikes}
             isLiked={post.isLiked}
           />
+          <CommentList postId={post.postId} commentsPerPage={5}/>
         </LeftCollumn>
         <RightCollumn>
           <UserInfoCard user={post.author} />

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
-import { LikesCounter } from "./LikesCounter";
-import ContentPane from "../layout/ContentPane";
+import { LikesCounter } from "../LikesCounter";
+import ContentPane from "../../layout/ContentPane";
 import ramarkGfm from "remark-gfm";
-import {likeService} from "../services/api/LikeService"
+import {likeService} from "../../services/api/LikeService"
 import CommentList from "./CommentList";
 
 type Props = {
@@ -59,10 +59,6 @@ export const PostDetails = ({
         </ReactMarkdown>
       </article>
     </ContentPane>
-    <section>
-      <h2 className="text-3xl font-semibold mt-10 mb-2">Komentarze</h2>
-      <CommentList postId={postId} postPerPage={5}></CommentList>
-    </section>
     </div>
   );
 };
