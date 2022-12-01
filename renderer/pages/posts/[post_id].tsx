@@ -78,7 +78,7 @@ const PostDetailPage: NextPage<
           />
           <CommentList
             postId={post.postId}
-            commentsPerPage={5}
+            commentsPerPage={10}
           />
         </LeftCollumn>
         <RightCollumn>
