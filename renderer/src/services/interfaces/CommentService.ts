@@ -16,5 +16,5 @@ export enum CommentOrdering{
 export interface CommentService {
   getComments(postId: number, pagination: Pagination, ordering: CommentOrdering): Promise<CommentsWithPagination>;
   createComment(postId: number, comment: CreateCommentDto): Promise<Comment>;
-  deleteComment(postId: number, commentId: number): Promise<void>;
+  deleteComment(postId: number, commentId: number): Promise<any>;
 }
