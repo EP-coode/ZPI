@@ -14,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -58,9 +58,8 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PostMapping()
-    public ResponseEntity<Object> addComment(@PathVariable String postId, @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
+    public ResponseEntity<Object> addComment(@PathVariable String postId, @Valid @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
         CommentCreateUpdateDto comment;
         try {
             comment = postService.addComment(postId, commentCreateUpdateDto);
@@ -75,10 +74,9 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PutMapping("/{commentId}")
     public ResponseEntity<Object> updateComment(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId,
-                                                @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
+                                                @Valid @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
         try {
             postService.updateComment(postId, commentId, commentCreateUpdateDto);
         } catch (WrongIdException e) {
@@ -92,7 +90,6 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Object> deleteComment(@PathVariable String commentId) {
         try {
