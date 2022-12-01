@@ -13,12 +13,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashSet;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,16 +52,17 @@ public class BackendPostTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     public void testCreatePost() {
-        PostCreateUpdateDto post = new PostCreateUpdateDto();
-        post.setTitle("Tytuł");
-        post.setCategoryName("Matematycy");
-        post.setMarkdownContent("Krótki content");
-        post.setTagNames(new HashSet<>(Arrays.asList("jedzenie", "jarmark")));
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        paramsMap.add("title", "tytuł");
+        paramsMap.add("categoryName", "Fizycy");
+        paramsMap.add("markdownContent", "Krótki content");
+        paramsMap.add("tagNames", "jedzenie");
+        paramsMap.add("tagNames", "jarmark");
         try {
             var mockRequest = MockMvcRequestBuilders
-                    .post("http://localhost:8080/posts/create")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(post));
+                    .multipart("http://localhost:8080/posts/create")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .params(paramsMap);
             mockMvc.perform(mockRequest).andExpect(status().isCreated());
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,11 +73,13 @@ public class BackendPostTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     public void testCreatePostWithPhoto() {
-        PostCreateUpdateDto post = new PostCreateUpdateDto();
-        post.setTitle("Tytuł 2");
-        post.setCategoryName("Matematycy");
-        post.setMarkdownContent("Krótki content 2");
-        post.setTagNames(new HashSet<>(Arrays.asList("jedzenie", "jarmark")));
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        paramsMap.add("title", "tytuł 2");
+        paramsMap.add("categoryName", "Matematycy");
+        paramsMap.add("markdownContent", "Krótki content 2");
+        paramsMap.add("tagNames", "jedzenie");
+        paramsMap.add("tagNames", "jarmark");
+
         MockMultipartFile photo;
         try {
             photo = new MockMultipartFile("photo", Files.readAllBytes(Path.of("./src/main/resources/trollface.png")));
@@ -87,8 +90,8 @@ public class BackendPostTest {
             var mockRequest = MockMvcRequestBuilders
                     .multipart("http://localhost:8080/posts/create")
                     .file(photo)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(post));
+                    .params(paramsMap)
+                    .contentType(MediaType.MULTIPART_FORM_DATA);
             mockMvc.perform(mockRequest).andExpect(status().isCreated());
         } catch (Exception e) {
             e.printStackTrace();
