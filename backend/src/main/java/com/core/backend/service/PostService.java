@@ -32,7 +32,7 @@ public interface PostService {
         PostDto addPost(PostCreateUpdateDto postDto)
                         throws NoAccessException, NoPostCategoryException;
 
-        void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo)
+        void updatePost(String postId, PostCreateUpdateDto postDto)
                         throws NoAccessException, NoPostException, WrongIdException, NoIdException,
                         NoPostCategoryException;
 
