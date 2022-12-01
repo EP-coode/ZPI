@@ -2,6 +2,7 @@ package com.core.backend.service;
 
 import com.core.backend.dto.comment.CommentCreateUpdateDto;
 import com.core.backend.dto.comment.CommentDto;
+import com.core.backend.dto.comment.CommentWithPaginationDto;
 import com.core.backend.dto.filter.PostFilters;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
@@ -9,12 +10,14 @@ import com.core.backend.dto.post.PostWithPaginationDto;
 import com.core.backend.dto.mapper.CommentMapper;
 import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.exception.*;
+import com.core.backend.id.CommentLikeOrDislikeId;
 import com.core.backend.id.PostLikeOrDislikeId;
 import com.core.backend.model.*;
 import com.core.backend.repository.*;
 import com.core.backend.sorting.PostSorting;
 import com.core.backend.utilis.Utilis;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -53,6 +56,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostLikeOrDislikeRepository postLikeOrDislikeRepository;
+
+    @Autowired
+    private CommentLikeOrDislikeRepository commentLikeOrDislikeRepository;
 
     @Autowired
     private Utilis utilis;
@@ -155,6 +161,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public CommentDto getCommentById(String commentId) throws WrongIdException, NoIdException, NoCommentException {
+        long longId;
+        longId = utilis.convertId(commentId);
+        Optional<Comment> comment = commentRepository.findById(longId);
+        if (comment.isEmpty())
+            throw new NoCommentException("Komentarz nie istnieje");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(authentication.getName());
+        CommentLikeOrDislike commentLikeOrDislike = getCommentLikeOrDislike(comment.get(), user);
+        Boolean isLiked = commentLikeOrDislike == null ? null : commentLikeOrDislike.isLikes();
+        return CommentMapper.toCommentDto(comment.get(), isLiked);
+    }
+
+    @Override
     public List<CommentDto> getComments(String postId) throws WrongIdException, NoIdException, NoPostException {
         long longId;
         longId = utilis.convertId(postId);
@@ -164,12 +184,12 @@ public class PostServiceImpl implements PostService {
         Post post = postOptional.get();
         List<Comment> comments = commentRepository.findAllCommentsByPostId(post.getPostId());
         return comments.stream()
-                .map(CommentMapper::toCommentDto)
+                .map(c -> CommentMapper.toCommentDto(c, null))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentDto> getCommentsPagination(String postId, Integer page, Sort.Direction sort)
+    public CommentWithPaginationDto getCommentsPagination(String postId, Integer page, Sort.Direction sort)
             throws WrongIdException, NoIdException, NoPostException {
 
         long longId;
@@ -180,11 +200,12 @@ public class PostServiceImpl implements PostService {
         Post post = postOptional.get();
         page = page == null ? 0 : page;
         Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "commentId");
-        List<Comment> comments = commentRepository.findAllCommentsByPostId(post.getPostId(), pageableRequest);
+        Page<Comment> comments = commentRepository.findAllCommentsByPostId(post.getPostId(), pageableRequest);
 
-        return comments.stream()
-                .map(CommentMapper::toCommentDto)
-                .collect(Collectors.toList());
+        List<CommentDto> collectedComments = comments.stream()
+                .map(c -> CommentMapper.toCommentDto(c, null))
+                .toList();
+        return new CommentWithPaginationDto(collectedComments, comments.getTotalElements());
     }
 
     @Override
@@ -345,7 +366,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public CommentCreateUpdateDto addComment(String postId, CommentCreateUpdateDto commentCreateUpdateDto)
+    public CommentDto addComment(String postId, CommentCreateUpdateDto commentCreateUpdateDto)
             throws NoPostException, WrongIdException, NoIdException {
         long longId;
         longId = utilis.convertId(postId);
@@ -353,8 +374,9 @@ public class PostServiceImpl implements PostService {
         Optional<Post> post = postRepository.findById(longId);
         if (post.isEmpty())
             throw new NoPostException("Post nie istnieje");
-        commentRepository.save(CommentMapper.toComment(commentCreateUpdateDto, creator, post.get()));
-        return commentCreateUpdateDto;
+        Comment newComment = CommentMapper.toComment(commentCreateUpdateDto, creator, post.get());
+        commentRepository.save(newComment);
+        return CommentMapper.toCommentDto(newComment, null);
     }
 
     @Override
@@ -388,8 +410,10 @@ public class PostServiceImpl implements PostService {
                 comment.get().getCreator().getEmail()))
                 && authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER")))
             throw new NoAccessException("Możesz usunąć tylko swój komentarz");
-        else
+        else{
+            commentLikeOrDislikeRepository.deleteAllByCommentId(longId);
             commentRepository.deleteById(longId);
+        }
     }
 
     @Override
@@ -410,6 +434,15 @@ public class PostServiceImpl implements PostService {
         PostLikeOrDislikeId postLikeOrDislikeId = new PostLikeOrDislikeId(user, post);
         Optional<PostLikeOrDislike> postLikeOrDislike = postLikeOrDislikeRepository.findById(postLikeOrDislikeId);
         return postLikeOrDislike.isEmpty() ? null : postLikeOrDislike.get();
+    }
+
+    @Override
+    public CommentLikeOrDislike getCommentLikeOrDislike(Comment comment, User user) {
+        if (user == null)
+            return null;
+        CommentLikeOrDislikeId commentLikeOrDislikeId = new CommentLikeOrDislikeId(comment, user);
+        Optional<CommentLikeOrDislike> commentLikeOrDislike = commentLikeOrDislikeRepository.findById(commentLikeOrDislikeId);
+        return commentLikeOrDislike.isEmpty() ? null : commentLikeOrDislike.get();
     }
 
 }

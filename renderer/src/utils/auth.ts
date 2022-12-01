@@ -104,6 +104,16 @@ export async function getUserData(): Promise<User | undefined> {
   return await userReq.json();
 }
 
+export function getUserId(): number | undefined {
+  const rt = getRefreshToken();
+
+  if (!rt) return undefined;
+
+  const { user_id } = jwt_decode<RefreshTokenPayload>(rt);
+  
+  return user_id;
+}
+
 export async function refreshTokens() {
   const rt = getRefreshToken();
 

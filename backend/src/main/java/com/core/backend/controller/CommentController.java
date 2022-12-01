@@ -2,6 +2,8 @@ package com.core.backend.controller;
 
 import com.core.backend.dto.comment.CommentCreateUpdateDto;
 import com.core.backend.dto.comment.CommentDto;
+import com.core.backend.dto.comment.CommentWithPaginationDto;
+import com.core.backend.exception.NoCommentException;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.service.PostService;
@@ -14,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Controller
@@ -24,6 +25,21 @@ public class CommentController {
     @Autowired
     private PostService postService;
 
+    @GetMapping(value = "/{commentId}")
+    public ResponseEntity<Object> getComment(@PathVariable String commentId) {
+        CommentDto commentDto;
+        try {
+            commentDto = postService.getCommentById(commentId);
+        } catch (WrongIdException e) {
+            return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
+        } catch (NoIdException e) {
+            return new ResponseEntity<>("Podane id nie jest liczbą", HttpStatus.BAD_REQUEST);
+        } catch (NoCommentException e) {
+            return new ResponseEntity<>("Brak komentarza o podanym ID", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(commentDto, HttpStatus.OK);
+    }
 
     @GetMapping()
     public ResponseEntity<Object> getComments(@PathVariable String postId) {
@@ -43,7 +59,7 @@ public class CommentController {
 
     @GetMapping(params = "page")
     public ResponseEntity<Object> getCommentsPagination(@PathVariable String postId, @RequestParam(required = false) Integer page, Sort.Direction sort) {
-        List<CommentDto> commentDtos;
+        CommentWithPaginationDto commentDtos;
         try {
             commentDtos = postService.getCommentsPagination(postId, page, sort);
         } catch (WrongIdException e) {
@@ -58,10 +74,9 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PostMapping()
     public ResponseEntity<Object> addComment(@PathVariable String postId, @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
-        CommentCreateUpdateDto comment;
+        CommentDto comment;
         try {
             comment = postService.addComment(postId, commentCreateUpdateDto);
         } catch (WrongIdException e) {
@@ -75,7 +90,6 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @PutMapping("/{commentId}")
     public ResponseEntity<Object> updateComment(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId,
                                                 @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
@@ -92,7 +106,6 @@ public class CommentController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @Transactional
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Object> deleteComment(@PathVariable String commentId) {
         try {

@@ -5,6 +5,7 @@ import { LikesCounter } from "./LikesCounter";
 import ContentPane from "../layout/ContentPane";
 import ramarkGfm from "remark-gfm";
 import {likeService} from "../services/api/LikeService"
+import CommentList from "./CommentList";
 
 type Props = {
   postId: number;
@@ -26,13 +27,15 @@ export const PostDetails = ({
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
+    <div>
     <ContentPane>
       <div className="flex flex-row items-center justify-center gap-7 w-full">
         <h1 className="text-3xl sm:text-5xl font-semibold grow">{title}</h1>
         <div className="shrink-0">
-          <LikesCounter postId={postId} totalLikes={totalLikes} isLiked={isLiked}
+          <LikesCounter resourceId={postId} totalLikes={totalLikes} isLiked={isLiked}
             onDisLike={likeService.DislikePost} 
-            onLike={likeService.LikePost} 
+            onLike={likeService.LikePost}
+            setIsLiked={likeService.IsPostLiked} 
           />
         </div>
       </div>
@@ -56,5 +59,10 @@ export const PostDetails = ({
         </ReactMarkdown>
       </article>
     </ContentPane>
+    <section>
+      <h2 className="text-3xl font-semibold mt-10 mb-2">Komentarze</h2>
+      <CommentList postId={postId} postPerPage={5}></CommentList>
+    </section>
+    </div>
   );
 };
