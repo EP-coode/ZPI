@@ -1,5 +1,6 @@
 package com.core.backend.config;
 
+import com.azure.core.http.HttpMethod;
 import com.core.backend.security.JWTAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +32,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+        CorsConfiguration corsConfig = new CorsConfiguration().applyPermitDefaultValues();
+        corsConfig.addAllowedMethod(String.valueOf(HttpMethod.DELETE));
+        corsConfig.addAllowedMethod(String.valueOf(HttpMethod.PUT));
+        http.cors().configurationSource(request -> corsConfig);
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers(

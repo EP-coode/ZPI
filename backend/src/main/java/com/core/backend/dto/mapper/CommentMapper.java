@@ -7,10 +7,10 @@ import com.core.backend.model.Post;
 import com.core.backend.model.User;
 
 public class CommentMapper {
-    public static CommentDto toCommentDto(Comment comment) {
+    public static CommentDto toCommentDto(Comment comment, Boolean isLiked) {
         return new CommentDto(comment.getCommentId(), comment.getPost().getPostId(),
                 UserMapper.toUserDto(comment.getCreator()), comment.getTotalLikes(), comment.getTotalDislikes(),
-                comment.getContent(), comment.getCreationTime());
+                comment.getContent(), comment.getCreationTime(), isLiked);
     }
     public static Comment toComment(CommentCreateUpdateDto comment, User creator, Post post) {
         return new Comment(post, creator, comment.getContent());
