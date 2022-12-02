@@ -59,10 +59,12 @@ public class CommentController {
     }
 
     @GetMapping(params = "page")
-    public ResponseEntity<Object> getCommentsPagination(@PathVariable String postId, @RequestParam(required = false) Integer page, Sort.Direction sort) {
+    public ResponseEntity<Object> getCommentsPagination(@PathVariable String postId,
+            @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize,
+            Sort.Direction sort) {
         CommentWithPaginationDto commentDtos;
         try {
-            commentDtos = postService.getCommentsPagination(postId, page, sort);
+            commentDtos = postService.getCommentsPagination(postId, page, pageSize, sort);
         } catch (WrongIdException e) {
             return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         } catch (NoIdException e) {

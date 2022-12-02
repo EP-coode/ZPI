@@ -29,6 +29,17 @@ const TagsPicker = ({
   const [tagSearchState, setTagSearchState] = useState(LoadingState.IDDLE);
   const [tagFilterPrefix, setTagFilterPrefix] = useState<string>("");
 
+  const tagMatchCurrentPrefix = (tag: string): boolean => {
+    return tag.toLowerCase().startsWith(tagFilterPrefix.toLowerCase());
+  };
+
+  const handleRemoveTag = (tagName: string) => {
+    onRemoveTag(tagName);
+    if (tagMatchCurrentPrefix(tagName) && !tagSearchResult.includes(tagName)) {
+      setTagSearchResult((prev) => [...prev, tagName]);
+    }
+  };
+
   const fetchTags = async (
     tagFilterPrefix: string,
     { isCanceled }: { isCanceled: boolean }
@@ -73,7 +84,7 @@ const TagsPicker = ({
         <ul className="flex flex-wrap gap-2 mt-1">
           {activeTags.map((tagName) => (
             <li className="badge badge-primary badge-lg gap-2 " key={tagName}>
-              <CloseIcon onClick={() => onRemoveTag(tagName)} />
+              <CloseIcon onClick={() => handleRemoveTag(tagName)} />
               {tagName}
             </li>
           ))}
