@@ -32,11 +32,12 @@ public class PostController {
     public ResponseEntity<Object> getPostsFiltered(@RequestBody PostFilters postFilters,
             @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
 
-        int _page = page == null ? 0 : page;
-        int _pageSize = pageSize == null ? DEFAULT_POST_PAGE_SIZE : pageSize;
-
         return new ResponseEntity<>(postService
-                .getPostsFiltered(postFilters, _page, _pageSize), HttpStatus.OK);
+                .getPostsFiltered(
+                        postFilters,
+                        page == null ? 0 : page,
+                        pageSize == null ? DEFAULT_POST_PAGE_SIZE : pageSize),
+                HttpStatus.OK);
     }
 
     @GetMapping(value = "/{postId}")
