@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private Utilis utilis;
 
-    public static final int PAGE_SIZE = 5;
+    public static final int DEFAULT_PAGE_SIZE = 5;
 
     @Override
     public List<PostDto> getAllPosts() {
@@ -81,7 +81,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getAllPostsPagination(Integer page, Sort.Direction sort) {
         page = page == null ? 0 : page;
-        Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "postId");
+        Pageable pageableRequest = PageRequest.of(page, DEFAULT_PAGE_SIZE, sort, "postId");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByEmail(authentication.getName());
 
@@ -189,7 +189,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public CommentWithPaginationDto getCommentsPagination(String postId, Integer page, Sort.Direction sort)
+    public CommentWithPaginationDto getCommentsPagination(String postId, Integer page, Integer pageSize, Sort.Direction sort)
             throws WrongIdException, NoIdException, NoPostException {
 
         long longId;
@@ -199,7 +199,8 @@ public class PostServiceImpl implements PostService {
             throw new NoPostException();
         Post post = postOptional.get();
         page = page == null ? 0 : page;
-        Pageable pageableRequest = PageRequest.of(page, PAGE_SIZE, sort, "commentId");
+        pageSize = pageSize == null ? DEFAULT_PAGE_SIZE : pageSize;
+        Pageable pageableRequest = PageRequest.of(page, pageSize, sort, "commentId");
         Page<Comment> comments = commentRepository.findAllCommentsByPostId(post.getPostId(), pageableRequest);
 
         List<CommentDto> collectedComments = comments.stream()

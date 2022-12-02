@@ -43,7 +43,7 @@ const CommentList = ({
     if (currentPage != 0) setCurrentPage(0);
     const returnedComments = await commentService.getComments(
       postId,
-      { currentPage, postPerPage: commentsPerPage }, // TODO: refactor naming on backend
+      { currentPage, itemsPerPage: commentsPerPage }, // TODO: refactor naming on backend
       CommentOrdering.DateDsc
     );
     setComments(returnedComments.comments);
@@ -58,7 +58,7 @@ const CommentList = ({
     const updateComments = async () => {
       const returnedComments = await commentService.getComments(
         postId,
-        { currentPage, postPerPage: commentsPerPage }, // TODO: refactor naming on backend
+        { currentPage, itemsPerPage: commentsPerPage }, // TODO: refactor naming on backend
         CommentOrdering.DateDsc
       );
 

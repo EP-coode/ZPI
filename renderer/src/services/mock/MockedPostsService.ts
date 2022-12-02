@@ -81,11 +81,11 @@ ReactDOM.render(
   ): Promise<PostsWithPagination> {
     const posts = [];
 
-    for (let i = 0; i < pagination.postPerPage; i++) {
+    for (let i = 0; i < pagination.itemsPerPage; i++) {
       const post = await this.getPost(i);
       posts.push(post);
 
-      if (i == pagination.postPerPage - 1) post.imageUrl = null;
+      if (i == pagination.itemsPerPage - 1) post.imageUrl = null;
     }
 
     const filteredPosts = posts.filter((post) =>
