@@ -35,7 +35,9 @@ const CommentList = ({
 
   const deleteComment = async (commentId: number) => {
     await commentService.deleteComment(postId, commentId);
-    setComments((prev) => prev.filter((c) => c.commentId != commentId));
+    const updatedComments = comments.filter((c) => c.commentId != commentId);
+    if (updatedComments.length > 0) setComments(updatedComments) 
+    else setCurrentPage(Math.max(currentPage - 1, 0));
   };
 
   const createComment = async (content: string) => {

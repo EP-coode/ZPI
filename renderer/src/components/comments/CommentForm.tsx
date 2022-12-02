@@ -43,6 +43,7 @@ const CommentForm = ({ onSubmit }: Props) => {
             "textarea-error": formik.errors.commentContent,
           })}
           disabled={formik.isSubmitting}
+          onChange={formik.handleChange}
         />
         <label className="label">
           <span className="label-text-alt  text-error">
@@ -58,6 +59,7 @@ const CommentForm = ({ onSubmit }: Props) => {
         className={classNames("btn ml-auto mr-0 my-2 float-right", {
           "pointer-events-none loading": formik.isSubmitting,
         })}
+        type="submit"
       >
         Dodaj komentarz
       </button>
