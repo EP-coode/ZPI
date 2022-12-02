@@ -1,6 +1,6 @@
 export interface Pagination{
     currentPage: number,
-    postPerPage: number,
+    itemsPerPage: number,
 }
 
 export interface PaginationData{

@@ -28,7 +28,7 @@ const PostList = ({
 
     const f = async () => {
       const returnedPosts = await postsService.getPosts(
-        { currentPage, postPerPage },
+        { currentPage, itemsPerPage: postPerPage },
         {
           categoryGroupId,
           categoryId,

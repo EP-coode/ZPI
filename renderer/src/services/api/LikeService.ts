@@ -12,7 +12,7 @@ export const likeService: LikeService = {
             const result = fetchWithJWT<LikeOrDislike>(`postRating/like/${postId}`, {method: "GET",});
             return result;
         }catch(e: any){
-            console.log(e);
+            console.error(e);
             throw new Error("Coś poszło nie tak");
         }
     },
@@ -22,7 +22,7 @@ export const likeService: LikeService = {
             const result = fetchWithJWT<LikeOrDislike>(`postRating/dislike/${postId}`, {method: "GET",})
             return result;
         }catch(e: any){
-            console.log(e);
+            console.error(e);
              throw new Error("Coś poszło nie tak");
         }
     },
@@ -32,7 +32,7 @@ export const likeService: LikeService = {
             const post = await fetchWithJWT<Post>(`posts/${postId}`, {method: "GET",});
             return post.isLiked;
         }catch(e: any){
-            console.log(e);
+            console.error(e);
              throw new Error("Coś poszło nie tak");
         }
     },

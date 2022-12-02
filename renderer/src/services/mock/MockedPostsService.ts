@@ -81,11 +81,11 @@ ReactDOM.render(
   ): Promise<PostsWithPagination> {
     const posts = [];
 
-    for (let i = 0; i < pagination.postPerPage; i++) {
+    for (let i = 0; i < pagination.itemsPerPage; i++) {
       const post = await this.getPost(i);
       posts.push(post);
 
-      if (i == pagination.postPerPage - 1) post.imageUrl = null;
+      if (i == pagination.itemsPerPage - 1) post.imageUrl = null;
     }
 
     const filteredPosts = posts.filter((post) =>
@@ -102,7 +102,7 @@ ReactDOM.render(
       posts: filteredPosts,
     };
   },
-  createPost: function (post: CreatePostDto): Promise<void> {
+  createPost: function (post: CreatePostDto): Promise<Post> {
     throw new Error("Function not implemented.");
   },
   deletePost: function (postId: string): Promise<void> {
