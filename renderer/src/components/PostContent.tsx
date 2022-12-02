@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { LikesCounter } from "./LikesCounter";
 import ContentPane from "../layout/ContentPane";
 import ramarkGfm from "remark-gfm";
-import {likeService} from "../services/api/LikeService"
+import { likeService } from "../services/api/LikeService";
 import CommentList from "./comments/CommentSection";
 
 type Props = {
@@ -22,20 +22,22 @@ export const PostDetails = ({
   title,
   benerImageUrl,
   totalLikes,
-  isLiked
+  isLiked,
 }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div>
     <ContentPane className="p-5">
       <div className="flex flex-row items-center justify-center gap-7 w-full">
         <h1 className="text-3xl sm:text-5xl font-semibold grow">{title}</h1>
         <div className="shrink-0">
-          <LikesCounter resourceId={postId} totalLikes={totalLikes} isLiked={isLiked}
-            onDisLike={likeService.DislikePost} 
+          <LikesCounter
+            resourceId={postId}
+            totalLikes={totalLikes}
+            isLiked={isLiked}
+            onDisLike={likeService.DislikePost}
             onLike={likeService.LikePost}
-            setIsLiked={likeService.IsPostLiked} 
+            setIsLiked={likeService.IsPostLiked}
           />
         </div>
       </div>
@@ -59,6 +61,5 @@ export const PostDetails = ({
         </ReactMarkdown>
       </article>
     </ContentPane>
-    </div>
   );
 };
