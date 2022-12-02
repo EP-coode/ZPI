@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -117,7 +118,9 @@ public class CommentController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Komentarz usunięto pomyślnie", HttpStatus.OK);
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", "Komentarz usutnięto pomyślnie");
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
