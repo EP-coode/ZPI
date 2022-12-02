@@ -55,7 +55,7 @@ export const PostDetails = ({
           )}
         </figure>
       )}
-      <article className="p-7 prose max-w-full w-full">
+      <article className="mt-7 prose max-w-full w-full">
         <ReactMarkdown remarkPlugins={[ramarkGfm]}>
           {contentMarkdown}
         </ReactMarkdown>
