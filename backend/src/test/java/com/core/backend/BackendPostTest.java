@@ -9,7 +9,10 @@ import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.WrongIdException;
 import com.core.backend.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BackendPostTest {
 
     @Autowired
@@ -47,6 +52,7 @@ public class BackendPostTest {
     @Test
     @WithMockUser(roles = "USER")
     @Transactional
+    @Order(1)
     public void testGetAll() {
         PostFilters postFilters = new PostFilters();
         postFilters.setOrderBy(PostOrdering.LIKES_ASC);
@@ -81,6 +87,7 @@ public class BackendPostTest {
     }
 
     @Test
+    @Order(2)
     public void testFailedCreatePost() {
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
         paramsMap.add("title", "tytuł");
@@ -101,7 +108,8 @@ public class BackendPostTest {
     }
 
     @Test
-    @WithMockUser(roles = {"ADMIN"})
+    @Order(3)
+    @WithMockUser(username = "studentcommunityzpi@gmail.com", roles = {"ADMIN"})
     public void testCreatePost() {
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
         paramsMap.add("title", "tytuł");
@@ -122,7 +130,8 @@ public class BackendPostTest {
     }
 
     @Test
-    @WithMockUser(roles = {"ADMIN"})
+    @Order(4)
+    @WithMockUser(username = "user@gmail.com", roles = "USER")
     public void testCreatePostWithPhoto() {
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
         paramsMap.add("title", "tytuł 2");
@@ -151,11 +160,12 @@ public class BackendPostTest {
     }
 
     @Test
+    @Order(5)
     @WithMockUser(roles = {"ADMIN"})
     public void testDeletePost() {
         try {
             var mockRequest = MockMvcRequestBuilders
-                    .delete("http://localhost:8080/posts/0")
+                    .delete("http://localhost:8080/posts/2")
                     .accept(MediaType.APPLICATION_JSON);
             mockMvc.perform(mockRequest).andExpect(status().isOk());
         } catch (Exception e) {
@@ -163,4 +173,34 @@ public class BackendPostTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    @Order(6)
+    public void testFailedLikePost()  {
+        likeOrDislikePost(0, status().isForbidden());
+    }
+    @Test
+    @Order(7)
+    @WithMockUser(username = "user@gmail.com", roles = "USER")
+    public void testLikePost()  {
+        likeOrDislikePost(0, status().isOk());
+    }
+
+    @Test
+    @Order(8)
+    @WithMockUser(username = "user@gmail.com", roles = "USER")
+    public void testDislikePost()  {
+        likeOrDislikePost(1, status().isOk());
+    }
+
+    private void likeOrDislikePost(int id, ResultMatcher expectedStatus) {
+        try {
+            var mockRequest = MockMvcRequestBuilders
+                    .get("http://localhost:8080/postRating/like/" + id);
+            mockMvc.perform(mockRequest).andExpect(expectedStatus);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -24,8 +24,8 @@ public class PostMapper {
 
     public static PostDto toPostDto(Post post) {
         return new PostDto(post.getPostId(),
-                post.getCreator() != null ? UserMapper.toUserDto(post.getCreator()) : null,
-                post.getApprover() != null ? post.getApprover().getUserId() : null,
+                UserMapper.toUserDto(post.getCreator()),
+                post.getApprover().getUserId(),
                 post.getCategory(),
                 post.getTitle(),
                 post.getImageUrl(),
@@ -35,7 +35,7 @@ public class PostMapper {
                 post.getCreationTime(),
                 post.getMarkdownContent(),
                 post.getPostTags(),
-                post.getCreator() != null ? UserMapper.toUserDto(post.getCreator()) : null
+                UserMapper.toUserDto(post.getCreator())
                 );
     }
 
