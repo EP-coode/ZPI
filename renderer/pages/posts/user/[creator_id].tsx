@@ -70,7 +70,7 @@ const PostCreatorPage: NextPage<
             orderBy={PostOrdering.DateDsc}
           />
         </LeftCollumn>
-        <RightCollumn className="m-2 md:m-0">
+        <RightCollumn>
           <UserInfoCard user={user} />
         </RightCollumn>
       </CollumnWrapper>
