@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -59,10 +60,12 @@ public class CommentController {
     }
 
     @GetMapping(params = "page")
-    public ResponseEntity<Object> getCommentsPagination(@PathVariable String postId, @RequestParam(required = false) Integer page, Sort.Direction sort) {
+    public ResponseEntity<Object> getCommentsPagination(@PathVariable String postId,
+            @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize,
+            Sort.Direction sort) {
         CommentWithPaginationDto commentDtos;
         try {
-            commentDtos = postService.getCommentsPagination(postId, page, sort);
+            commentDtos = postService.getCommentsPagination(postId, page, pageSize, sort);
         } catch (WrongIdException e) {
             return new ResponseEntity<>("Brak wartości dla pola id", HttpStatus.BAD_REQUEST);
         } catch (NoIdException e) {
@@ -118,7 +121,9 @@ public class CommentController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Komentarz usunięto pomyślnie", HttpStatus.OK);
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", "Komentarz usutnięto pomyślnie");
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

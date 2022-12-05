@@ -150,6 +150,7 @@ const PostEditor = ({ onPostSubmit, editedPost, categoryGroups }: Props) => {
           <span className="label-text">Wybierz dział postu</span>
         </label>
         <select
+          name="categoryName"
           className="select select-bordered w-full"
           onChange={formik.handleChange}
           value={formik.values.categoryName}

@@ -4,8 +4,8 @@ import ReactMarkdown from "react-markdown";
 import { LikesCounter } from "./LikesCounter";
 import ContentPane from "../layout/ContentPane";
 import ramarkGfm from "remark-gfm";
-import {likeService} from "../services/api/LikeService"
-import CommentList from "./CommentList";
+import { likeService } from "../services/api/LikeService";
+import CommentList from "./comments/CommentSection";
 
 type Props = {
   postId: number;
@@ -22,20 +22,22 @@ export const PostDetails = ({
   title,
   benerImageUrl,
   totalLikes,
-  isLiked
+  isLiked,
 }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div>
-    <ContentPane>
+    <ContentPane className="p-5">
       <div className="flex flex-row items-center justify-center gap-7 w-full">
         <h1 className="text-3xl sm:text-5xl font-semibold grow">{title}</h1>
         <div className="shrink-0">
-          <LikesCounter resourceId={postId} totalLikes={totalLikes} isLiked={isLiked}
-            onDisLike={likeService.DislikePost} 
+          <LikesCounter
+            resourceId={postId}
+            totalLikes={totalLikes}
+            isLiked={isLiked}
+            onDisLike={likeService.DislikePost}
             onLike={likeService.LikePost}
-            setIsLiked={likeService.IsPostLiked} 
+            setIsLiked={likeService.IsPostLiked}
           />
         </div>
       </div>
@@ -53,16 +55,11 @@ export const PostDetails = ({
           )}
         </figure>
       )}
-      <article className="p-7 prose max-w-full">
+      <article className="mt-7 prose max-w-full w-full">
         <ReactMarkdown remarkPlugins={[ramarkGfm]}>
           {contentMarkdown}
         </ReactMarkdown>
       </article>
     </ContentPane>
-    <section>
-      <h2 className="text-3xl font-semibold mt-10 mb-2">Komentarze</h2>
-      <CommentList postId={postId} postPerPage={5}></CommentList>
-    </section>
-    </div>
   );
 };

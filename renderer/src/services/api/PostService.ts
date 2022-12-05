@@ -26,7 +26,7 @@ export const postsService: PostService = {
     }
   },
   getPosts: async function (
-    { currentPage, postPerPage }: Pagination,
+    { currentPage, itemsPerPage: postPerPage }: Pagination,
     filters: PostFilters
   ): Promise<PostsWithPagination> {
     try {

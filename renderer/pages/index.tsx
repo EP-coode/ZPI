@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<
 > = async () => {
   const pagination: Pagination = {
     currentPage: 0,
-    postPerPage: PAGE_SIZE,
+    itemsPerPage: PAGE_SIZE,
   };
 
   const categoryGroups = await categoryGroupService.getCategoryGroups();

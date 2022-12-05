@@ -28,7 +28,7 @@ const PostList = ({
 
     const f = async () => {
       const returnedPosts = await postsService.getPosts(
-        { currentPage, postPerPage },
+        { currentPage, itemsPerPage: postPerPage },
         {
           categoryGroupId,
           categoryId,
@@ -85,7 +85,7 @@ const PostList = ({
   };
 
   return (
-    <div className="flex flex-col gap-3 m-2 md:m-0 min-h-screen w-full">
+    <div className="flex flex-col gap-3 m-2 md:m-0 p-2 sm:p-0 min-h-screen w-full">
       {totalPosts == 0 && LoadingState.LOADED == postLoadingState && (
         <div className="w-full my-auto text-center">nie znaleziono postów</div>
       )}

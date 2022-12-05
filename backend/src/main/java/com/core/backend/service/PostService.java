@@ -27,7 +27,7 @@ public interface PostService {
 
         List<CommentDto> getComments(String postId) throws WrongIdException, NoIdException, NoPostException;
 
-        CommentWithPaginationDto getCommentsPagination(String postId, Integer page, Sort.Direction sort)
+        CommentWithPaginationDto getCommentsPagination(String postId, Integer page, Integer pageSize, Sort.Direction sort)
             throws WrongIdException, NoIdException, NoPostException;
 
         PostDto addPost(PostCreateUpdateDto postDto)

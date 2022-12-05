@@ -79,7 +79,7 @@ const PostCategoryPage: NextPage<
             orderBy={postFilterContext?.postOrdering ?? PostOrdering.LikesDsc}
           />
         </LeftCollumn>
-        <RightCollumn className="m-2 md:m-0">
+        <RightCollumn>
           <PostFilterBox />
           <CategoryTree />
         </RightCollumn>
