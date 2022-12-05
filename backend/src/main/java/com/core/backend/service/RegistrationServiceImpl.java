@@ -13,11 +13,13 @@ import com.core.backend.repository.UserRepository;
 import com.core.backend.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +34,9 @@ public class RegistrationServiceImpl implements RegistrationService{
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private final ApplicationEventPublisher eventPublisher;
+
+    @Value("${registration.mail.student-domain}")
+    private String studentDomain;
 
     @Override
     public User registerNewUserAccount(RegisterUser userDto) throws Exception{
@@ -69,6 +74,7 @@ public class RegistrationServiceImpl implements RegistrationService{
         }
         User user = verificationToken.getUser();
         user.setEmailConfirmed(true);
+        user.setStudentStatusConfirmed(Objects.equals(user.getEmail().split("@")[1], studentDomain));
         userRepository.save(user);
         tokenRepository.deleteById(verificationToken.getId());
     }

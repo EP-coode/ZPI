@@ -6,15 +6,15 @@ import javax.validation.constraints.Size;
 
 public class RegisterUser {
 
-    @NotEmpty
-    @Size(min = 2, message = "name should have at least 2 characters")
+    @NotEmpty()
+    @Size(min = 3, message = "Nazwa musi mieć przynajmniej 3 znaki")
     private String name;
-    @NotEmpty
-    @Email
+    @NotEmpty()
+    @Email()
     private String email;
 
-    @NotEmpty
-    @Size(min = 6, message = "password should have at least 6 characters")
+    @NotEmpty()
+    @Size(min = 7, max = 32, message = "Hasło musi zawierać od 7 do 32 znaków")
     private String password;
 
     public String getName() {

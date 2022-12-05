@@ -37,7 +37,7 @@ const PostFilterBox = (props: Props) => {
       >
         <input type="checkbox" />
         <h2 className="text-xl font-semibold collapse-title">Filtruj posty</h2>
-        <div className="collapse-content flex flex-col max-w-xl gap-3 w-full">
+        <div className="collapse-content flex flex-col gap-3 w-full">
           <TagsPicker
             noTagsSelectedMsg="Nie wybrano tagów do filtrowania"
             pickedLabel="Musi zazwierać tagi:"
