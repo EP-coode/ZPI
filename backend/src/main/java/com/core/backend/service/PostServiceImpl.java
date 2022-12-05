@@ -266,7 +266,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(String postId, PostCreateUpdateDto postDto, MultipartFile photo)
+    public void updatePost(String postId, PostCreateUpdateDto postDto)
             throws NoAccessException, NoPostException, WrongIdException, NoIdException, NoPostCategoryException {
         long longId;
         longId = utilis.convertId(postId);
@@ -275,14 +275,12 @@ public class PostServiceImpl implements PostService {
             throw new NoPostException("Post nie istnieje");
         Post post = postOpt.get();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Set<String> tagNames = postDto.getTagNames() == null ? new HashSet<>() : postDto.getTagNames();
         if (!Objects.equals(authentication.getName(),
                 post.getCreator().getEmail()) &&
                 authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) {
             throw new NoAccessException("Próba edycji nie swojego postu");
         }
-        postDto.setTagNames(postDto.getTagNames().stream()
-                .map(p -> p.toLowerCase(Locale.ROOT))
-                .collect(Collectors.toSet()));
         PostCategory newPostCategory = postCategoryRepository.findByDisplayName(postDto.getCategoryName());
         if (newPostCategory == null)
             throw new NoPostCategoryException("Podana kategoria postu nie istnieje");
@@ -298,17 +296,20 @@ public class PostServiceImpl implements PostService {
                         .setTotalPosts(newPostCategory.getPostCategoryGroup().getTotalPosts() + 1);
             }
         }
-        boolean isPhotoEmpty = photo == null || photo.isEmpty();
+        boolean isPhotoEmpty = postDto.getPhoto() == null || postDto.getPhoto().isEmpty();
         String path = isPhotoEmpty ? "" : String.format("post_%d", longId);
         post.setCategory(newPostCategory);
         post.setImageUrl(path);
         post.setMarkdownContent(postDto.getMarkdownContent());
         post.setTitle(postDto.getTitle());
 
+        tagNames = tagNames.stream()
+                .map(p -> p.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
         List<PostTag> newPostTags = StreamSupport
-                .stream(postTagRepository.findAllById(postDto.getTagNames()).spliterator(), false).toList();
+                .stream(postTagRepository.findAllById(tagNames).spliterator(), false).toList();
 
-        for (String tag : postDto.getTagNames()) {
+        for (String tag : tagNames) {
             int id = newPostTags.indexOf(new PostTag(tag));
             PostTag p = new PostTag(tag);
             if (id != -1) {
@@ -330,7 +331,7 @@ public class PostServiceImpl implements PostService {
 
         if (isPhotoEmpty)
             return;
-        fileService.uploadFile(photo, path);
+        fileService.uploadFile(postDto.getPhoto(), path);
     }
 
     @Override

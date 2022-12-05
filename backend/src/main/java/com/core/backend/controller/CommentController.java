@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class CommentController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PostMapping()
-    public ResponseEntity<Object> addComment(@PathVariable String postId, @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
+    public ResponseEntity<Object> addComment(@PathVariable String postId, @Valid @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
         CommentDto comment;
         try {
             comment = postService.addComment(postId, commentCreateUpdateDto);
@@ -95,7 +96,7 @@ public class CommentController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PutMapping("/{commentId}")
     public ResponseEntity<Object> updateComment(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId,
-                                                @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
+                                                @Valid @RequestBody CommentCreateUpdateDto commentCreateUpdateDto) {
         try {
             postService.updateComment(postId, commentId, commentCreateUpdateDto);
         } catch (WrongIdException e) {

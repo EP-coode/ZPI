@@ -1,14 +1,12 @@
 package com.core.backend.controller;
 
 import com.core.backend.dto.filter.PostFilters;
-import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.dto.post.PostCreateUpdateDto;
 import com.core.backend.dto.post.PostDto;
 import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.NoIdException;
 import com.core.backend.service.PostService;
 import com.core.backend.exception.WrongIdException;
-import com.core.backend.model.Post;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping(path = "/posts")
@@ -56,8 +56,11 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @RequestMapping(path = "/create", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<Object> addPost(@ModelAttribute PostCreateUpdateDto post) {
+    @PostMapping(path = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Object> addPost(@Valid @ModelAttribute PostCreateUpdateDto post, BindingResult result) {
+        if(result.hasErrors()){
+            return new ResponseEntity<>(AppExceptionHandler.handleBindingResultErrors(result), HttpStatus.BAD_REQUEST);
+        }
         try {
             PostDto createdPost = postService.addPost(post);
             return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
@@ -67,11 +70,14 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @PutMapping("/{postId}")
-    public ResponseEntity<Object> updatePost(@PathVariable String postId, @RequestBody PostCreateUpdateDto postDto,
-            @RequestBody(required = false) MultipartFile photo) {
+    @PutMapping(value = "/{postId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Object> updatePost(@PathVariable String postId, @Valid @ModelAttribute PostCreateUpdateDto postDto,
+                                             BindingResult result) {
+        if(result.hasErrors()){
+            return new ResponseEntity<>(AppExceptionHandler.handleBindingResultErrors(result), HttpStatus.BAD_REQUEST);
+        }
         try {
-            postService.updatePost(postId, postDto, photo);
+            postService.updatePost(postId, postDto);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
