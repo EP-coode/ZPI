@@ -9,16 +9,13 @@ import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.WrongIdException;
 import com.core.backend.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -50,7 +47,7 @@ public class BackendPostTest {
     ObjectMapper mapper;
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithAnonymousUser
     @Transactional
     @Order(1)
     public void testGetAll() {
@@ -78,9 +75,9 @@ public class BackendPostTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(mapper.writeValueAsString(postFilters));
-            MockHttpServletResponse result = mockMvc.perform(mockRequest).andExpect(status().isOk()).andReturn().getResponse();
-            result.setCharacterEncoding("UTF-8");
-            assertThat(result.getContentAsString()).isEqualToIgnoringWhitespace(mapper.writeValueAsString(expectedResult));
+            var response = mockMvc.perform(mockRequest).andExpect(status().isOk()).andReturn().getResponse();
+            response.setCharacterEncoding("UTF-8");
+            assertThat(response.getContentAsString()).isEqualToIgnoringWhitespace(mapper.writeValueAsString(expectedResult));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,13 +173,14 @@ public class BackendPostTest {
 
     @Test
     @Order(6)
+    @WithAnonymousUser
     public void testFailedLikePost()  {
         likeOrDislikePost(0, status().isForbidden());
     }
     @Test
     @Order(7)
     @WithMockUser(username = "user@gmail.com", roles = "USER")
-    public void testLikePost()  {
+    public void testLikePost() {
         likeOrDislikePost(0, status().isOk());
     }
 
@@ -190,7 +188,7 @@ public class BackendPostTest {
     @Order(8)
     @WithMockUser(username = "user@gmail.com", roles = "USER")
     public void testDislikePost()  {
-        likeOrDislikePost(1, status().isOk());
+        likeOrDislikePost(0, status().isOk());
     }
 
     private void likeOrDislikePost(int id, ResultMatcher expectedStatus) {
