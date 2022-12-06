@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,11 +27,8 @@ public class AuthController {
     private AuthService service;
 
     @PostMapping("/login")
-    ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser, BindingResult result)
+    ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser)
             throws AuthenticationException, JsonProcessingException, IllegalArgumentException, JWTCreationException {
-        if (result.hasErrors()) {
-            return new ResponseEntity<>("Niepoprawne dane logowania", HttpStatus.BAD_REQUEST);
-        }
         AuthTokens tokens;
         try{
             tokens = service.authenticateUser(loginUser);

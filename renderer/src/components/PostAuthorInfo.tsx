@@ -46,7 +46,7 @@ const UserInfoCard = ({ user }: Props) => {
         </div>
         <div>
           <span className="font-semibold">Rola:</span>
-          <h2 className="inline-block ml-2">{user.role.roleName}</h2>
+          <h2 className="inline-block ml-2">{user.role}</h2>
         </div>
         {userPageHref != router.asPath && (
           <div>

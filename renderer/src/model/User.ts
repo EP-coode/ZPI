@@ -7,5 +7,5 @@ export interface User {
   emailConfirmed: boolean;
   studentStatusConfirmed: boolean;
   avatarUrl: string | null;
-  role: Role;
+  role: string;
 }

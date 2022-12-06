@@ -28,10 +28,7 @@ public class RegistrationController {
     ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/register")
-    ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUser userDto, BindingResult result) {
-        if(result.hasErrors()){
-            return new ResponseEntity<>("Niepoprawne dane rejestracji", HttpStatus.BAD_REQUEST);
-        }
+    ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUser userDto) {
         User registered = null;
         if (userDto != null) {
             try {

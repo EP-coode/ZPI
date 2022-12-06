@@ -8,7 +8,7 @@ export const userService: UserService = {
             email: "jan@nowak.pl",
             name: "Janusz",
             avatarUrl: "https://placeimg.com/400/400/arch",
-            role: { roleName: "USER" },
+            role: "USER",
             emailConfirmed: true,
             studentStatusConfirmed: true,
           })
