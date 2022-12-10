@@ -53,7 +53,7 @@ public class BackendRegistrationAndLoginTest {
 
     @Test
     @Order(2)
-    public void testFailedRegistration() {
+    public void testIncorrectRegistration() {
         RegisterUser registerUser = new RegisterUser();
         registerUser.setName(incorrectUserName);
         registerUser.setEmail(correctUserEmail);

@@ -9,16 +9,13 @@ import com.core.backend.exception.NoPostException;
 import com.core.backend.exception.WrongIdException;
 import com.core.backend.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -50,7 +47,7 @@ public class BackendPostTest {
     ObjectMapper mapper;
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithAnonymousUser
     @Transactional
     @Order(1)
     public void testGetAll() {
@@ -70,7 +67,7 @@ public class BackendPostTest {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        PostWithPaginationDto expectedResult = new PostWithPaginationDto(List.of(post1, post2),2);
+        PostWithPaginationDto expectedResult = new PostWithPaginationDto(List.of(post1, post2), 2);
 
         try {
             var mockRequest = MockMvcRequestBuilders
@@ -78,9 +75,9 @@ public class BackendPostTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(mapper.writeValueAsString(postFilters));
-            MockHttpServletResponse result = mockMvc.perform(mockRequest).andExpect(status().isOk()).andReturn().getResponse();
-            result.setCharacterEncoding("UTF-8");
-            assertThat(result.getContentAsString()).isEqualToIgnoringWhitespace(mapper.writeValueAsString(expectedResult));
+            var response = mockMvc.perform(mockRequest).andExpect(status().isOk()).andReturn().getResponse();
+            response.setCharacterEncoding("UTF-8");
+            assertThat(response.getContentAsString()).isEqualToIgnoringWhitespace(mapper.writeValueAsString(expectedResult));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,27 +85,29 @@ public class BackendPostTest {
 
     @Test
     @Order(2)
-    public void testFailedCreatePost() {
+    public void testUnauthorizedCreatePost() {
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
         paramsMap.add("title", "tytuł");
         paramsMap.add("categoryName", "Fizycy");
         paramsMap.add("markdownContent", "Krótki content");
         paramsMap.add("tagNames", "jedzenie");
         paramsMap.add("tagNames", "jarmark");
-        try {
-            var mockRequest = MockMvcRequestBuilders
-                    .multipart("http://localhost:8080/posts/create")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .params(paramsMap);
-            mockMvc.perform(mockRequest).andExpect(status().isForbidden());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        createPost(paramsMap, status().isForbidden());
     }
 
     @Test
     @Order(3)
+    @WithMockUser(username = "studentcommunityzpi@gmail.com", roles = {"ADMIN"})
+    public void testWrongModelCreatePost() {
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        paramsMap.add("markdownContent", "Krótki content");
+        paramsMap.add("tagNames", "jedzenie");
+        paramsMap.add("tagNames", "jarmark");
+        createPost(paramsMap, status().isBadRequest());
+    }
+
+    @Test
+    @Order(4)
     @WithMockUser(username = "studentcommunityzpi@gmail.com", roles = {"ADMIN"})
     public void testCreatePost() {
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
@@ -117,20 +116,11 @@ public class BackendPostTest {
         paramsMap.add("markdownContent", "Krótki content");
         paramsMap.add("tagNames", "jedzenie");
         paramsMap.add("tagNames", "jarmark");
-        try {
-            var mockRequest = MockMvcRequestBuilders
-                    .multipart("http://localhost:8080/posts/create")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .params(paramsMap);
-            mockMvc.perform(mockRequest).andExpect(status().isCreated());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        createPost(paramsMap, status().isCreated());
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @WithMockUser(username = "user@gmail.com", roles = "USER")
     public void testCreatePostWithPhoto() {
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
@@ -160,12 +150,27 @@ public class BackendPostTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
+    @WithMockUser(username = "user@gmail.com", roles = "USER")
+    public void testUnauthorizedDeletePost() {
+        try {
+            var mockRequest = MockMvcRequestBuilders
+                    .delete("http://localhost:8080/posts/1")
+                    .accept(MediaType.APPLICATION_JSON);
+            mockMvc.perform(mockRequest).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    @Order(7)
     @WithMockUser(roles = {"ADMIN"})
     public void testDeletePost() {
         try {
             var mockRequest = MockMvcRequestBuilders
-                    .delete("http://localhost:8080/posts/2")
+                    .delete("http://localhost:8080/posts/1")
                     .accept(MediaType.APPLICATION_JSON);
             mockMvc.perform(mockRequest).andExpect(status().isOk());
         } catch (Exception e) {
@@ -175,22 +180,24 @@ public class BackendPostTest {
     }
 
     @Test
-    @Order(6)
-    public void testFailedLikePost()  {
+    @Order(8)
+    @WithAnonymousUser
+    public void testFailedLikePost() {
         likeOrDislikePost(0, status().isForbidden());
     }
+
     @Test
-    @Order(7)
+    @Order(9)
     @WithMockUser(username = "user@gmail.com", roles = "USER")
-    public void testLikePost()  {
+    public void testLikePost() {
         likeOrDislikePost(0, status().isOk());
     }
 
     @Test
-    @Order(8)
+    @Order(10)
     @WithMockUser(username = "user@gmail.com", roles = "USER")
-    public void testDislikePost()  {
-        likeOrDislikePost(1, status().isOk());
+    public void testDislikePost() {
+        likeOrDislikePost(0, status().isOk());
     }
 
     private void likeOrDislikePost(int id, ResultMatcher expectedStatus) {
@@ -199,6 +206,19 @@ public class BackendPostTest {
                     .get("http://localhost:8080/postRating/like/" + id);
             mockMvc.perform(mockRequest).andExpect(expectedStatus);
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createPost(MultiValueMap<String, String> paramsMap, ResultMatcher status) {
+        try {
+            var mockRequest = MockMvcRequestBuilders
+                    .multipart("http://localhost:8080/posts/create")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .params(paramsMap);
+            mockMvc.perform(mockRequest).andExpect(status);
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
