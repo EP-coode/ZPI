@@ -1,0 +1,12 @@
+Logowanie
+Rejestracja
+Post:
+    Tworzenie
+    Usuwanie
+    Filtrowanie
+    Lajkowanie
+Komentarz:
+    Tworzenie
+    Usuwanie
+    Lajkowanie
+    Pobieranie

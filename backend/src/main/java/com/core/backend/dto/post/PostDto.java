@@ -16,7 +16,7 @@ import java.util.Set;
 public class PostDto {
     private long postId;
     private UserDto creator;
-    private long approverId;
+    private Long approverId;
     private PostCategory category;
     private String title;
     private String imageUrl;
@@ -29,7 +29,7 @@ public class PostDto {
     private Set<PostTag> postTags;
     private UserDto author;
 
-    public PostDto(long postId, UserDto creator, long approverId, PostCategory category, String title, String imageUrl,
+    public PostDto(long postId, UserDto creator, Long approverId, PostCategory category, String title, String imageUrl,
             int totalLikes, int totalDislikes, Date approveTime, Date creationTime, String markdownContent,
             Set<PostTag> postTags, UserDto author) {
         this.postId = postId;
