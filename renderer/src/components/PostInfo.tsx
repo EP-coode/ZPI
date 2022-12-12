@@ -1,9 +1,8 @@
 import Link from "next/link";
-import React, {useEffect, useState, useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import ContentPane from "../layout/ContentPane";
 import { Post } from "../model/Post";
 import { formatDate } from "../utils/dateFormating";
-import classNames from "classnames";
 import { isLoggedIn, getUserId } from "../utils/auth";
 import { postsService } from "../services/api/PostService";
 import { ModalContext } from "../context/ModalContext";
@@ -19,14 +18,15 @@ const PostInfo = ({ post }: Props) => {
   const router = useRouter();
 
   const handleDeleteClick = async () => {
-    await postsService.deletePost(post.postId).catch(e => e.message);
-    modalContext.setupModal(
-      null,
-      "Post został usunięty.",
-      false,
-      [{ label: "Strona profilowa", onClick: () => router.push(`/posts/user/${post.author.id}`)}, 
-      { label: "Strona główna", onClick: () => router.push("/")}]
-    );
+    await postsService.deletePost(post.postId).catch((e) => e.message);
+    modalContext.setupModal("Sukces!", "Post został usunięty.", false, [
+      { label: "Strona główna", onClick: () => router.push("/") },
+      {
+        label: "Strona profilowa",
+        onClick: () => router.push(`/posts/user/${post.author.id}`),
+        classNames: "btn-primary",
+      },
+    ]);
     modalContext.show();
   };
 
@@ -46,28 +46,30 @@ const PostInfo = ({ post }: Props) => {
         </div>
         <div className="w-full">
           <h3 className="font-semibold inline">Tagi: </h3>
-          {post.postTags.length > 0 ? post.postTags.map((tag) => (
-            <Link
-              href={`category/${post.category.postCategoryGroup?.displayName}/${post.category.displayName}?tags=${tag.tagName}`}
-              key={tag.tagName}
-            >
-              <a className="btn btn-sm btn-outline m-1">
-                {tag.tagName}
-                <span className="badge ml-2">{tag.totalPosts}</span>
-              </a>
-            </Link>
-          )) : "Brak"}
+          {post.postTags.length > 0
+            ? post.postTags.map((tag) => (
+                <Link
+                  href={`category/${post.category.postCategoryGroup?.displayName}/${post.category.displayName}?tags=${tag.tagName}`}
+                  key={tag.tagName}
+                >
+                  <a className="btn btn-sm btn-outline m-1">
+                    {tag.tagName}
+                    <span className="badge ml-2">{tag.totalPosts}</span>
+                  </a>
+                </Link>
+              ))
+            : "Brak"}
         </div>
         <div className="flex-grow">
-            {showDeleteButton && (
-              <button
-                className={classNames("btn btn-sm btn-error mr-auto ml-0 mt-5")}
-                onClick ={handleDeleteClick}
-              >
-                USUŃ POST
-              </button>
-            )}
-          </div>
+          {showDeleteButton && (
+            <button
+              className="btn btn-sm btn-error mr-auto ml-0 mt-5"
+              onClick={handleDeleteClick}
+            >
+              USUŃ POST
+            </button>
+          )}
+        </div>
       </div>
     </ContentPane>
   );
