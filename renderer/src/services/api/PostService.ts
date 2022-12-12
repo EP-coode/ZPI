@@ -69,7 +69,16 @@ export const postsService: PostService = {
       body: formData,
     });
   },
-  deletePost: function (postId: string): Promise<void> {
-    throw new Error("Function not implemented.");
+  deletePost: function (postId: number): Promise<void> {
+    try {
+      const result = fetchWithJWT<any>(
+        `posts/${postId}`,
+        { method: "DELETE" }
+      );
+      return result;
+    } catch (e: any) {
+      console.log(e);
+      throw new Error("Coś poszło nie tak");
+    }
   },
 };

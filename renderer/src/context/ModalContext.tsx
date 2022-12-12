@@ -53,6 +53,7 @@ export const ModalContextProvider = ({ children }: React.PropsWithChildren) => {
     actions: ActionBtnProps[]
   ) => {
     setModalProperites({
+      ...DEFAULT_MODAL_STATE,
       title: title,
       actions: actions,
       canClose: canClose,
@@ -99,7 +100,7 @@ export const ModalContextProvider = ({ children }: React.PropsWithChildren) => {
                 className={`btn ${classNames ?? ""}`}
                 onClick={() => {
                   onClick();
-                  handleReset();
+                  setShowModal(false);
                 }}
                 key={label}
               >

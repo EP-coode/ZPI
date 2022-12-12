@@ -29,7 +29,7 @@ export const commentService: CommentService = {
       return commentsWithPagination;
     } catch (e: any) {
       console.log(e);
-      throw new Error("Coś poszło nie tak");
+      throw new Error("Coś poszło nie tak przy pobieraniu komentarzy");
     }
   },
 
