@@ -1,6 +1,6 @@
 package com.core.backend.model;
 
-import com.core.backend.id.PostLikeOrDislikeId;
+import com.core.backend.model.id.PostLikeOrDislikeId;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

@@ -1,6 +1,6 @@
 package com.core.backend.model;
 
-import com.core.backend.id.FollowedUserId;
+import com.core.backend.model.id.FollowedUserId;
 
 import javax.persistence.*;
 

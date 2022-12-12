@@ -1,7 +1,7 @@
 package com.core.backend.repository;
 
 import com.core.backend.model.FollowedCategories;
-import com.core.backend.id.FollowedCategoriesId;
+import com.core.backend.model.id.FollowedCategoriesId;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.core.backend.service;
 
 import com.core.backend.exception.*;
-import com.core.backend.id.FollowedUserId;
+import com.core.backend.model.id.FollowedUserId;
 import com.core.backend.model.FollowedUser;
 import com.core.backend.model.Role;
 import com.core.backend.repository.FollowedUserRepository;

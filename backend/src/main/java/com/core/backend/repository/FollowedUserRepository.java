@@ -1,7 +1,7 @@
 package com.core.backend.repository;
 
 import com.core.backend.model.FollowedUser;
-import com.core.backend.id.FollowedUserId;
+import com.core.backend.model.id.FollowedUserId;
 import com.core.backend.model.User;
 import org.springframework.data.repository.CrudRepository;
 

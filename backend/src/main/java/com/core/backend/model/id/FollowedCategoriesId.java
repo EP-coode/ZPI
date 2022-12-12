@@ -1,4 +1,4 @@
-package com.core.backend.id;
+package com.core.backend.model.id;
 
 import com.core.backend.model.PostCategory;
 import com.core.backend.model.User;

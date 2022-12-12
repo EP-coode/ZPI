@@ -10,8 +10,8 @@ import com.core.backend.dto.post.PostWithPaginationDto;
 import com.core.backend.dto.mapper.CommentMapper;
 import com.core.backend.dto.mapper.PostMapper;
 import com.core.backend.exception.*;
-import com.core.backend.id.CommentLikeOrDislikeId;
-import com.core.backend.id.PostLikeOrDislikeId;
+import com.core.backend.model.id.CommentLikeOrDislikeId;
+import com.core.backend.model.id.PostLikeOrDislikeId;
 import com.core.backend.model.*;
 import com.core.backend.repository.*;
 import com.core.backend.sorting.PostSorting;
@@ -25,7 +25,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;

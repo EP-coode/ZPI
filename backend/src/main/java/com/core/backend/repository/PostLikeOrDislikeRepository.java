@@ -1,8 +1,7 @@
 package com.core.backend.repository;
 
-import com.core.backend.model.Post;
 import com.core.backend.model.PostLikeOrDislike;
-import com.core.backend.id.PostLikeOrDislikeId;
+import com.core.backend.model.id.PostLikeOrDislikeId;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

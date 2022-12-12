@@ -46,7 +46,7 @@ public class PostTagController {
     @GetMapping
     public ResponseEntity<Object> getTagsByPrefix(@RequestParam(required = true) String tagPrefix,
             @RequestParam(required = false) Integer limit) {
-        Integer _limit = limit == null ? DEFAULT_TAGS_LIMIT : limit;
+        int _limit = limit == null ? DEFAULT_TAGS_LIMIT : limit;
         Pageable pageable = PageRequest.of(0, _limit);
         List<PostTag> result = postTagRepository.getTagsByPrefix(tagPrefix, pageable);
 
