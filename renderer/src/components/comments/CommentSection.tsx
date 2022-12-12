@@ -71,9 +71,9 @@ const CommentList = ({
       }
     };
 
-    updateComments();
+    updateComments().catch(e => console.log(e.message));
     const refreshInterval = setInterval(
-      () => updateComments(),
+      () => updateComments().catch(e => console.log(e.message)),
       refreshFrequencyMs
     );
 
