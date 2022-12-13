@@ -1,7 +1,5 @@
 package com.core.backend.dto.user;
 
-import com.core.backend.model.User;
-
 import lombok.*;
 
 @ToString
@@ -15,5 +13,5 @@ public class UserDto {
     private Boolean emailConfirmed;
     private String avatarUrl;
     private String role;
-    private Boolean studentStatusConfirmed;
+    private Boolean pwrStatusConfirmed;
 }

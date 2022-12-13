@@ -11,7 +11,7 @@ public class UserMapper {
         UserDto userDto = new UserDto();
         userDto.setName(user.getName());
         userDto.setAvatarUrl(user.getAvatarUrl() != null ? imageUriPrefix + user.getAvatarUrl() : null);
-        userDto.setStudentStatusConfirmed(user.isStudentStatusConfirmed());
+        userDto.setPwrStatusConfirmed(user.isPwrStatusConfirmed());
         userDto.setRole(user.getRole().getRoleName().split("_")[1]);
         userDto.setEmailConfirmed(user.isEmailConfirmed());
         userDto.setId(user.getUserId());

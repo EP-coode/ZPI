@@ -149,7 +149,7 @@ public class UserController {
                                       @RequestParam String emailConfirmationToken,
                                       @RequestParam Boolean emailConfirmed,
                                       @RequestParam String refreshToken,
-                                      @RequestParam Boolean studentStatusConfirmed) {
+                                      @RequestParam Boolean pwrStatusConfirmed) {
         User userToSave;
         try {
             userToSave = userService.getUserById(id);
@@ -180,8 +180,8 @@ public class UserController {
             userToSave.setEmailConfirmed(emailConfirmed);
         if (refreshToken != null)
             userToSave.setRefreshToken(refreshToken);
-        if (studentStatusConfirmed != null)
-            userToSave.setStudentStatusConfirmed(studentStatusConfirmed);
+        if (pwrStatusConfirmed != null)
+            userToSave.setPwrStatusConfirmed(pwrStatusConfirmed);
         userService.saveUser(userToSave);
         return new ResponseEntity<>("Użytkownik zaktualizowany", HttpStatus.OK);
     }

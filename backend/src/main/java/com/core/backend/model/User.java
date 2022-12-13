@@ -15,7 +15,7 @@ public class User {
     private String passwordHash;
     private boolean emailConfirmed;
     private String emailConfirmationToken;
-    private boolean studentStatusConfirmed;
+    private boolean pwrStatusConfirmed;
     private String refreshToken;
     private String avatarUrl;
 
@@ -75,12 +75,12 @@ public class User {
         this.emailConfirmationToken = emailConfirmationToken;
     }
 
-    public boolean isStudentStatusConfirmed() {
-        return studentStatusConfirmed;
+    public boolean isPwrStatusConfirmed() {
+        return pwrStatusConfirmed;
     }
 
-    public void setStudentStatusConfirmed(boolean studentStatusConfirmed) {
-        this.studentStatusConfirmed = studentStatusConfirmed;
+    public void setPwrStatusConfirmed(boolean pwrStatusConfirmed) {
+        this.pwrStatusConfirmed = pwrStatusConfirmed;
     }
 
     public String getRefreshToken() {
