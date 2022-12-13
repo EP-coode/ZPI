@@ -17,7 +17,7 @@ UPDATE role_name = role_name,
 --hasło: 123456
 --on duplicate skip
 INSERT INTO db_example.user (user_id, avatar_url, email, name, email_confirmation_token, email_confirmed, password_hash,
-                             refresh_token, student_status_confirmed, role_fk)
+                             refresh_token, pwr_status_confirmed, role_fk)
 VALUES (1, null, 'studentcommunityzpi@gmail.com', 'admin123', null, true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_ADMIN'),
        (2, 'avatar_user@gmail.com.jpg', 'user@gmail.com', 'user123', null, true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_USER')
 ON DUPLICATE KEY UPDATE user_id=user_id;

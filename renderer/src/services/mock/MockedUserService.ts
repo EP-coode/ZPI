@@ -10,7 +10,7 @@ export const userService: UserService = {
             avatarUrl: "https://placeimg.com/400/400/arch",
             role: "USER",
             emailConfirmed: true,
-            studentStatusConfirmed: true,
+            pwrStatusConfirmed: true,
           })
     }
 }

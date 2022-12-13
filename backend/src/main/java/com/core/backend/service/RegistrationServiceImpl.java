@@ -19,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,8 +34,8 @@ public class RegistrationServiceImpl implements RegistrationService{
 
     private final ApplicationEventPublisher eventPublisher;
 
-    @Value("${registration.mail.student-domain}")
-    private String studentDomain;
+    @Value("${registration.mail.domain}")
+    private String pwrDomain;
 
     @Override
     public User registerNewUserAccount(RegisterUser userDto) throws Exception{
@@ -74,7 +73,7 @@ public class RegistrationServiceImpl implements RegistrationService{
         }
         User user = verificationToken.getUser();
         user.setEmailConfirmed(true);
-        user.setStudentStatusConfirmed(Objects.equals(user.getEmail().split("@")[1], studentDomain));
+        user.setPwrStatusConfirmed(user.getEmail().split("@")[1].endsWith(pwrDomain));
         userRepository.save(user);
         tokenRepository.deleteById(verificationToken.getId());
     }

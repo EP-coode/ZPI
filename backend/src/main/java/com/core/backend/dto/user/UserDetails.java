@@ -12,5 +12,5 @@ public class UserDetails {
     private String email;
     private String avatarUrl;
     private String roleName;
-    private boolean studentStatusConfirmed;
+    private boolean pwrStatusConfirmed;
 }

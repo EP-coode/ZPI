@@ -10,7 +10,7 @@ public class UserDetailsMapper {
         userDetails.setName(user.getName());
         userDetails.setEmail(user.getEmail());
         userDetails.setAvatarUrl(user.getAvatarUrl());
-        userDetails.setStudentStatusConfirmed(user.isStudentStatusConfirmed());
+        userDetails.setPwrStatusConfirmed(user.isPwrStatusConfirmed());
         userDetails.setRoleName(user.getRole().getRoleName().split("_")[1]);
         return userDetails;
     }

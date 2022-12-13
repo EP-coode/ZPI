@@ -5,7 +5,7 @@ export interface User {
   email: string | null;
   name: string;
   emailConfirmed: boolean;
-  studentStatusConfirmed: boolean;
+  pwrStatusConfirmed: boolean;
   avatarUrl: string | null;
   role: string;
 }
