@@ -41,16 +41,6 @@ export const NavBar = (props: Props) => {
       {loginContext?.user ? (
         <div className="flex-1 flex-row gap-3 justify-end">
           <div className="dropdown dropdown-end">
-            <div
-              className="tooltip tooltip-bottom"
-              data-tip="Obserwowane treści"
-            >
-              <label tabIndex={0} className="btn btn-ghost btn-circle">
-                <BellSvg />
-              </label>
-            </div>
-          </div>
-          <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
                 <StudentSvg />
