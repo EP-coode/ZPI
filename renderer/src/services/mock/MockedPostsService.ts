@@ -85,17 +85,16 @@ ReactDOM.render(
       const post = await this.getPost(i);
       posts.push(post);
 
-      if (i == pagination.itemsPerPage - 1) post.imageUrl = null;
+      if (i == pagination.itemsPerPage - 1)
+        post.imageUrl = null;
     }
 
-    const filteredPosts = posts.filter((post) =>
-      filters
-        ? filters.tagNames?.every((tagName) =>
-            post.postTags.some(
-              (tag) => tag.tagName.toLowerCase() == tagName.toLowerCase()
-            )
-          ) ?? true
-        : true
+    const filteredPosts = posts.filter((post) => filters
+      ? filters.tagNames?.every((tagName) => post.postTags.some(
+        (tag) => tag.tagName.toLowerCase() == tagName.toLowerCase()
+      )
+      ) ?? true
+      : true
     );
     return {
       totalPosts: filteredPosts.length + (filteredPosts.length > 0 ? 100 : 0),
@@ -105,7 +104,7 @@ ReactDOM.render(
   createPost: function (post: CreatePostDto): Promise<Post> {
     throw new Error("Function not implemented.");
   },
-  deletePost: function (postId: string): Promise<void> {
+  deletePost: function (postId: number): Promise<void> {
     throw new Error("Function not implemented.");
-  },
+  }
 };
