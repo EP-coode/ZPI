@@ -1,4 +1,4 @@
-INSERT INTO db_example.role (
+INSERT INTO role (
         role_name,
         can_approve_post,
         can_create_post,
@@ -12,23 +12,23 @@ UPDATE role_name = role_name,
     can_create_post=can_create_post,
     can_read_post=can_read_post,
     post_per_day_limit=post_per_day_limit;
---update roles
+-- update roles
 
---hasło: 123456
---on duplicate skip
-INSERT INTO db_example.user (user_id, avatar_url, email, name, email_confirmation_token, email_confirmed, password_hash,
+-- hasło: 123456
+-- on duplicate skip
+INSERT INTO user (user_id, avatar_url, email, name, email_confirmation_token, email_confirmed, password_hash,
                              refresh_token, pwr_status_confirmed, role_fk)
 VALUES (1, null, 'studentcommunityzpi@gmail.com', 'admin123', null, true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_ADMIN'),
        (2, 'avatar_user@gmail.com.jpg', 'user@gmail.com', 'user123', null, true, '$2a$10$iEmh3dR5UGxLnVF0bv4cVeGnukOrDITftURUxVeHstQnCBeQhbUlK', '""', true, 'ROLE_USER')
 ON DUPLICATE KEY UPDATE user_id=user_id;
 
-INSERT INTO db_example.post_category_group (display_name, total_posts)
+INSERT INTO post_category_group (display_name, total_posts)
 VALUES
     ('Wydziały', 1),
     ('Prowadzący', 2)
 ON DUPLICATE KEY UPDATE display_name=display_name;
 
-INSERT INTO db_example.post_category (display_name, total_posts,
+INSERT INTO post_category (display_name, total_posts,
                                       post_category_group_id_fk)
 VALUES
     ('W-4N', 1, 'Wydziały'),
@@ -39,14 +39,13 @@ VALUES
     ('Chemicy', 0, 'Prowadzący')
 ON DUPLICATE KEY UPDATE display_name=display_name;
 
---@BLOCK
-INSERT INTO db_example.post_tag (tag_name, total_posts) VALUES
+INSERT INTO post_tag (tag_name, total_posts) VALUES
     ('jedzenie', 2),
     ('jeremiasz', 1),
     ('jarmark', 2)
 ON DUPLICATE KEY UPDATE tag_name=tag_name;
 
-INSERT INTO db_example.post (post_id, approve_time, creation_time, image_url, markdown_content, title, total_dislikes,
+INSERT INTO post (post_id, approve_time, creation_time, image_url, markdown_content, title, total_dislikes,
                              total_likes, approver_id_fk, post_category_id_fk, creator_id_fk)
 VALUES
     (0, current_date, current_date, null, '# Jakiś bardzo interesujący content
@@ -64,7 +63,7 @@ I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 I tyle w temacie.', 'Tytuł 2 (dłuższy tytuł)', 100, 1000, 1, 'Fizycy', 1)
 ON DUPLICATE KEY UPDATE post_id=post_id;
 
-INSERT INTO db_example.post_post_tag (post_id, tag_name) VALUES
+INSERT INTO post_post_tag (post_id, tag_name) VALUES
     (0,'jedzenie'),
     (-1,'jeremiasz'),
     (-2,'jarmark'),
@@ -72,7 +71,7 @@ INSERT INTO db_example.post_post_tag (post_id, tag_name) VALUES
     (-1,'jarmark')
 ON DUPLICATE KEY UPDATE post_id=post_id;
 
-INSERT INTO db_example.comment (comment_id, total_likes, total_dislikes, content, creation_time, post_id, creator_id_fk)
+INSERT INTO comment (comment_id, total_likes, total_dislikes, content, creation_time, post_id, creator_id_fk)
 VALUES
     (1, 10, 5, 'masno ni', current_date, -1, 1),
     (2, 0, 20, 'nie masno ni', current_date, -1, 2),
