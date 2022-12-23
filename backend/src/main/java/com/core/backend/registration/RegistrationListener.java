@@ -3,6 +3,7 @@ package com.core.backend.registration;
 import com.core.backend.service.RegistrationService;
 import com.core.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -10,10 +11,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
-
 @EnableAsync
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
+
+    @Value("${registration.cleint.url}")
+    private String clientUrl;
 
     @Autowired
     private RegistrationService service;
@@ -33,7 +36,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
         String recipientAddress = user.getEmail();
         String subject = "Potwierdzenie rejestracji";
-        String message = "Kliknij w ten link aby potwierdzić rejestrację: http://localhost:3000/confirmation?token=" + token;
+        String message = "Kliknij w ten link aby potwierdzić rejestrację: " + clientUrl + "/confirmation?token="
+                + token;
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
