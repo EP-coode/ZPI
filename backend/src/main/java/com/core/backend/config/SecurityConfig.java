@@ -39,20 +39,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers(
-                        "/auth/**",
-                        "/users/**",
-                        "/followedUsers/**",
-                        "/registration/**",
-                        "/posts/**",
-                        "/v2/api-docs",
-                        "/configuration/ui",
-                        "/swagger-resources/**",
-                        "/configuration/security",
-                        "/swagger-ui.html",
-                        "/webjars/**",
-                        "/blob/**",
-                        "/postCategoryGroups",
-                        "/post-tag").permitAll()
+                "/auth/**",
+                "/users/**",
+                "/followedUsers/**",
+                "/registration/**",
+                "/posts/**",
+                "/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**",
+                "/blob/**",
+                "/postCategoryGroups",
+                "/post-tag",
+                "/ping").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authorizationFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
@@ -64,12 +65,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JWTAuthorizationFilter authorizationFilterBean() throws Exception{
+    public JWTAuthorizationFilter authorizationFilterBean() throws Exception {
         return new JWTAuthorizationFilter();
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
