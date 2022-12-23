@@ -94,7 +94,7 @@ export const ModalContextProvider = ({ children }: React.PropsWithChildren) => {
             <h3 className="text-lg font-bold">{modalProperties.title}</h3>
           )}
           <p className="py-4">{modalProperties.message}</p>
-          <div className="modal-action">
+          <div className="modal-action flex flex-wrap gap-2">
             {modalProperties.actions?.map(({ onClick, label, classNames }) => (
               <button
                 className={`btn ${classNames ?? ""}`}
