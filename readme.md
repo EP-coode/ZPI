@@ -1,4 +1,4 @@
-# Soclial app for students
+# Social app for students
 Live example here ->  [sc.eprzybyl.eu](https://sc.eprzybyl.eu)
 
 **WARNING**
