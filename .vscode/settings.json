@@ -1,0 +1,30 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "sql7.freesqldatabase.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "sql7.freesqldatabase.com",
+            "database": "sql7586237",
+            "username": "sql7586237",
+            "password": "YBppycVTny"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "bczft5rjvbrs0ggeqjas-mysql.services.clever-cloud.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "bczft5rjvbrs0ggeqjas-mysql.services.clever-cloud.com",
+            "database": "bczft5rjvbrs0ggeqjas",
+            "username": "unkhdw8qihvbduqi",
+            "password": "tlLBxQrWxRBewijAGYee"
+        }
+    ]
+}

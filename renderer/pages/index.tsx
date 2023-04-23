@@ -58,13 +58,16 @@ export const getServerSideProps: GetServerSideProps<
 const Home: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ categoryGroups, categoryGroupsPosts }) => {
+  var fakeDate = new Date();
+  fakeDate.setDate(fakeDate.getDate() + 300);
+
   return (
     <ContentWrapper>
       <div className="relative flex flex-row justify-center items-center gap-7 p-7 bg-base-200 p- w-min mx-auto rounded-xl my-7">
         <h2 className="text-3xl writing-vertical sm:writing-normal">
           Do sesji pozostało
         </h2>
-        <CountDown toDate={new Date("03/02/2023")} />
+        <CountDown toDate={fakeDate} />
       </div>
       <div className="flex flex-col gap-7">
         {categoryGroups.map((categoryGroup) => (
